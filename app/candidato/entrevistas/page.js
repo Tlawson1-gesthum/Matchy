@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import { linkWhatsApp } from '../../../lib/whatsapp';
 
 export default function EntrevistasCandidato() {
   const router = useRouter();
@@ -50,7 +51,10 @@ export default function EntrevistasCandidato() {
     <div>
       <div className="navbar">
         <a className="logo" href="/">Matchy</a>
-        <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
+        <div>
+          <a className="nav-link" href="/candidato/panel">Mi panel</a>
+          <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
+        </div>
       </div>
       <div className="container">
         <h1>Mis entrevistas</h1>
@@ -72,7 +76,25 @@ export default function EntrevistasCandidato() {
               </div>
             )}
             {e.estado === 'confirmada' && (
-              <p>Contacto del local: <strong>{e.postulaciones.vacantes.empleadores.contacto}</strong></p>
+              <div>
+                <p>Contacto del local: <strong>{e.postulaciones.vacantes.empleadores.contacto}</strong></p>
+                {linkWhatsApp(
+                  e.postulaciones.vacantes.empleadores.contacto,
+                  `Hola, soy candidato en Matchy para el puesto de ${e.postulaciones.vacantes.puesto}. Confirmo la entrevista.`
+                ) && (
+                  <a
+                    className="btn blanco"
+                    href={linkWhatsApp(
+                      e.postulaciones.vacantes.empleadores.contacto,
+                      `Hola, soy candidato en Matchy para el puesto de ${e.postulaciones.vacantes.puesto}. Confirmo la entrevista.`
+                    )}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Escribir por WhatsApp
+                  </a>
+                )}
+              </div>
             )}
           </div>
         ))}

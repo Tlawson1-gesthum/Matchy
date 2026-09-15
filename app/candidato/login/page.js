@@ -53,11 +53,15 @@ export default function LoginCandidato() {
     }
 
     setCargando(false);
-    router.push('/candidato/cv');
+    router.push('/candidato/panel');
   }
 
   return (
-    <div className="container" style={{ maxWidth: 420 }}>
+    <div>
+      <div className="navbar">
+        <a className="logo" href="/">Matchy</a>
+      </div>
+      <div className="panel-auth" style={{ paddingTop: 36 }}>
       <h1>Iniciar sesión</h1>
       <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>
       <form onSubmit={handleSubmit} className="card">
@@ -75,13 +79,14 @@ export default function LoginCandidato() {
           />
         </div>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-        <button className="btn" type="submit" disabled={cargando}>
+        <button className="btn ancho" type="submit" disabled={cargando}>
           {cargando ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
       <p style={{ marginTop: 16 }}>
         Si no tenés una cuenta, <Link href="/candidato/registro">registrate acá</Link>.
       </p>
+      </div>
     </div>
   );
 }

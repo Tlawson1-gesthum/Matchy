@@ -68,35 +68,7 @@ a { color: var(--tierra); }
   border: 1px solid #E8E4DC;
 }
 
-.landing-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 40px;
-}
 
-@media (max-width: 640px) {
-  .landing-cards { grid-template-columns: 1fr; }
-}
-
-.landing-card {
-  background: var(--blanco);
-  border-radius: 14px;
-  padding: 44px 28px;
-  text-align: center;
-  text-decoration: none;
-  border: 1px solid #E2DED6;
-  transition: transform 0.15s ease;
-  display: block;
-}
-
-.landing-card:hover { transform: translateY(-3px); }
-
-.landing-card.activa { border-color: var(--verde); box-shadow: 0 4px 16px rgba(43,70,50,0.10); }
-
-.landing-card h2 { font-size: 1.6rem; }
-
-.landing-card p { color: var(--texto); font-size: 0.95rem; }
 
 .btn {
   display: inline-block;
@@ -294,4 +266,284 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
     font-size: 10.5pt;
   }
   .cv-nombre { font-size: 20pt; }
+}
+
+/* ============================================================
+   TARJETA DE VACANTE
+   ============================================================ */
+.vacante { border-left: 3px solid var(--verde); }
+
+.vacante-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.vacante-local {
+  display: block;
+  font-family: var(--font-titulos);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--verde);
+}
+
+.vacante-tipo {
+  font-family: var(--font-datos);
+  font-size: 0.74rem;
+  color: #6B655C;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge.urgente {
+  background: #F7E4DE;
+  color: var(--tierra);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vacante-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.vacante-datos span {
+  background: #F4F2EC;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+}
+
+.vacante-meta {
+  font-size: 0.76rem;
+  color: #6B655C;
+  margin: 12px 0;
+}
+
+.aviso-postulado {
+  background: #E9F1EA;
+  border-left: 3px solid var(--verde);
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   PORTADA — pantalla partida
+   ============================================================ */
+.portada {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--verde);
+  color: #F6F4EE;
+}
+
+.portada-barra {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+  gap: 16px;
+}
+
+.portada-marca {
+  font-family: var(--font-titulos);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.portada-pulso {
+  font-family: var(--font-datos);
+  font-size: 0.72rem;
+  color: #9FB6A4;
+}
+
+.portada-pulso b { color: var(--mostaza); font-weight: 500; }
+
+.portada-titular {
+  padding: 32px 24px 28px;
+  max-width: 17ch;
+  font-family: var(--font-titulos);
+  font-size: clamp(2.1rem, 7vw, 3.4rem);
+  line-height: 1.04;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #F6F4EE;
+}
+
+.portada-split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid rgba(246, 244, 238, 0.16);
+}
+
+.mitad {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 26px 24px 30px;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid rgba(246, 244, 238, 0.16);
+  transition: background 0.18s ease;
+}
+
+.mitad:last-child { border-bottom: none; }
+
+.mitad-titulo {
+  font-family: var(--font-titulos);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 600;
+  color: #F6F4EE;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mitad-texto {
+  font-size: 0.97rem;
+  line-height: 1.5;
+  color: #CBD8CD;
+  max-width: 42ch;
+  margin: 10px 0 0;
+}
+
+.mitad-accion {
+  font-family: var(--font-datos);
+  font-size: 0.8rem;
+  color: var(--mostaza);
+  border-top: 1px solid rgba(246, 244, 238, 0.16);
+  padding-top: 14px;
+}
+
+.mitad:hover, .mitad:focus-visible {
+  background: rgba(246, 244, 238, 0.06);
+}
+
+.mitad.candidato:hover, .mitad.candidato:focus-visible {
+  background: rgba(217, 164, 65, 0.1);
+}
+
+.mitad.empleador:hover, .mitad.empleador:focus-visible {
+  background: rgba(181, 67, 42, 0.14);
+}
+
+@media (min-width: 820px) {
+  .portada-barra { padding: 28px 40px 0; }
+  .portada-titular { padding: 40px 40px 34px; }
+  .portada-split { grid-template-columns: 1fr 1fr; }
+  .mitad {
+    padding: 38px 40px 44px;
+    border-bottom: none;
+    border-right: 1px solid rgba(246, 244, 238, 0.16);
+  }
+  .mitad:last-child { border-right: none; }
+}
+
+/* ============================================================
+   FORMULARIOS — presentación más cuidada
+   ============================================================ */
+.panel-auth {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0 20px 56px;
+}
+
+.panel-auth h1 { font-size: 1.9rem; letter-spacing: -0.01em; }
+
+.auth-intro { color: #55504A; margin-bottom: 22px; }
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: 2px solid var(--verde);
+  outline-offset: 1px;
+  border-color: var(--verde);
+}
+
+.btn:focus-visible, a:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+
+.btn.ancho { width: 100%; text-align: center; padding: 14px 22px; }
+
+.linea-o {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  color: #8A847A;
+  font-size: 0.85rem;
+}
+.linea-o::before, .linea-o::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E6E2DA;
+}
+
+/* ============================================================
+   PANEL DEL CANDIDATO
+   ============================================================ */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+@media (min-width: 760px) {
+  .panel-grid { grid-template-columns: 1.2fr 1fr; }
+}
+
+.panel-cifra {
+  font-family: var(--font-titulos);
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--verde);
+  line-height: 1;
+}
+
+.panel-cifra-label {
+  font-family: var(--font-datos);
+  font-size: 0.74rem;
+  color: #6B655C;
+}
+
+.fila-cifras { display: flex; gap: 28px; flex-wrap: wrap; }
+
+.match-chip {
+  display: inline-block;
+  background: #E9F1EA;
+  color: var(--verde);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.match-chip.tibio { background: #FBF3E0; color: #8A6410; }
+.match-chip.frio { background: #F6E7E1; color: var(--tierra); }
+
+.disclaimer {
+  font-size: 0.76rem;
+  color: #7A746A;
+  line-height: 1.45;
+  border-top: 1px solid #EDEAE3;
+  padding-top: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 560px) {
+  .container { padding: 18px 16px; }
+  .navbar { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
+  .navbar a.nav-link { margin-left: 0; margin-right: 16px; }
+  .hoja-cv { padding: 26px 22px; }
+  .card { padding: 18px; }
 }

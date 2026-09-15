@@ -27,7 +27,13 @@ export default function VacantesEmpleador() {
 
   useEffect(() => { cargar(); }, []);
 
-  async function marcarCubierta(id) {
+  async function marcarCubierta(id, puesto) {
+    const ok = window.confirm(
+      `¿Marcar la vacante de ${puesto} como cubierta?\n\n` +
+      'Se va a sacar del listado público y los candidatos ya no van a poder postularse. ' +
+      'Esta acción no se puede deshacer: si necesitás volver a buscar, vas a tener que publicar una vacante nueva.'
+    );
+    if (!ok) return;
     await supabase.from('vacantes').update({ estado: 'cubierta' }).eq('id', id);
     cargar();
   }
@@ -63,7 +69,7 @@ export default function VacantesEmpleador() {
               <div style={{ display: 'flex', gap: 10 }}>
                 <a className="btn secundario" href={`/empleador/vacantes/${v.id}`}>Ver ranking</a>
                 {v.estado === 'activa' && (
-                  <button className="btn secundario" onClick={() => marcarCubierta(v.id)}>Marcar cubierta</button>
+                  <button className="btn secundario" onClick={() => marcarCubierta(v.id, v.puesto)}>Marcar cubierta</button>
                 )}
               </div>
             </div>

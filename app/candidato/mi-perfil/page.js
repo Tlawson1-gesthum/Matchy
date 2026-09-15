@@ -40,6 +40,7 @@ export default function MiPerfil() {
       <div className="navbar no-imprimir">
         <a className="logo" href="/">Matchy</a>
         <div>
+          <a className="nav-link" href="/candidato/panel">Mi panel</a>
           <a className="nav-link" href="/candidato/cv">Editar CV</a>
           <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
           <a className="nav-link" href="/candidato/entrevistas">Mis entrevistas</a>

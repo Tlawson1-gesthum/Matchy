@@ -165,7 +165,8 @@ export default function CvForm() {
       <div className="navbar">
         <a className="logo" href="/">Matchy</a>
         <div>
-          <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
+          <a className="nav-link" href="/candidato/panel">Mi panel</a>
+          <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
           <a className="nav-link" href="/candidato/mi-perfil">Ver mi CV</a>
         </div>
       </div>
