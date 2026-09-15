@@ -14,6 +14,20 @@ const TIPOS_LOCAL = [
   { value: 'otro', label: 'Otro' },
 ];
 
+function traducirError(msg) {
+  const m = (msg || '').toLowerCase();
+  if (m.includes('rate limit')) {
+    return 'Se alcanzó el límite de emails por hora de Supabase. Esperá un rato o desactivá la confirmación por email en Supabase (Authentication → Providers → Email).';
+  }
+  if (m.includes('already registered') || m.includes('already been registered')) {
+    return 'Ese email ya tiene una cuenta. Probá iniciando sesión.';
+  }
+  if (m.includes('password')) {
+    return 'La contraseña tiene que tener al menos 6 caracteres.';
+  }
+  return msg;
+}
+
 export default function RegistroEmpleador() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -41,8 +55,16 @@ export default function RegistroEmpleador() {
       password: form.password,
     });
     if (errAuth) {
-      setError(errAuth.message);
+      setError(traducirError(errAuth.message));
       setCargando(false);
+      return;
+    }
+
+    if (!data.session) {
+      setCargando(false);
+      setError(
+        'Tu cuenta se creó, pero falta confirmar el email. Revisá tu casilla (y la carpeta de spam) y volvé a iniciar sesión.'
+      );
       return;
     }
 
@@ -65,6 +87,7 @@ export default function RegistroEmpleador() {
   return (
     <div className="container" style={{ maxWidth: 460 }}>
       <h1>Registrá tu local</h1>
+      <p>¿Ya sos usuario? <Link href="/empleador/login">Iniciá sesión</Link>.</p>
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
           <label>Nombre del local</label>
@@ -81,10 +104,6 @@ export default function RegistroEmpleador() {
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
-        </div>
-        <div className="form-field">
-          <label>Ciudad</label>
-          <input value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)} />
         </div>
         <div className="form-field">
           <label>Contacto (WhatsApp o email visible para candidatos)</label>
@@ -115,7 +134,7 @@ export default function RegistroEmpleador() {
         </button>
       </form>
       <p style={{ marginTop: 16 }}>
-        ¿Ya tenés cuenta? <Link href="/empleador/login">Iniciá sesión</Link>
+        Si no tenés una cuenta, completá el formulario de arriba para registrar tu local.
       </p>
     </div>
   );

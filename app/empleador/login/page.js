@@ -16,18 +16,35 @@ export default function LoginEmpleador() {
     e.preventDefault();
     setError('');
     setCargando(true);
-    const { error: errAuth } = await supabase.auth.signInWithPassword({ email, password });
-    setCargando(false);
+    const { data, error: errAuth } = await supabase.auth.signInWithPassword({ email, password });
     if (errAuth) {
-      setError('Email o contraseña incorrectos.');
+      setCargando(false);
+      const m = (errAuth.message || '').toLowerCase();
+      if (m.includes('not confirmed')) {
+        setError('Todavía no confirmaste tu email. Revisá tu casilla y el spam.');
+      } else {
+        setError('Email o contraseña incorrectos.');
+      }
       return;
     }
+
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: perfil } = await supabase.from('perfiles').select('id').eq('id', userId).maybeSingle();
+      if (!perfil) {
+        await supabase.from('perfiles').insert({ id: userId, role: 'empleador', email });
+        await supabase.from('empleadores').insert({ id: userId, ciudad: 'Posadas' });
+      }
+    }
+
+    setCargando(false);
     router.push('/empleador/vacantes');
   }
 
   return (
     <div className="container" style={{ maxWidth: 420 }}>
       <h1>Iniciar sesión — locales</h1>
+      <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
           <label>Email</label>
@@ -48,7 +65,7 @@ export default function LoginEmpleador() {
         </button>
       </form>
       <p style={{ marginTop: 16 }}>
-        ¿No tenés cuenta? <Link href="/empleador/registro">Registrá tu local</Link>
+        Si no tenés una cuenta, <Link href="/empleador/registro">registrá tu local acá</Link>.
       </p>
     </div>
   );

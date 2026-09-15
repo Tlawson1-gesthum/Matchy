@@ -16,18 +16,45 @@ export default function LoginCandidato() {
     e.preventDefault();
     setError('');
     setCargando(true);
-    const { error: errAuth } = await supabase.auth.signInWithPassword({ email, password });
-    setCargando(false);
+    const { data, error: errAuth } = await supabase.auth.signInWithPassword({ email, password });
     if (errAuth) {
-      setError('Email o contraseña incorrectos.');
+      setCargando(false);
+      const m = (errAuth.message || '').toLowerCase();
+      if (m.includes('not confirmed')) {
+        setError('Todavía no confirmaste tu email. Revisá tu casilla y el spam.');
+      } else {
+        setError('Email o contraseña incorrectos.');
+      }
       return;
     }
+
+    // Si es la primera vez que entra (cuenta creada pero perfil no cargado), lo creamos.
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: perfil } = await supabase.from('perfiles').select('id').eq('id', userId).maybeSingle();
+      if (!perfil) {
+        await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
+        await supabase.from('cvs').insert({ id: userId });
+        setCargando(false);
+        router.push('/candidato/consentimiento');
+        return;
+      }
+      const { data: cv } = await supabase.from('cvs').select('consentimiento_at').eq('id', userId).maybeSingle();
+      if (!cv?.consentimiento_at) {
+        setCargando(false);
+        router.push('/candidato/consentimiento');
+        return;
+      }
+    }
+
+    setCargando(false);
     router.push('/candidato/cv');
   }
 
   return (
     <div className="container" style={{ maxWidth: 420 }}>
       <h1>Iniciar sesión</h1>
+      <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
           <label>Email</label>
@@ -48,7 +75,7 @@ export default function LoginCandidato() {
         </button>
       </form>
       <p style={{ marginTop: 16 }}>
-        ¿No tenés cuenta? <Link href="/candidato/registro">Creála acá</Link>
+        Si no tenés una cuenta, <Link href="/candidato/registro">registrate acá</Link>.
       </p>
     </div>
   );

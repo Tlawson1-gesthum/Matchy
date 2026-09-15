@@ -5,6 +5,23 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 
+function traducirError(msg) {
+  const m = (msg || '').toLowerCase();
+  if (m.includes('rate limit')) {
+    return 'Se alcanzó el límite de emails por hora de Supabase. Esperá un rato o desactivá la confirmación por email en Supabase (Authentication → Providers → Email).';
+  }
+  if (m.includes('already registered') || m.includes('already been registered')) {
+    return 'Ese email ya tiene una cuenta. Probá iniciando sesión.';
+  }
+  if (m.includes('password')) {
+    return 'La contraseña tiene que tener al menos 6 caracteres.';
+  }
+  if (m.includes('invalid') && m.includes('email')) {
+    return 'Ese email no parece válido.';
+  }
+  return msg;
+}
+
 export default function RegistroCandidato() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -19,8 +36,17 @@ export default function RegistroCandidato() {
 
     const { data, error: errAuth } = await supabase.auth.signUp({ email, password });
     if (errAuth) {
-      setError(errAuth.message);
+      setError(traducirError(errAuth.message));
       setCargando(false);
+      return;
+    }
+
+    // Si Supabase no devolvió sesión activa, es porque falta confirmar el email.
+    if (!data.session) {
+      setCargando(false);
+      setError(
+        'Tu cuenta se creó, pero falta confirmar el email. Revisá tu casilla (y la carpeta de spam) y volvé a iniciar sesión.'
+      );
       return;
     }
 
@@ -38,6 +64,7 @@ export default function RegistroCandidato() {
     <div className="container" style={{ maxWidth: 420 }}>
       <h1>Creá tu cuenta</h1>
       <p>Es gratis y siempre lo va a ser para quien busca trabajo.</p>
+      <p>¿Ya sos usuario? <Link href="/candidato/login">Iniciá sesión</Link>.</p>
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
           <label>Email</label>
@@ -59,7 +86,7 @@ export default function RegistroCandidato() {
         </button>
       </form>
       <p style={{ marginTop: 16 }}>
-        ¿Ya tenés cuenta? <Link href="/candidato/login">Iniciá sesión</Link>
+        Si no tenés una cuenta, completá el formulario de arriba para registrarte.
       </p>
     </div>
   );
