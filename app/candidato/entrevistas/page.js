@@ -5,43 +5,92 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
 
+const ESTADOS = {
+  pendiente: 'Esperando tu respuesta',
+  confirmada: 'Confirmada',
+  rechazada: 'Rechazada',
+  reagendar_propuesto: 'Propusiste otro horario',
+};
+
 export default function EntrevistasCandidato() {
   const router = useRouter();
   const [entrevistas, setEntrevistas] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
   const [horarioAlt, setHorarioAlt] = useState({});
 
   async function cargar() {
+    setError('');
     const { data: userData } = await supabase.auth.getUser();
     const uid = userData?.user?.id;
-    if (!uid) {
-      router.push('/candidato/login');
+    if (!uid) { router.push('/candidato/login'); return; }
+
+    // Paso 1: mis postulaciones
+    const { data: posts, error: errPost } = await supabase
+      .from('postulaciones').select('*').eq('candidato_id', uid);
+    if (errPost) { setError(errPost.message); setCargando(false); return; }
+
+    if (!posts || posts.length === 0) {
+      setEntrevistas([]);
+      setCargando(false);
       return;
     }
-    const { data } = await supabase
-      .from('entrevistas')
-      .select('*, postulaciones(vacante_id, vacantes(puesto, empleadores(nombre_local, contacto)))')
-      .eq('postulaciones.candidato_id', uid)
+
+    // Paso 2: las entrevistas de esas postulaciones
+    const { data: ents, error: errEnt } = await supabase
+      .from('entrevistas').select('*')
+      .in('postulacion_id', posts.map((p) => p.id))
       .order('created_at', { ascending: false });
-    setEntrevistas((data || []).filter((e) => e.postulaciones));
+    if (errEnt) { setError(errEnt.message); setCargando(false); return; }
+
+    if (!ents || ents.length === 0) {
+      setEntrevistas([]);
+      setCargando(false);
+      return;
+    }
+
+    // Paso 3: las vacantes involucradas
+    const idsVacantes = [...new Set(posts.map((p) => p.vacante_id))];
+    const { data: vacs } = await supabase.from('vacantes').select('*').in('id', idsVacantes);
+    const vacPorId = Object.fromEntries((vacs || []).map((v) => [v.id, v]));
+
+    // Paso 4: los locales de esas vacantes
+    const idsLocales = [...new Set((vacs || []).map((v) => v.empleador_id))];
+    const { data: locales } = idsLocales.length
+      ? await supabase.from('empleadores').select('*').in('id', idsLocales)
+      : { data: [] };
+    const localPorId = Object.fromEntries((locales || []).map((e) => [e.id, e]));
+
+    // Armamos cada fila solo con lo que realmente llegó
+    const armadas = ents.map((e) => {
+      const post = posts.find((p) => p.id === e.postulacion_id) || null;
+      const vac = post ? vacPorId[post.vacante_id] : null;
+      const local = vac ? localPorId[vac.empleador_id] : null;
+      return { ...e, vacante: vac, local };
+    });
+
+    setEntrevistas(armadas);
     setCargando(false);
   }
 
   useEffect(() => { cargar(); }, []);
 
   async function responder(id, estado) {
-    await supabase.from('entrevistas').update({ estado, updated_at: new Date().toISOString() }).eq('id', id);
+    const { error: err } = await supabase
+      .from('entrevistas').update({ estado, updated_at: new Date().toISOString() }).eq('id', id);
+    if (err) { setError('No se pudo guardar tu respuesta: ' + err.message); return; }
     cargar();
   }
 
   async function proponerReagendar(id) {
     const nuevoHorario = horarioAlt[id];
     if (!nuevoHorario) return;
-    await supabase.from('entrevistas').update({
+    const { error: err } = await supabase.from('entrevistas').update({
       horario_alternativo: nuevoHorario,
       estado: 'reagendar_propuesto',
       updated_at: new Date().toISOString(),
     }).eq('id', id);
+    if (err) { setError('No se pudo proponer el horario: ' + err.message); return; }
     cargar();
   }
 
@@ -56,48 +105,79 @@ export default function EntrevistasCandidato() {
           <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
         </div>
       </div>
-      <div className="container">
+
+      <div className="container" style={{ maxWidth: 760 }}>
         <h1>Mis entrevistas</h1>
-        {entrevistas.length === 0 && <p>Todavía no tenés propuestas de entrevista.</p>}
-        {entrevistas.map((e) => (
-          <div key={e.id} className="card" style={{ marginBottom: 16 }}>
-            <h3>{e.postulaciones.vacantes.puesto} — {e.postulaciones.vacantes.empleadores.nombre_local}</h3>
-            <p>Horario propuesto: <strong>{new Date(e.horario_propuesto).toLocaleString('es-AR')}</strong></p>
-            <p>Estado: <span className="badge medio">{e.estado}</span></p>
-            {e.estado === 'pendiente' && (
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                <button className="btn" onClick={() => responder(e.id, 'confirmada')}>Confirmar</button>
-                <button className="btn secundario" onClick={() => responder(e.id, 'rechazada')}>Rechazar</button>
-                <input
-                  type="datetime-local"
-                  onChange={(ev) => setHorarioAlt((s) => ({ ...s, [e.id]: ev.target.value }))}
-                />
-                <button className="btn mostaza" onClick={() => proponerReagendar(e.id)}>Proponer otro horario</button>
-              </div>
-            )}
-            {e.estado === 'confirmada' && (
-              <div>
-                <p>Contacto del local: <strong>{e.postulaciones.vacantes.empleadores.contacto}</strong></p>
-                {linkWhatsApp(
-                  e.postulaciones.vacantes.empleadores.contacto,
-                  `Hola, soy candidato en Matchy para el puesto de ${e.postulaciones.vacantes.puesto}. Confirmo la entrevista.`
-                ) && (
-                  <a
-                    className="btn blanco"
-                    href={linkWhatsApp(
-                      e.postulaciones.vacantes.empleadores.contacto,
-                      `Hola, soy candidato en Matchy para el puesto de ${e.postulaciones.vacantes.puesto}. Confirmo la entrevista.`
-                    )}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Escribir por WhatsApp
-                  </a>
-                )}
-              </div>
-            )}
+        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+
+        {entrevistas.length === 0 && (
+          <div className="card">
+            <p style={{ marginTop: 0 }}>Todavía no tenés propuestas de entrevista.</p>
+            <p style={{ marginBottom: 0 }}>
+              Las entrevistas las propone el local cuando ve tu perfil.{' '}
+              <a href="/candidato/vacantes">Postulate a más vacantes</a> para aparecer en más listas.
+            </p>
           </div>
-        ))}
+        )}
+
+        {entrevistas.map((e) => {
+          const puesto = e.vacante
+            ? (e.vacante.puesto === 'Otro' && e.vacante.puesto_otro ? e.vacante.puesto_otro : e.vacante.puesto)
+            : 'Puesto no disponible';
+          const nombreLocal = e.local?.nombre_local || 'Local no disponible';
+          const mensajeWpp = `Hola, te escribo por Matchy: confirmo la entrevista para el puesto de ${puesto}.`;
+          const wpp = e.local?.contacto ? linkWhatsApp(e.local.contacto, mensajeWpp) : null;
+
+          return (
+            <div key={e.id} className="card" style={{ marginBottom: 16 }}>
+              <h3 style={{ marginBottom: 4 }}>{puesto}</h3>
+              <p className="mono" style={{ fontSize: '0.78rem', margin: 0 }}>{nombreLocal}</p>
+
+              <p style={{ marginTop: 12 }}>
+                Horario propuesto:{' '}
+                <strong>{new Date(e.horario_propuesto).toLocaleString('es-AR')}</strong>
+              </p>
+              {e.horario_alternativo && (
+                <p style={{ margin: '4px 0' }}>
+                  Tu propuesta alternativa:{' '}
+                  <strong>{new Date(e.horario_alternativo).toLocaleString('es-AR')}</strong>
+                </p>
+              )}
+              <p><span className="badge medio">{ESTADOS[e.estado] || e.estado}</span></p>
+
+              {e.estado === 'pendiente' && (
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button className="btn" onClick={() => responder(e.id, 'confirmada')}>Confirmar</button>
+                  <button className="btn blanco" onClick={() => responder(e.id, 'rechazada')}>No puedo ir</button>
+                  <input
+                    type="datetime-local"
+                    onChange={(ev) => setHorarioAlt((s) => ({ ...s, [e.id]: ev.target.value }))}
+                  />
+                  <button
+                    className="btn mostaza"
+                    disabled={!horarioAlt[e.id]}
+                    onClick={() => proponerReagendar(e.id)}
+                  >
+                    Proponer otro horario
+                  </button>
+                </div>
+              )}
+
+              {e.estado === 'confirmada' && (
+                <div>
+                  {e.local?.direccion && <p style={{ margin: '4px 0' }}>Dirección: {e.local.direccion}</p>}
+                  {e.local?.contacto && <p style={{ margin: '4px 0' }}>Contacto: <strong>{e.local.contacto}</strong></p>}
+                  {wpp && (
+                    <a className="btn blanco" href={wpp} target="_blank" rel="noreferrer">
+                      Escribir por WhatsApp
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        <div style={{ height: 40 }} />
       </div>
     </div>
   );

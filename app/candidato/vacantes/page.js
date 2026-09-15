@@ -29,6 +29,7 @@ export default function VacantesCandidato() {
   const [detalleOtro, setDetalleOtro] = useState({});
   const [miCv, setMiCv] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function cargar() {
@@ -40,14 +41,31 @@ export default function VacantesCandidato() {
       const { data: cvPropio } = await supabase.from('cvs').select('*').eq('id', uid).single();
       setMiCv(cvPropio);
 
-      const { data: vac } = await supabase
+      const { data: vac, error: errVac } = await supabase
         .from('vacantes')
-        .select('*, empleadores(nombre_local, tipo_local, ciudad, direccion, red_social, estado)')
+        .select('*')
         .eq('estado', 'activa')
         .order('created_at', { ascending: false });
 
-      // Solo mostramos vacantes de locales ya verificados
-      const visibles = (vac || []).filter((v) => v.empleadores?.estado === 'aprobado');
+      if (errVac) {
+        setError('No pudimos cargar las vacantes: ' + errVac.message);
+        setCargando(false);
+        return;
+      }
+
+      // Los datos del local se traen aparte: si esta consulta falla,
+      // igual mostramos las vacantes en vez de dejar la pantalla vacía.
+      const idsLocales = [...new Set((vac || []).map((v) => v.empleador_id))];
+      const { data: locales } = idsLocales.length
+        ? await supabase.from('empleadores').select('*').in('id', idsLocales)
+        : { data: [] };
+      const localPorId = Object.fromEntries((locales || []).map((e) => [e.id, e]));
+
+      const conLocal = (vac || []).map((v) => ({ ...v, local: localPorId[v.empleador_id] || null }));
+      // Si pudimos leer los locales, mostramos solo los aprobados.
+      const visibles = locales && locales.length
+        ? conLocal.filter((v) => !v.local || v.local.estado === 'aprobado')
+        : conLocal;
       setVacantes(visibles);
 
       // Cuántos se postularon a cada una (para mostrar competencia real)
@@ -95,6 +113,7 @@ export default function VacantesCandidato() {
       <div className="container">
         <h1>Vacantes en Posadas</h1>
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>
+        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
 
         <div className="form-field" style={{ maxWidth: 260 }}>
           <label>Filtrar por puesto</label>
@@ -120,10 +139,10 @@ export default function VacantesCandidato() {
             <div key={v.id} className="card vacante" style={{ marginBottom: 18 }}>
               <div className="vacante-cabecera">
                 <div>
-                  <span className="vacante-local">{v.empleadores?.nombre_local}</span>
+                  <span className="vacante-local">{v.local?.nombre_local || 'Local de Posadas'}</span>
                   <span className="vacante-tipo">
-                    {etiqueta(TIPOS_LOCAL, v.empleadores?.tipo_local)}
-                    {v.empleadores?.direccion ? ` · ${v.empleadores.direccion}` : ''}
+                    {etiqueta(TIPOS_LOCAL, v.local?.tipo_local) || 'Gastronomía'}
+                    {v.local?.direccion ? ` · ${v.local.direccion}` : ''}
                   </span>
                 </div>
                 {urgente && <span className="badge urgente">Busca con urgencia</span>}

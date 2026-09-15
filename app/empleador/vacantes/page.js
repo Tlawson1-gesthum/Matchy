@@ -8,6 +8,7 @@ export default function VacantesEmpleador() {
   const router = useRouter();
   const [vacantes, setVacantes] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [esAdmin, setEsAdmin] = useState(false);
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -16,6 +17,10 @@ export default function VacantesEmpleador() {
       router.push('/empleador/login');
       return;
     }
+    const { data: admin } = await supabase
+      .from('administradores').select('id').eq('id', uid).maybeSingle();
+    setEsAdmin(!!admin);
+
     const { data } = await supabase
       .from('vacantes')
       .select('*, postulaciones(count)')
@@ -51,13 +56,19 @@ export default function VacantesEmpleador() {
         <a className="logo" href="/">Matchy</a>
         <div>
           <a className="btn blanco" href="/empleador/vacantes/nueva" style={{ marginRight: 16 }}>+ Publicar vacante</a>
+          {esAdmin && <a className="nav-link" href="/admin/locales">Aprobar locales</a>}
           <a className="nav-link" href="#" onClick={cerrarSesion}>Cerrar sesión</a>
         </div>
       </div>
       <div className="container">
         <h1>Mis vacantes</h1>
-        {vacantes.length === 0 && <p>Todavía no publicaste ninguna vacante.</p>}
-        {vacantes.map((v) => (
+        {vacantes.length === 0 && (
+          <div className="card">
+            <p style={{ marginTop: 0 }}>Todavía no publicaste ninguna vacante.</p>
+            <a className="btn" href="/empleador/vacantes/nueva">Publicar la primera</a>
+          </div>
+        )}
+        {[...vacantes].sort((a, b) => (a.estado === 'activa' ? -1 : 1) - (b.estado === 'activa' ? -1 : 1)).map((v) => (
           <div key={v.id} className="card" style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
