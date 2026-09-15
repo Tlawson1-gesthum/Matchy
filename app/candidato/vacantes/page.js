@@ -10,6 +10,7 @@ export default function VacantesCandidato() {
   const [vacantes, setVacantes] = useState([]);
   const [postuladas, setPostuladas] = useState(new Set());
   const [filtroPuesto, setFiltroPuesto] = useState('');
+  const [detalleOtro, setDetalleOtro] = useState({});
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
@@ -40,13 +41,15 @@ export default function VacantesCandidato() {
     cargar();
   }, [router]);
 
-  async function postularse(vacanteId) {
+  async function postularse(vacanteId, puestoOtro) {
     const { error } = await supabase.from('postulaciones').insert({
       vacante_id: vacanteId,
       candidato_id: userId,
+      puesto_otro: puestoOtro || null,
     });
     if (!error) {
       setPostuladas((s) => new Set([...s, vacanteId]));
+      setDetalleOtro((d) => ({ ...d, [vacanteId]: '' }));
     }
   }
 
@@ -61,7 +64,7 @@ export default function VacantesCandidato() {
   return (
     <div>
       <div className="navbar">
-        <span className="logo">Matchy</span>
+        <a className="logo" href="/">Matchy</a>
         <div>
           <a className="nav-link" href="/candidato/mi-perfil">Mi perfil</a>
           <a className="nav-link" href="/candidato/entrevistas">Mis entrevistas</a>
@@ -81,7 +84,7 @@ export default function VacantesCandidato() {
 
         {vacantesFiltradas.map((v) => (
           <div key={v.id} className="card" style={{ marginBottom: 16 }}>
-            <h3>{v.puesto} — {v.empleadores?.nombre_local}</h3>
+            <h3>{v.puesto === 'Otro' && v.puesto_otro ? v.puesto_otro : v.puesto} — {v.empleadores?.nombre_local}</h3>
             <p className="mono" style={{ fontSize: '0.85rem' }}>
               {v.empleadores?.tipo_local} · {v.empleadores?.ciudad} · Turno: {v.turno || 'a definir'} · Urgencia: {v.urgencia}
             </p>
@@ -93,6 +96,23 @@ export default function VacantesCandidato() {
             </p>
             {postuladas.has(v.id) ? (
               <span className="badge alto">Ya te postulaste</span>
+            ) : v.puesto === 'Otro' ? (
+              <div>
+                <div className="form-field" style={{ maxWidth: 380 }}>
+                  <label>Contanos a qué puesto te postulás</label>
+                  <input
+                    value={detalleOtro[v.id] || ''}
+                    onChange={(e) => setDetalleOtro((d) => ({ ...d, [v.id]: e.target.value }))}
+                  />
+                </div>
+                <button
+                  className="btn"
+                  disabled={!detalleOtro[v.id]}
+                  onClick={() => postularse(v.id, detalleOtro[v.id])}
+                >
+                  Postularme
+                </button>
+              </div>
             ) : (
               <button className="btn" onClick={() => postularse(v.id)}>Postularme</button>
             )}

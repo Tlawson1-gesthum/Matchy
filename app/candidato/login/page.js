@@ -28,10 +28,15 @@ export default function LoginCandidato() {
       return;
     }
 
-    // Si es la primera vez que entra (cuenta creada pero perfil no cargado), lo creamos.
     const userId = data.user?.id;
     if (userId) {
-      const { data: perfil } = await supabase.from('perfiles').select('id').eq('id', userId).maybeSingle();
+      const { data: perfil } = await supabase.from('perfiles').select('id, role').eq('id', userId).maybeSingle();
+      if (perfil && perfil.role === 'empleador') {
+        await supabase.auth.signOut();
+        setCargando(false);
+        setError('Esta cuenta está registrada como local. Para armar un CV registrate como candidato con otro email.');
+        return;
+      }
       if (!perfil) {
         await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
         await supabase.from('cvs').insert({ id: userId });

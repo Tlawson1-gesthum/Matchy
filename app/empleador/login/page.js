@@ -30,10 +30,18 @@ export default function LoginEmpleador() {
 
     const userId = data.user?.id;
     if (userId) {
-      const { data: perfil } = await supabase.from('perfiles').select('id').eq('id', userId).maybeSingle();
+      const { data: perfil } = await supabase.from('perfiles').select('id, role').eq('id', userId).maybeSingle();
+      if (perfil && perfil.role === 'candidato') {
+        await supabase.auth.signOut();
+        setCargando(false);
+        setError('Esta cuenta está registrada como candidato. Para publicar vacantes registrá tu local con otro email.');
+        return;
+      }
       if (!perfil) {
-        await supabase.from('perfiles').insert({ id: userId, role: 'empleador', email });
-        await supabase.from('empleadores').insert({ id: userId, ciudad: 'Posadas' });
+        await supabase.auth.signOut();
+        setCargando(false);
+        setError('No encontramos un local asociado a esta cuenta. Registrá tu local para empezar.');
+        return;
       }
     }
 

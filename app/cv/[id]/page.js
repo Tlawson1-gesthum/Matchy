@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import CvVista from '../../../components/CvVista';
+import CvHoja from '../../../components/CvHoja';
 
 // Fuerza a que esta página se genere en el momento en que alguien la visita
 // (no durante el build), así siempre tiene las variables de entorno disponibles.
@@ -28,7 +28,7 @@ export default async function CvPublico({ params }) {
       <div className="navbar no-imprimir">
         <a className="logo" href="/">Matchy</a>
       </div>
-      <CvVista cv={cv} />
+      <CvHoja cv={cv} />
     </div>
   );
 }

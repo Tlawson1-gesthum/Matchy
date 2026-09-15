@@ -42,9 +42,9 @@ export default function VacantesEmpleador() {
   return (
     <div>
       <div className="navbar">
-        <span className="logo">Matchy</span>
+        <a className="logo" href="/">Matchy</a>
         <div>
-          <a className="nav-link" href="/empleador/vacantes/nueva">+ Publicar vacante</a>
+          <a className="btn blanco" href="/empleador/vacantes/nueva" style={{ marginRight: 16 }}>+ Publicar vacante</a>
           <a className="nav-link" href="#" onClick={cerrarSesion}>Cerrar sesión</a>
         </div>
       </div>

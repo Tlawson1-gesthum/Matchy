@@ -122,6 +122,13 @@ a { color: var(--tierra); }
 
 .btn.mostaza { background: var(--mostaza); color: var(--texto); }
 
+.btn.blanco {
+  background: #FFFFFF;
+  color: var(--verde);
+  border: 1px solid #DDD8CE;
+}
+.btn.blanco:hover { border-color: var(--verde); }
+
 .form-field { margin-bottom: 16px; }
 
 .form-field label {
@@ -180,4 +187,111 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 @media print {
   .navbar, .no-imprimir { display: none !important; }
+}
+
+/* ============================================================
+   HOJA DE CV (una página A4, para pantalla e impresión)
+   ============================================================ */
+.hoja-cv {
+  max-width: 760px;
+  margin: 24px auto;
+  background: #FFFFFF;
+  padding: 44px 52px;
+  border: 1px solid #E8E4DC;
+  color: #1F1D1A;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.cv-nombre {
+  font-family: var(--font-titulos);
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--verde);
+  margin: 0 0 6px 0;
+}
+
+.cv-contacto {
+  font-family: var(--font-datos);
+  font-size: 0.78rem;
+  color: #55504A;
+  margin: 0;
+}
+
+.cv-puestos {
+  font-family: var(--font-datos);
+  font-size: 0.78rem;
+  color: var(--tierra);
+  margin: 4px 0 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cv-foto {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.cv-linea {
+  border: none;
+  border-top: 2px solid var(--verde);
+  margin: 16px 0 18px 0;
+}
+
+.cv-presentacion {
+  margin: 0 0 20px 0;
+  font-size: 0.94rem;
+}
+
+.cv-seccion {
+  font-family: var(--font-datos);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--verde);
+  border-bottom: 1px solid #DDD8CE;
+  padding-bottom: 4px;
+  margin: 18px 0 10px 0;
+}
+
+.cv-linea-dato { margin: 4px 0; }
+
+.cv-item { margin-bottom: 12px; }
+
+.cv-item-titulo { display: block; }
+
+.cv-fechas {
+  font-family: var(--font-datos);
+  font-size: 0.74rem;
+  color: #6B655C;
+  margin-left: 8px;
+}
+
+.cv-item-texto { margin: 3px 0 0 0; }
+
+.cv-pie {
+  margin-top: 26px;
+  padding-top: 10px;
+  border-top: 1px solid #E8E4DC;
+  font-family: var(--font-datos);
+  font-size: 0.68rem;
+  color: #9A948A;
+  text-align: right;
+}
+
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; }
+  .hoja-cv {
+    border: none;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    font-size: 10.5pt;
+  }
+  .cv-nombre { font-size: 20pt; }
 }

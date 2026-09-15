@@ -115,7 +115,7 @@ export default function RankingVacante({ params }) {
   return (
     <div>
       <div className="navbar">
-        <span className="logo">Matchy</span>
+        <a className="logo" href="/">Matchy</a>
         <a className="nav-link" href="/empleador/vacantes">Mis vacantes</a>
       </div>
       <div className="container">

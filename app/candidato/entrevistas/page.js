@@ -49,7 +49,7 @@ export default function EntrevistasCandidato() {
   return (
     <div>
       <div className="navbar">
-        <span className="logo">Matchy</span>
+        <a className="logo" href="/">Matchy</a>
         <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
       </div>
       <div className="container">

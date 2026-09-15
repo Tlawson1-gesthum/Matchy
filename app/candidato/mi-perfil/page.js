@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
-import CvVista from '../../../components/CvVista';
+import CvHoja from '../../../components/CvHoja';
 
 export default function MiPerfil() {
   const router = useRouter();
@@ -15,10 +15,7 @@ export default function MiPerfil() {
     async function cargar() {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData?.user?.id;
-      if (!uid) {
-        router.push('/candidato/login');
-        return;
-      }
+      if (!uid) { router.push('/candidato/login'); return; }
       setUserId(uid);
       const { data } = await supabase.from('cvs').select('*').eq('id', uid).single();
       setCv(data);
@@ -27,8 +24,7 @@ export default function MiPerfil() {
   }, [router]);
 
   function copiarLink() {
-    const url = `${window.location.origin}/cv/${userId}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(`${window.location.origin}/cv/${userId}`);
     setLinkCopiado(true);
   }
 
@@ -42,7 +38,7 @@ export default function MiPerfil() {
   return (
     <div>
       <div className="navbar no-imprimir">
-        <span className="logo">Matchy</span>
+        <a className="logo" href="/">Matchy</a>
         <div>
           <a className="nav-link" href="/candidato/cv">Editar CV</a>
           <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
@@ -50,13 +46,19 @@ export default function MiPerfil() {
           <a className="nav-link" href="#" onClick={cerrarSesion}>Cerrar sesión</a>
         </div>
       </div>
-      <div className="container no-imprimir" style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-        <button className="btn" onClick={() => window.print()}>Descargar / imprimir PDF</button>
-        <button className="btn secundario" onClick={copiarLink}>
-          {linkCopiado ? 'Link copiado ✓' : 'Copiar link para compartir'}
+
+      <div className="container no-imprimir" style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
+        <button className="btn" onClick={() => window.print()}>Descargar en PDF</button>
+        <button className="btn blanco" onClick={copiarLink}>
+          {linkCopiado ? 'Link copiado' : 'Copiar link para compartir'}
         </button>
       </div>
-      <CvVista cv={cv} />
+      <p className="container no-imprimir" style={{ fontSize: '0.85rem', marginTop: 8 }}>
+        Al apretar "Descargar en PDF" se abre el diálogo de impresión: elegí "Guardar como PDF" como destino.
+      </p>
+
+      <CvHoja cv={cv} />
+      <div style={{ height: 40 }} />
     </div>
   );
 }
