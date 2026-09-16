@@ -6,7 +6,7 @@ import { supabase } from '../../../lib/supabaseClient';
 import ListaEditable from '../../../components/ListaEditable';
 import {
   PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA,
-  TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE,
+  TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
 
 function calcularAniosExperiencia(experiencia) {
@@ -208,8 +208,10 @@ export default function CvForm() {
             <input type="number" value={cv.edad || ''} onChange={(e) => set('edad', e.target.value)} />
           </div>
           <div className="form-field">
-            <label>Ciudad</label>
-            <input value={cv.ciudad} onChange={(e) => set('ciudad', e.target.value)} />
+            <label>Dónde vivís</label>
+            <select value={cv.ciudad} onChange={(e) => set('ciudad', e.target.value)}>
+              {LOCALIDADES.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
           </div>
           <div className="form-field">
             <label>Contacto (WhatsApp o email)</label>

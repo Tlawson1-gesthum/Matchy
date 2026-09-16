@@ -7,6 +7,13 @@ import { calcularPuntaje } from '../../../../lib/scoring';
 import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
 
+const ESTADOS_ENTREVISTA = {
+  pendiente: 'esperando respuesta del candidato',
+  confirmada: 'confirmada',
+  rechazada: 'el candidato no puede',
+  reagendar_propuesto: 'el candidato propuso otro horario',
+};
+
 function badgeClase(puntaje) {
   if (puntaje >= 70) return 'alto';
   if (puntaje >= 40) return 'medio';
@@ -138,6 +145,30 @@ export default function RankingVacante({ params }) {
     );
   }
 
+  async function responderEntrevista(entrevistaId, estado, horario) {
+    const cambios = { estado, updated_at: new Date().toISOString() };
+    if (horario) {
+      cambios.horario_propuesto = horario;
+      cambios.horario_alternativo = null;
+      cambios.estado = 'pendiente';
+      cambios.propuesta_por = 'empleador';
+    }
+    const { error: err } = await supabase.from('entrevistas').update(cambios).eq('id', entrevistaId);
+    if (err) { setError('No se pudo actualizar la entrevista: ' + err.message); return; }
+    cargar();
+  }
+
+  async function aceptarHorarioAlternativo(entrevista) {
+    const { error: err } = await supabase.from('entrevistas').update({
+      horario_propuesto: entrevista.horario_alternativo,
+      horario_alternativo: null,
+      estado: 'confirmada',
+      updated_at: new Date().toISOString(),
+    }).eq('id', entrevista.id);
+    if (err) { setError('No se pudo confirmar: ' + err.message); return; }
+    cargar();
+  }
+
   async function exportarExcel() {
     const XLSX = await import('xlsx');
     const filas = postulaciones.map((p) => ({
@@ -231,8 +262,66 @@ export default function RankingVacante({ params }) {
               <div style={{ marginTop: 10 }}>
                 <p style={{ margin: 0 }}>
                   Entrevista: <strong>{new Date(p.entrevista.horario_propuesto).toLocaleString('es-AR')}</strong>
-                  {' '}— <span className="badge medio">{p.entrevista.estado}</span>
+                  {' '}<span className="badge medio">{ESTADOS_ENTREVISTA[p.entrevista.estado] || p.entrevista.estado}</span>
                 </p>
+
+                {p.entrevista.estado === 'reagendar_propuesto' && (
+                  <div className="aviso-reagendar">
+                    <p style={{ margin: '0 0 10px' }}>
+                      El candidato no puede en ese horario y propone{' '}
+                      <strong>{new Date(p.entrevista.horario_alternativo).toLocaleString('es-AR')}</strong>.
+                    </p>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <button className="btn" onClick={() => aceptarHorarioAlternativo(p.entrevista)}>
+                        Aceptar ese horario
+                      </button>
+                      <input
+                        type="datetime-local"
+                        onChange={(e) => setHorarios((s) => ({ ...s, [`re-${p.entrevista.id}`]: e.target.value }))}
+                      />
+                      <button
+                        className="btn blanco"
+                        disabled={!horarios[`re-${p.entrevista.id}`]}
+                        onClick={() => responderEntrevista(p.entrevista.id, 'pendiente', horarios[`re-${p.entrevista.id}`])}
+                      >
+                        Proponer otro horario
+                      </button>
+                      <button
+                        className="btn blanco"
+                        onClick={() => {
+                          if (window.confirm(`¿Descartar a ${p.cv.nombre || 'este candidato'}? Se cancela la entrevista.`)) {
+                            responderEntrevista(p.entrevista.id, 'rechazada');
+                            cambiarEstado(p.id, 'descartado');
+                          }
+                        }}
+                      >
+                        Descartar candidato
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {p.entrevista.estado === 'rechazada' && (
+                  <div className="aviso-reagendar">
+                    <p style={{ margin: '0 0 10px' }}>El candidato no puede asistir.</p>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <input
+                        type="datetime-local"
+                        onChange={(e) => setHorarios((s) => ({ ...s, [`re-${p.entrevista.id}`]: e.target.value }))}
+                      />
+                      <button
+                        className="btn"
+                        disabled={!horarios[`re-${p.entrevista.id}`]}
+                        onClick={() => responderEntrevista(p.entrevista.id, 'pendiente', horarios[`re-${p.entrevista.id}`])}
+                      >
+                        Proponer otra fecha
+                      </button>
+                      <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'descartado')}>
+                        Descartar candidato
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {linkWhatsApp(
                   p.cv.contacto,
                   `Hola ${p.cv.nombre || ''}, te escribo por Matchy: te propuse una entrevista para el puesto de ${vacante.puesto}.`

@@ -78,7 +78,7 @@ export default function VacantesEmpleador() {
                 </p>
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
-                <a className="btn secundario" href={`/empleador/vacantes/${v.id}`}>Ver ranking</a>
+                <a className="btn secundario" href={`/empleador/vacantes/${v.id}`}>Ver postulantes</a>
                 {v.estado === 'activa' && (
                   <button className="btn secundario" onClick={() => marcarCubierta(v.id, v.puesto)}>Marcar cubierta</button>
                 )}

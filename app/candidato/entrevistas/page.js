@@ -145,6 +145,18 @@ export default function EntrevistasCandidato() {
               )}
               <p><span className="badge medio">{ESTADOS[e.estado] || e.estado}</span></p>
 
+              {e.estado === 'pendiente' && e.propuesta_por === 'empleador' && (
+                <p style={{ fontSize: '0.88rem', color: '#6B655C' }}>
+                  El local propuso este horario. Respondé para confirmar la entrevista.
+                </p>
+              )}
+
+              {e.estado === 'reagendar_propuesto' && (
+                <p style={{ fontSize: '0.88rem', color: '#6B655C' }}>
+                  Propusiste otro horario. El local tiene que confirmarlo.
+                </p>
+              )}
+
               {e.estado === 'pendiente' && (
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                   <button className="btn" onClick={() => responder(e.id, 'confirmada')}>Confirmar</button>

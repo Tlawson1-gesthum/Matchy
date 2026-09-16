@@ -547,3 +547,11 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   .hoja-cv { padding: 26px 22px; }
   .card { padding: 18px; }
 }
+
+.aviso-reagendar {
+  background: #FBF6E9;
+  border-left: 3px solid var(--mostaza);
+  padding: 14px;
+  border-radius: 4px;
+  margin-top: 12px;
+}

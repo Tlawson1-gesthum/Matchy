@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
-import { TIPOS_LOCAL, cuitValido } from '../../../lib/opciones';
+import { TIPOS_LOCAL, LOCALIDADES, cuitValido } from '../../../lib/opciones';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -23,7 +23,7 @@ export default function RegistroEmpleador() {
   const [form, setForm] = useState({
     email: '', password: '',
     nombre_responsable: '', cuit: '', razon_social: '',
-    nombre_local: '', tipo_local: 'resto', direccion: '',
+    nombre_local: '', tipo_local: 'resto', direccion: '', ciudad: 'Posadas',
     telefono: '', red_social: '', contacto: '',
   });
   const [error, setError] = useState('');
@@ -73,7 +73,7 @@ export default function RegistroEmpleador() {
         telefono: form.telefono,
         red_social: form.red_social,
         contacto: form.contacto,
-        ciudad: 'Posadas',
+        ciudad: form.ciudad,
         estado: 'pendiente',
       });
     }
@@ -120,6 +120,15 @@ export default function RegistroEmpleador() {
             <select value={form.tipo_local} onChange={(e) => set('tipo_local', e.target.value)}>
               {TIPOS_LOCAL.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
+          </div>
+          <div className="form-field">
+            <label>Localidad</label>
+            <select value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)}>
+              {LOCALIDADES.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <p style={{ fontSize: '0.8rem', color: '#7A746A', margin: '6px 0 0' }}>
+              Por ahora Matchy funciona solo en Posadas y alrededores.
+            </p>
           </div>
           <div className="form-field">
             <label>Dirección exacta del local</label>

@@ -26,6 +26,7 @@ export default function VacantesCandidato() {
   const [conteos, setConteos] = useState({});
   const [postuladas, setPostuladas] = useState(new Set());
   const [filtroPuesto, setFiltroPuesto] = useState('');
+  const [filtroCiudad, setFiltroCiudad] = useState('');
   const [detalleOtro, setDetalleOtro] = useState({});
   const [miCv, setMiCv] = useState(null);
   const [cargando, setCargando] = useState(true);
@@ -95,7 +96,12 @@ export default function VacantesCandidato() {
     }
   }
 
-  const vacantesFiltradas = filtroPuesto ? vacantes.filter((v) => v.puesto === filtroPuesto) : vacantes;
+  const vacantesFiltradas = vacantes.filter((v) => {
+    if (filtroPuesto && v.puesto !== filtroPuesto) return false;
+    if (filtroCiudad && v.local?.ciudad !== filtroCiudad) return false;
+    return true;
+  });
+  const ciudadesDisponibles = [...new Set(vacantes.map((v) => v.local?.ciudad).filter(Boolean))];
   const puestosDisponibles = [...new Set(vacantes.map((v) => v.puesto))];
 
   if (cargando) return <div className="container">Cargando...</div>;
@@ -115,12 +121,21 @@ export default function VacantesCandidato() {
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
 
-        <div className="form-field" style={{ maxWidth: 260 }}>
-          <label>Filtrar por puesto</label>
-          <select value={filtroPuesto} onChange={(e) => setFiltroPuesto(e.target.value)}>
-            <option value="">Todos</option>
-            {puestosDisponibles.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <div className="form-field" style={{ minWidth: 200, flex: '1 1 200px' }}>
+            <label>Filtrar por puesto</label>
+            <select value={filtroPuesto} onChange={(e) => setFiltroPuesto(e.target.value)}>
+              <option value="">Todos</option>
+              {puestosDisponibles.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          <div className="form-field" style={{ minWidth: 200, flex: '1 1 200px' }}>
+            <label>Filtrar por localidad</label>
+            <select value={filtroCiudad} onChange={(e) => setFiltroCiudad(e.target.value)}>
+              <option value="">Todas</option>
+              {ciudadesDisponibles.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
         </div>
 
         {vacantesFiltradas.length === 0 && (
@@ -142,6 +157,7 @@ export default function VacantesCandidato() {
                   <span className="vacante-local">{v.local?.nombre_local || 'Local de Posadas'}</span>
                   <span className="vacante-tipo">
                     {etiqueta(TIPOS_LOCAL, v.local?.tipo_local) || 'Gastronomía'}
+                    {v.local?.ciudad ? ` · ${v.local.ciudad}` : ''}
                     {v.local?.direccion ? ` · ${v.local.direccion}` : ''}
                   </span>
                 </div>
