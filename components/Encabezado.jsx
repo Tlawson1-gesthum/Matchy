@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../lib/supabaseClient';
+import { useState } from 'react';
 
 function IconoPin() {
   return (
@@ -13,38 +11,16 @@ function IconoPin() {
   );
 }
 
-function IconoPersona() {
+function IconoMenu() {
   return (
-    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="12" cy="8" r="3.6" />
-      <path d="M5 20c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6" />
-    </svg>
-  );
-}
-
-function IconoCuenta() {
-  return (
-    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="10" r="3" />
-      <path d="M6.4 18.6c1.2-2.2 3.2-3.3 5.6-3.3s4.4 1.1 5.6 3.3" />
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
 }
 
 export default function Encabezado({ links = [] }) {
-  const router = useRouter();
-  const [sesion, setSesion] = useState(null);
   const [abierto, setAbierto] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setSesion(data?.user || null));
-  }, []);
-
-  async function salir() {
-    await supabase.auth.signOut();
-    router.push('/');
-  }
 
   return (
     <header className="cabecera">
@@ -56,38 +32,29 @@ export default function Encabezado({ links = [] }) {
         </span>
 
         {links.length > 0 && (
-          <button
-            className="icono-plano solo-movil"
-            onClick={() => setAbierto((v) => !v)}
-            aria-label="Menú"
-          >
-            <IconoPersona />
-          </button>
+          <>
+            <nav className="cabecera-nav">
+              {links.map((l) => (
+                <a key={l.href} href={l.href}>{l.texto}</a>
+              ))}
+            </nav>
+
+            <button
+              className="icono-plano solo-movil"
+              onClick={() => setAbierto((v) => !v)}
+              aria-label="Menú"
+            >
+              <IconoMenu />
+            </button>
+          </>
         )}
-
-        <nav className="cabecera-nav">
-          {links.map((l) => (
-            <a key={l.href} href={l.href}>{l.texto}</a>
-          ))}
-          {sesion ? (
-            <a href="#" onClick={salir}>Salir</a>
-          ) : (
-            <a href="/candidato/login">Entrar</a>
-          )}
-        </nav>
-
-        <a className="icono-plano icono-cuenta" href={sesion ? '/candidato/panel' : '/candidato/login'} aria-label="Mi cuenta">
-          <IconoCuenta />
-          <span className="punto-cuenta" />
-        </a>
       </div>
 
-      {abierto && (
+      {abierto && links.length > 0 && (
         <nav className="menu-desplegado">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setAbierto(false)}>{l.texto}</a>
           ))}
-          {sesion && <a href="#" onClick={salir}>Salir</a>}
         </nav>
       )}
     </header>

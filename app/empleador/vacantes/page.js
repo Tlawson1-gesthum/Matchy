@@ -81,6 +81,11 @@ export default function VacantesEmpleador() {
             </div>
           </div>
         ))}
+
+        <p style={{ marginTop: 28, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          {esAdmin && <a className="btn secundario" href="/admin/locales">Aprobar locales</a>}
+          <button className="btn secundario" onClick={cerrarSesion}>Cerrar sesión</button>
+        </p>
       </div>
       <Pie />
     </div>

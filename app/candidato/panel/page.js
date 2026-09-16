@@ -153,6 +153,9 @@ export default function PanelCandidato() {
             </ul>
           </div>
         </div>
+        <p style={{ marginTop: 28 }}>
+          <button className="btn secundario" onClick={cerrarSesion}>Cerrar sesión</button>
+        </p>
         <div style={{ height: 40 }} />
       </div>
       <Pie />
