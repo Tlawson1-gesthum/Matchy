@@ -209,6 +209,7 @@ export default function NuevaVacante() {
         </form>
         <div style={{ height: 40 }} />
       </div>
+      <Pie />
     </div>
   );
 }

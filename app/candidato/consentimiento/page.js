@@ -50,6 +50,7 @@ export default function Consentimiento() {
         </div>
       </div>
       </div>
+      <Pie />
     </div>
   );
 }

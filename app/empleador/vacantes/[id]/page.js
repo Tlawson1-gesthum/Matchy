@@ -349,6 +349,7 @@ export default function RankingVacante({ params }) {
         ))}
         <div style={{ height: 40 }} />
       </div>
+      <Pie />
     </div>
   );
 }

@@ -187,6 +187,7 @@ export default function EntrevistasCandidato() {
         })}
         <div style={{ height: 40 }} />
       </div>
+      <Pie />
     </div>
   );
 }

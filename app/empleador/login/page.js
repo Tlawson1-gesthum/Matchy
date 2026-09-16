@@ -80,6 +80,7 @@ export default function LoginEmpleador() {
         Si no tenés una cuenta, <Link href="/empleador/registro">registrá tu local acá</Link>.
       </p>
       </div>
+      <Pie />
     </div>
   );
 }

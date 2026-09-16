@@ -87,6 +87,7 @@ export default function LoginCandidato() {
         Si no tenés una cuenta, <Link href="/candidato/registro">registrate acá</Link>.
       </p>
       </div>
+      <Pie />
     </div>
   );
 }

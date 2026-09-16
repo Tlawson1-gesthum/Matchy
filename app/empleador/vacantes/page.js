@@ -82,6 +82,7 @@ export default function VacantesEmpleador() {
           </div>
         ))}
       </div>
+      <Pie />
     </div>
   );
 }

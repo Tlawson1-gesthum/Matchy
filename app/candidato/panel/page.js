@@ -155,6 +155,7 @@ export default function PanelCandidato() {
         </div>
         <div style={{ height: 40 }} />
       </div>
+      <Pie />
     </div>
   );
 }

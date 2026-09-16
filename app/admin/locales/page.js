@@ -135,6 +135,7 @@ function FichaLocal({ local, onCambiar }) {
           </button>
         )}
       </div>
+      <Pie />
     </div>
   );
 }

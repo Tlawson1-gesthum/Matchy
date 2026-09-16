@@ -107,6 +107,7 @@ export default function RegistroCandidato() {
           de acuerdo.
         </p>
       </div>
+      <Pie />
     </div>
   );
 }

@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import ListaEditable from '../../../components/ListaEditable';
 import {
-import Encabezado from '../../../components/Encabezado';
-import Pie from '../../../components/Pie';
   PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA,
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 function calcularAniosExperiencia(experiencia) {
   let totalMeses = 0;
@@ -463,6 +463,7 @@ export default function CvForm() {
           )}
         </div>
       </div>
+      <Pie />
     </div>
   );
 }

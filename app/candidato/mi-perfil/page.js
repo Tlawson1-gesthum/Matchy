@@ -53,6 +53,7 @@ export default function MiPerfil() {
 
       <CvHoja cv={cv} />
       <div style={{ height: 40 }} />
+      <Pie />
     </div>
   );
 }

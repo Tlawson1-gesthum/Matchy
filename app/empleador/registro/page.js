@@ -167,6 +167,7 @@ export default function RegistroEmpleador() {
           Si no tenés una cuenta, completá el formulario de arriba para registrar tu local.
         </p>
       </div>
+      <Pie />
     </div>
   );
 }
