@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 function pctCompleto(cv) {
   const campos = [
@@ -78,13 +80,7 @@ export default function PanelCandidato() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
-          <a className="nav-link" href="/candidato/entrevistas">Entrevistas</a>
-          <a className="nav-link" href="#" onClick={cerrarSesion}>Salir</a>
-        </div>
+      <Encabezado links={[{ href: '/candidato/vacantes', texto: 'Vacantes' }, { href: '/candidato/cv', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} />
       </div>
 
       <div className="container" style={{ maxWidth: 900 }}>

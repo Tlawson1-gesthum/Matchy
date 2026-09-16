@@ -55,10 +55,14 @@ const CV_EJEMPLO = {
 export default function CvModelo() {
   return (
     <div>
-      <div className="navbar no-imprimir">
-        <a className="logo" href="/">Matchy</a>
-        <a className="nav-link" href="/candidato/cv">Armar el mío</a>
-      </div>
+      <header className="cabecera no-imprimir">
+        <a className="cabecera-marca" href="/">Matchy</a>
+        <nav className="cabecera-iconos">
+          <a href="/candidato/cv" style={{ color: 'var(--verde)', textDecoration: 'none', fontSize: '0.92rem' }}>
+            Armar el mío
+          </a>
+        </nav>
+      </header>
       <div className="container no-imprimir" style={{ maxWidth: 760 }}>
         <h1 style={{ marginTop: 24 }}>Así queda un CV en Matchy</h1>
         <p>

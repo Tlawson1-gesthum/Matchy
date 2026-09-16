@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 const ESTADOS = {
   pendiente: 'Esperando tu respuesta',
@@ -98,12 +100,7 @@ export default function EntrevistasCandidato() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="nav-link" href="/candidato/panel">Mi panel</a>
-          <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
-        </div>
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }]} />
       </div>
 
       <div className="container" style={{ maxWidth: 760 }}>

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 export default function LoginCandidato() {
   const router = useRouter();
@@ -58,9 +60,7 @@ export default function LoginCandidato() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-      </div>
+      <Encabezado links={[]} />
       <div className="panel-auth" style={{ paddingTop: 36 }}>
       <h1>Iniciar sesión</h1>
       <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>

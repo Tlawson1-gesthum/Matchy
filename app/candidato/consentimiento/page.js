@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 export default function Consentimiento() {
   const router = useRouter();
@@ -27,7 +29,9 @@ export default function Consentimiento() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 560 }}>
+    <div>
+      <Encabezado links={[]} />
+      <div className="container container-angosto">
       <h1>Antes de armar tu CV</h1>
       <div className="card">
         <p>
@@ -44,6 +48,7 @@ export default function Consentimiento() {
           <button className="btn" onClick={aceptar}>Acepto y continúo</button>
           <button className="btn secundario" onClick={rechazar}>No acepto</button>
         </div>
+      </div>
       </div>
     </div>
   );

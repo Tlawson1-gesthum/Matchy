@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import CvHoja from '../../../components/CvHoja';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 export default function MiPerfil() {
   const router = useRouter();
@@ -37,15 +39,7 @@ export default function MiPerfil() {
 
   return (
     <div>
-      <div className="navbar no-imprimir">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="nav-link" href="/candidato/panel">Mi panel</a>
-          <a className="nav-link" href="/candidato/cv">Editar CV</a>
-          <a className="nav-link" href="/candidato/vacantes">Ver vacantes</a>
-          <a className="nav-link" href="/candidato/entrevistas">Mis entrevistas</a>
-          <a className="nav-link" href="#" onClick={cerrarSesion}>Cerrar sesión</a>
-        </div>
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/cv', texto: 'Editar CV' }]} />
       </div>
 
       <div className="container no-imprimir" style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>

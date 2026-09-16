@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 function diasDesde(fecha) {
   const ms = Date.now() - new Date(fecha).getTime();
@@ -108,13 +110,7 @@ export default function VacantesCandidato() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="nav-link" href="/candidato/panel">Mi panel</a>
-          <a className="nav-link" href="/candidato/mi-perfil">Mi CV</a>
-          <a className="nav-link" href="/candidato/entrevistas">Mis entrevistas</a>
-        </div>
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/mi-perfil', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} />
       </div>
       <div className="container">
         <h1>Vacantes en Posadas</h1>

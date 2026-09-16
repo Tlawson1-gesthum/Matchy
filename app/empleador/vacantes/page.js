@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 export default function VacantesEmpleador() {
   const router = useRouter();
@@ -52,13 +54,7 @@ export default function VacantesEmpleador() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="btn blanco" href="/empleador/vacantes/nueva" style={{ marginRight: 16 }}>+ Publicar vacante</a>
-          {esAdmin && <a className="nav-link" href="/admin/locales">Aprobar locales</a>}
-          <a className="nav-link" href="#" onClick={cerrarSesion}>Cerrar sesión</a>
-        </div>
+      <Encabezado links={[{ href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} />
       </div>
       <div className="container">
         <h1>Mis vacantes</h1>

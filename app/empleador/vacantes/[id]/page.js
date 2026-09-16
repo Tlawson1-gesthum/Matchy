@@ -6,6 +6,8 @@ import { supabase } from '../../../../lib/supabaseClient';
 import { calcularPuntaje } from '../../../../lib/scoring';
 import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
+import Encabezado from '../../../../components/Encabezado';
+import Pie from '../../../../components/Pie';
 
 const ESTADOS_ENTREVISTA = {
   pendiente: 'esperando respuesta del candidato',
@@ -194,7 +196,7 @@ export default function RankingVacante({ params }) {
   if (!vacante) {
     return (
       <div>
-        <div className="navbar"><a className="logo" href="/">Matchy</a></div>
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
         <div className="container"><p>{error}</p></div>
       </div>
     );
@@ -202,10 +204,6 @@ export default function RankingVacante({ params }) {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <a className="nav-link" href="/empleador/vacantes">Mis vacantes</a>
-      </div>
       <div className="container">
         <h1>{vacante.puesto === 'Otro' && vacante.puesto_otro ? vacante.puesto_otro : vacante.puesto}</h1>
         <p className="mono" style={{ fontSize: '0.85rem' }}>

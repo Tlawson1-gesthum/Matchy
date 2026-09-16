@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import ListaEditable from '../../../components/ListaEditable';
 import {
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
   PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA,
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
@@ -162,13 +164,7 @@ export default function CvForm() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <div>
-          <a className="nav-link" href="/candidato/panel">Mi panel</a>
-          <a className="nav-link" href="/candidato/vacantes">Vacantes</a>
-          <a className="nav-link" href="/candidato/mi-perfil">Ver mi CV</a>
-        </div>
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }, { href: '/candidato/mi-perfil', texto: 'Ver mi CV' }]} />
       </div>
 
       <div className="container" style={{ maxWidth: 720 }}>

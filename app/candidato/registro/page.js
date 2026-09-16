@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -51,10 +53,7 @@ export default function RegistroCandidato() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <Link className="nav-link" href="/cv-modelo">Ver un CV de ejemplo</Link>
-      </div>
+      <Encabezado links={[{ href: '/cv-modelo', texto: 'CV de ejemplo' }]} />
 
       <div className="panel-auth" style={{ paddingTop: 36 }}>
         <h1>Creá tu cuenta</h1>

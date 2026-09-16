@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TIPOS_LOCAL } from '../../../lib/opciones';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 export default function AdminLocales() {
   const router = useRouter();
@@ -54,7 +56,7 @@ export default function AdminLocales() {
   if (!esAdmin) {
     return (
       <div>
-        <div className="navbar"><a className="logo" href="/">Matchy</a></div>
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
         <div className="container">
           <h1>Sin acceso</h1>
           <p>Esta pantalla es solo para administradores de Matchy.</p>
@@ -68,10 +70,6 @@ export default function AdminLocales() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <a className="nav-link" href="/empleador/vacantes">Mis vacantes</a>
-      </div>
       <div className="container" style={{ maxWidth: 820 }}>
         <h1>Locales registrados</h1>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}

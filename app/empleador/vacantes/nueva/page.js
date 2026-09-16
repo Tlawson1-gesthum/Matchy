@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 import ListaEditable from '../../../../components/ListaEditable';
 import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../../lib/opciones';
+import Encabezado from '../../../../components/Encabezado';
+import Pie from '../../../../components/Pie';
 
 export default function NuevaVacante() {
   const router = useRouter();
@@ -91,7 +93,7 @@ export default function NuevaVacante() {
   if (!empleador) {
     return (
       <div>
-        <div className="navbar"><a className="logo" href="/">Matchy</a></div>
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
         <div className="container" style={{ maxWidth: 520 }}>
           <h1>No podemos publicar todavía</h1>
           <div className="card">
@@ -105,10 +107,6 @@ export default function NuevaVacante() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-        <a className="nav-link" href="/empleador/vacantes">Mis vacantes</a>
-      </div>
       <div className="container" style={{ maxWidth: 600 }}>
         <h1>Publicar vacante</h1>
 

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import { TIPOS_LOCAL, LOCALIDADES, cuitValido } from '../../../lib/opciones';
+import Encabezado from '../../../components/Encabezado';
+import Pie from '../../../components/Pie';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -84,9 +86,7 @@ export default function RegistroEmpleador() {
 
   return (
     <div>
-      <div className="navbar">
-        <a className="logo" href="/">Matchy</a>
-      </div>
+      <Encabezado links={[]} />
       <div className="container" style={{ maxWidth: 520 }}>
         <h1>Registrá tu local</h1>
         <p>¿Ya sos usuario? <Link href="/empleador/login">Iniciá sesión</Link>.</p>
