@@ -204,6 +204,7 @@ export default function RankingVacante({ params }) {
 
   return (
     <div>
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
       <div className="container">
         <h1>{vacante.puesto === 'Otro' && vacante.puesto_otro ? vacante.puesto_otro : vacante.puesto}</h1>
         <p className="mono" style={{ fontSize: '0.85rem' }}>

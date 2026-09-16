@@ -81,7 +81,6 @@ export default function PanelCandidato() {
   return (
     <div>
       <Encabezado links={[{ href: '/candidato/vacantes', texto: 'Vacantes' }, { href: '/candidato/cv', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} />
-      </div>
 
       <div className="container" style={{ maxWidth: 900 }}>
         <h1>Hola{cv.nombre ? `, ${cv.nombre.split(' ')[0]}` : ''}</h1>

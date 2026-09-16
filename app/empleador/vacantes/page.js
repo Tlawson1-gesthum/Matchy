@@ -55,7 +55,6 @@ export default function VacantesEmpleador() {
   return (
     <div>
       <Encabezado links={[{ href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} />
-      </div>
       <div className="container">
         <h1>Mis vacantes</h1>
         {vacantes.length === 0 && (

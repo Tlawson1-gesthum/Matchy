@@ -101,7 +101,6 @@ export default function EntrevistasCandidato() {
   return (
     <div>
       <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }]} />
-      </div>
 
       <div className="container" style={{ maxWidth: 760 }}>
         <h1>Mis entrevistas</h1>

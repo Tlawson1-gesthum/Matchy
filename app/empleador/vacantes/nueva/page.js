@@ -107,6 +107,7 @@ export default function NuevaVacante() {
 
   return (
     <div>
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
       <div className="container" style={{ maxWidth: 600 }}>
         <h1>Publicar vacante</h1>
 
