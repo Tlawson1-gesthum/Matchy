@@ -145,9 +145,17 @@ export default function PanelCandidato() {
                 Compartí el link de tu CV por WhatsApp cuando golpees puertas.{' '}
                 <a href="/candidato/mi-perfil">Copialo acá</a>.
               </li>
-              {cv.certificado_manipulacion === false && (
-                <li>
-                  Sacá el certificado de manipulación de alimentos: muchas vacantes lo piden como requisito excluyente.
+              {!cv.certificado_manipulacion && !cv.certificado_url && (
+                <li style={{ marginBottom: 8 }}>
+                  Sacá el certificado de manipulación de alimentos: muchas vacantes lo piden como requisito
+                  excluyente.
+                </li>
+              )}
+              {cv.certificado_manipulacion && !cv.certificado_url && (
+                <li style={{ marginBottom: 8 }}>
+                  Subí una foto de tu certificado de manipulación de alimentos.{' '}
+                  <a href="/candidato/cv">Cargalo acá</a>. Declararlo sin el archivo suma la mitad de puntos en las
+                  vacantes que lo piden, porque el local no puede confirmarlo.
                 </li>
               )}
             </ul>

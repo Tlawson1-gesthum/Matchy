@@ -473,14 +473,21 @@ export default function CvForm() {
         <div className="card" style={{ marginBottom: 20 }}>
           <h3>Certificado de manipulación de alimentos</h3>
           <div className="tip">
-            Si ya lo tenés, subilo: poder verlo en el momento le ahorra un trámite al local y te pone varios escalones
-            arriba de quien solo dice tenerlo.
+            Si ya lo tenés, subilo. Marcar la casilla sin el archivo suma la mitad de puntos en las vacantes que lo
+            piden como requisito, porque el local no tiene cómo confirmarlo. Con el archivo cargado suma el total y
+            le ahorrás un trámite a quien te contrate.
           </div>
           <label style={{ display: 'block', marginBottom: 12 }}>
             <input type="checkbox" checked={cv.certificado_manipulacion} onChange={(e) => set('certificado_manipulacion', e.target.checked)} /> Tengo el certificado vigente
           </label>
+          {cv.certificado_manipulacion && !cv.certificado_url && (
+            <p className="marca-editado">
+              Marcaste que lo tenés pero todavía no subiste el archivo. Subilo para que sume el puntaje completo.
+            </p>
+          )}
+
           <div className="form-field">
-            <label>Subir certificado (foto o PDF, opcional)</label>
+            <label>Subir certificado (foto o PDF)</label>
             <input type="file" accept="image/*,application/pdf" onChange={subirCertificado} />
             {subiendoCert && <p>Subiendo...</p>}
             {cv.certificado_url && (

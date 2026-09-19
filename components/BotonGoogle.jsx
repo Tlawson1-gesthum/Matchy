@@ -14,6 +14,9 @@ export default function BotonGoogle({ rol = 'candidato', texto = 'Continuar con 
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback?rol=${rol}`,
+        // Sin esto, si hay una sola cuenta abierta en el navegador Google la elige
+        // sola y no pregunta. Mucha gente tiene la cuenta personal y la del trabajo.
+        queryParams: { prompt: 'select_account' },
       },
     });
     if (err) {
