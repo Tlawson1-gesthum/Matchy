@@ -26,7 +26,7 @@ export default async function Home() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/cv-modelo', texto: 'CV de ejemplo' }]} />
+      <Encabezado links={[]} />
 
       <main className="container">
         <h1 className="portada-titular">
@@ -43,12 +43,20 @@ export default async function Home() {
             <h2>¿Buscás empleo?</h2>
             <p>Armá tu CV digital, compartilo al instante y destacá en el mercado local.</p>
             <a className="btn" href="/candidato/registro">Crear CV gratis</a>
+            <p className="tarjeta-acceso">
+              ¿Ya tenés cuenta? <a href="/candidato/login">Iniciar sesión</a>
+              <span aria-hidden="true"> · </span>
+              <a href="/cv-modelo">Ver un CV de ejemplo</a>
+            </p>
           </section>
 
           <section className="tarjeta-portada">
             <h2>¿Ofrecés empleo?</h2>
             <p>Publicá vacantes y accedé a candidatos precalificados y ordenados por expectativas.</p>
             <a className="btn" href="/empleador/registro">Publicar vacante</a>
+            <p className="tarjeta-acceso">
+              ¿Ya tenés cuenta? <a href="/empleador/login">Iniciar sesión</a>
+            </p>
           </section>
         </div>
       </main>

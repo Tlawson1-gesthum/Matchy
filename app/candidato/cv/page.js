@@ -166,7 +166,7 @@ export default function CvForm() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }, { href: '/candidato/mi-perfil', texto: 'Ver mi CV' }]} />
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }, { href: '/candidato/mi-perfil', texto: 'Ver mi CV' }]} campanaHref="/candidato/entrevistas" />
 
       <div className="container" style={{ maxWidth: 720 }}>
         <h1>Tu CV</h1>

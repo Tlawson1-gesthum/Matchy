@@ -29,7 +29,7 @@ function IconoFlecha() {
   );
 }
 
-export default function Encabezado({ links = [], destacado = null }) {
+export default function Encabezado({ links = [], destacado = null, campanaHref = null }) {
   const router = useRouter();
   const [abierto, setAbierto] = useState(false);
   const [menuCuenta, setMenuCuenta] = useState(false);
@@ -92,7 +92,11 @@ export default function Encabezado({ links = [], destacado = null }) {
   const iniciales = (usuario?.user_metadata?.full_name || usuario?.email || '?')
     .trim().charAt(0).toUpperCase();
 
-  const destinoCampana = links.find((l) => /entrevista|postulante/i.test(l.texto))?.href || '/';
+  // Si no nos pasan destino, lo deducimos del rol de la sesión.
+  const destinoCampana =
+    campanaHref ||
+    links.find((l) => /entrevista|postulante|vacante/i.test(l.texto))?.href ||
+    '/';
 
   return (
     <header className="cabecera">

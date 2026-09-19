@@ -97,7 +97,7 @@ export default function NuevaVacante() {
   if (!empleador) {
     return (
       <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
         <div className="container" style={{ maxWidth: 520 }}>
           <h1>Falta cargar tu local</h1>
           <div className="card">
@@ -114,7 +114,7 @@ export default function NuevaVacante() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
       <div className="container" style={{ maxWidth: 600 }}>
         <h1>Publicar vacante</h1>
 

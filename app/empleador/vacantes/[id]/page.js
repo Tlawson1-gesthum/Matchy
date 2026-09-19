@@ -224,7 +224,7 @@ export default function RankingVacante({ params }) {
   if (!vacante) {
     return (
       <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
         <div className="container"><p>{error}</p></div>
       </div>
     );
@@ -232,7 +232,7 @@ export default function RankingVacante({ params }) {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
       <div className="container">
         <h1>{vacante.puesto === 'Otro' && vacante.puesto_otro ? vacante.puesto_otro : vacante.puesto}</h1>
         <p className="mono" style={{ fontSize: '0.85rem' }}>

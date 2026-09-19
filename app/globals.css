@@ -861,3 +861,13 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   .etiquetas-vacante { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
   .vacante-cabecera { flex-direction: column; }
 }
+
+.ficha-reporte { border-left: 3px solid var(--tierra); }
+
+.tarjeta-acceso {
+  font-size: 0.84rem;
+  color: var(--texto-suave);
+  margin: 14px 0 0;
+}
+
+.tarjeta-acceso a { color: var(--oro-oscuro); }

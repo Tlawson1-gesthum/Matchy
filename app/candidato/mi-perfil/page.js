@@ -39,7 +39,7 @@ export default function MiPerfil() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/cv', texto: 'Editar CV' }]} />
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/cv', texto: 'Editar CV' }]} campanaHref="/candidato/entrevistas" />
 
       <div className="container no-imprimir" style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
         <button className="btn" onClick={() => window.print()}>Descargar en PDF</button>

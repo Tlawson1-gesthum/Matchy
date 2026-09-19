@@ -191,7 +191,7 @@ export default function VacantesCandidato() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/mi-perfil', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} />
+      <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/mi-perfil', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} campanaHref="/candidato/entrevistas" />
       <div className="container">
         <h1>Vacantes en Posadas</h1>
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>

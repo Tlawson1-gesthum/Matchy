@@ -69,7 +69,8 @@ export default function VacantesEmpleador() {
   return (
     <div>
       <Encabezado
-        links={[{ href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]}
+        links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]}
+        campanaHref="/empleador/vacantes"
         destacado={esAdmin ? { href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes } : null}
       />
       <div className="container">
@@ -103,6 +104,14 @@ export default function VacantesEmpleador() {
                   {v.postulaciones?.[0]?.count || 0} postulantes · Estado: {v.estado}
                   {v.cantidad_puestos > 1 && ` · ${v.cantidad_puestos} puestos`}
                 </p>
+                {v.estado === 'suspendida' && (
+                  <p className="marca-editado" style={{ maxWidth: 420 }}>
+                    Esta vacante está suspendida y no se muestra a los candidatos.
+                    {v.suspendida_motivo ? ` ${v.suspendida_motivo}.` : ''}{' '}
+                    Si creés que es un error, escribinos a{' '}
+                    <a href="mailto:gozzasabores@gmail.com?subject=Vacante%20suspendida">gozzasabores@gmail.com</a>.
+                  </p>
+                )}
                 {v.cierra_at && v.estado === 'activa' && (
                   <p className="mono" style={{ fontSize: '0.78rem', margin: '4px 0 0', color: 'var(--tierra)' }}>
                     Cierra el {new Date(v.cierra_at).toLocaleString('es-AR', {
