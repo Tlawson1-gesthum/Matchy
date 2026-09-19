@@ -58,9 +58,10 @@ export default function Privacidad() {
 
         <h2>5. Dónde se alojan tus datos y transferencias internacionales</h2>
         <p>
-          Matchy utiliza los servicios de Supabase para alojar la base de datos y los archivos, con
-          infraestructura ubicada en San Pablo, Brasil, y de Vercel para el alojamiento del sitio. Brasil cuenta
-          con legislación de protección de datos personales (Lei Geral de Proteção de Dados).
+          Matchy utiliza los servicios de Supabase para alojar la base de datos y los archivos, y de Vercel para
+          el alojamiento del sitio. La infraestructura se encuentra ubicada fuera de la República Argentina.
+          [PENDIENTE: indicar la región definitiva una vez completada la migración a San Pablo, Brasil, país que
+          cuenta con legislación de protección de datos personales.]
         </p>
         <p>
           Para generar el resumen orientativo que ve el empleador, algunos datos de tu CV (nombre, años de

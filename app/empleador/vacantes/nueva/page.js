@@ -18,6 +18,8 @@ export default function NuevaVacante() {
     turno: '',
     dias_trabajo: '',
     urgencia: 'esta_semana',
+    cantidad_puestos: 1,
+    cierra_at: '',
     experiencia_minima_anios: 0,
     disponibilidad_requerida: '',
     movilidad_requerida: false,
@@ -71,6 +73,8 @@ export default function NuevaVacante() {
       dias_trabajo: form.dias_trabajo || null,
       tipo_local: empleador.tipo_local || null,
       urgencia: form.urgencia,
+      cantidad_puestos: Number(form.cantidad_puestos) || 1,
+      cierra_at: form.cierra_at ? new Date(form.cierra_at).toISOString() : null,
       experiencia_minima_anios: Number(form.experiencia_minima_anios) || 0,
       disponibilidad_requerida: form.disponibilidad_requerida,
       movilidad_requerida: form.movilidad_requerida,
@@ -167,6 +171,34 @@ export default function NuevaVacante() {
             <select value={form.urgencia} onChange={(e) => set('urgencia', e.target.value)}>
               {URGENCIAS.map((u) => <option key={u.value} value={u.value}>{u.label}</option>)}
             </select>
+          </div>
+
+          <div className="form-field">
+            <label>¿Cuántas personas buscás para este puesto?</label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={form.cantidad_puestos}
+              onChange={(e) => set('cantidad_puestos', e.target.value)}
+            />
+            <p className="ayuda-campo">
+              Se lo mostramos a los candidatos. Si buscás una sola persona, saber que el cupo es chico los motiva a
+              postularse antes.
+            </p>
+          </div>
+
+          <div className="form-field">
+            <label>¿Hasta cuándo recibís postulaciones? (opcional)</label>
+            <input
+              type="datetime-local"
+              value={form.cierra_at}
+              onChange={(e) => set('cierra_at', e.target.value)}
+            />
+            <p className="ayuda-campo">
+              Al llegar esa fecha la vacante se cierra sola y deja de recibir postulaciones. Poner una fecha real
+              acelera las postulaciones; dejalo vacío si no tenés apuro.
+            </p>
           </div>
 
           <div className="form-field">

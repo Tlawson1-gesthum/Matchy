@@ -51,12 +51,18 @@ export default function Consentimiento() {
           entregan a un local cuando decide avanzar con tu postulación.
         </p>
         <p>
-          Tus datos se alojan en servidores ubicados en San Pablo, Brasil, y parte de la información se procesa en
+          Tus datos se alojan en servidores ubicados fuera de Argentina, y parte de la información se procesa en
           Estados Unidos para generar el resumen orientativo que ve el empleador. El detalle está en la{' '}
           <a href="/legal/privacidad" target="_blank">política de privacidad</a>.
         </p>
+        <p style={{ fontSize: '0.88rem', borderTop: '1px solid var(--borde)', paddingTop: 14, marginTop: 18 }}>
+          Al apretar "Acepto y continúo" estás de acuerdo con los{' '}
+          <a href="/legal/terminos" target="_blank">términos y condiciones</a> y con la{' '}
+          <a href="/legal/privacidad" target="_blank">política de privacidad</a> de Matchy.
+        </p>
+
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-        <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
+        <div style={{ marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button className="btn" onClick={aceptar}>Acepto y continúo</button>
           <button className="btn secundario" onClick={rechazar}>No acepto</button>
         </div>

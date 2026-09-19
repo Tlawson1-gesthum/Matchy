@@ -5,12 +5,27 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje, comoMejorar } from '../../../lib/scoring';
+import TickerActividad from '../../../components/TickerActividad';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
 function diasDesde(fecha) {
   const ms = Date.now() - new Date(fecha).getTime();
   return Math.floor(ms / (1000 * 60 * 60 * 24));
+}
+
+function cuentaRegresiva(cierraAt) {
+  if (!cierraAt) return null;
+  const ms = new Date(cierraAt).getTime() - Date.now();
+  if (ms <= 0) return { texto: 'Cerrada', inminente: true, vencida: true };
+  const horas = Math.floor(ms / (1000 * 60 * 60));
+  if (horas < 1) {
+    const minutos = Math.max(1, Math.floor(ms / (1000 * 60)));
+    return { texto: `Cierra en ${minutos} min`, inminente: true };
+  }
+  if (horas < 24) return { texto: `Cierra en ${horas} ${horas === 1 ? 'hora' : 'horas'}`, inminente: true };
+  const dias = Math.floor(horas / 24);
+  return { texto: `Cierra en ${dias} ${dias === 1 ? 'día' : 'días'}`, inminente: dias <= 2 };
 }
 
 function textoAntiguedad(fecha) {
@@ -34,6 +49,8 @@ export default function VacantesCandidato() {
   const [miCv, setMiCv] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [vistas, setVistas] = useState({});
+  const [actividad, setActividad] = useState(null);
 
   useEffect(() => {
     async function cargar() {
@@ -82,6 +99,25 @@ export default function VacantesCandidato() {
         .from('postulaciones').select('*').eq('candidato_id', uid);
       setPostuladas(new Set((post || []).map((p) => p.vacante_id)));
       setMisPostulaciones(Object.fromEntries((post || []).map((p) => [p.vacante_id, p])));
+
+      // Cerramos las vacantes que ya vencieron antes de mostrar nada
+      await supabase.rpc('cerrar_vacantes_vencidas');
+
+      // Vistas reales de los últimos 7 días
+      const { data: v7 } = await supabase.rpc('vistas_por_vacante');
+      setVistas(Object.fromEntries((v7 || []).map((r) => [r.vacante_id, Number(r.vistas)])));
+
+      // Actividad real de la plataforma
+      const { data: act } = await supabase.rpc('actividad_reciente');
+      setActividad(act || null);
+
+      // Registramos que esta persona vio estas vacantes hoy (una vez por día)
+      if (visibles.length) {
+        await supabase.from('vacante_vistas').upsert(
+          visibles.map((v) => ({ vacante_id: v.id, usuario_id: uid })),
+          { onConflict: 'vacante_id,usuario_id,dia', ignoreDuplicates: true }
+        );
+      }
 
       setCargando(false);
     }
@@ -161,6 +197,8 @@ export default function VacantesCandidato() {
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
 
+        <TickerActividad datos={actividad} />
+
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
           <div className="form-field" style={{ minWidth: 200, flex: '1 1 200px' }}>
             <label>Filtrar por puesto</label>
@@ -190,6 +228,8 @@ export default function VacantesCandidato() {
         {vacantesFiltradas.map((v) => {
           const urgente = v.urgencia === 'hoy' || v.urgencia === 'esta_semana';
           const cantidad = conteos[v.id] || 0;
+          const cierre = cuentaRegresiva(v.cierra_at);
+          const mirando = vistas[v.id] || 0;
           return (
             <div key={v.id} className="card vacante" style={{ marginBottom: 18 }}>
               <div className="vacante-cabecera">
@@ -201,7 +241,14 @@ export default function VacantesCandidato() {
                     {v.local?.direccion ? ` · ${v.local.direccion}` : ''}
                   </span>
                 </div>
-                {urgente && <span className="badge urgente">Busca con urgencia</span>}
+                <div className="etiquetas-vacante">
+                  {cierre && !cierre.vencida && (
+                    <span className={`badge cierra ${cierre.inminente ? 'inminente' : ''}`}>{cierre.texto}</span>
+                  )}
+                  {v.cantidad_puestos === 1 && <span className="badge cupo">Solo 1 vacante</span>}
+                  {v.cantidad_puestos > 1 && <span className="badge cupo">{v.cantidad_puestos} vacantes</span>}
+                  {urgente && !cierre && <span className="badge urgente">Busca con urgencia</span>}
+                </div>
               </div>
 
               <h3 style={{ margin: '10px 0 6px' }}>
@@ -223,11 +270,28 @@ export default function VacantesCandidato() {
 
               {v.descripcion && <p style={{ marginTop: 12 }}>{v.descripcion}</p>}
 
-              <p className="mono vacante-meta">
-                {textoAntiguedad(v.created_at)}
-                {cantidad > 0 && ` · ${cantidad} ${cantidad === 1 ? 'persona ya se postuló' : 'personas ya se postularon'}`}
-                {cantidad === 0 && ' · Sé la primera persona en postularte'}
-              </p>
+              <p className="mono vacante-meta">{textoAntiguedad(v.created_at)}</p>
+
+              <div className="senales-vacante">
+                {mirando > 1 && (
+                  <span>
+                    <span aria-hidden="true">👁️</span>
+                    {mirando} {mirando === 1 ? 'persona miró' : 'personas miraron'} esta vacante esta semana
+                  </span>
+                )}
+                {cantidad > 0 && (
+                  <span>
+                    <span aria-hidden="true">🔥</span>
+                    {cantidad} {cantidad === 1 ? 'persona ya se postuló' : 'personas ya se postularon'}
+                  </span>
+                )}
+                {cantidad === 0 && (
+                  <span>
+                    <span aria-hidden="true">✨</span>
+                    Nadie se postuló todavía: sé la primera persona
+                  </span>
+                )}
+              </div>
 
               <p style={{ margin: '0 0 10px' }}>
                 <button
@@ -289,7 +353,20 @@ export default function VacantesCandidato() {
                   </button>
                 </div>
               ) : (
-                <button className="btn" onClick={() => postularse(v)}>Postularme</button>
+                <>
+                  <button className="btn" onClick={() => postularse(v)}>Postularme</button>
+                  {cierre && !cierre.vencida && (
+                    <p className="micro-cta">
+                      Las postulaciones cierran el{' '}
+                      {new Date(v.cierra_at).toLocaleString('es-AR', {
+                        day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+                      })}.
+                    </p>
+                  )}
+                  {!cierre && v.urgencia === 'hoy' && (
+                    <p className="micro-cta">El local marcó que necesita cubrir el puesto esta semana.</p>
+                  )}
+                </>
               )}
             </div>
           );

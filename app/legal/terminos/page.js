@@ -106,8 +106,8 @@ export default function Terminos() {
 
         <h2>9. Alojamiento de datos</h2>
         <p>
-          Los datos se alojan en infraestructura de Supabase ubicada en San Pablo, Brasil, y el sitio se aloja en
-          Vercel. Para el resumen orientativo de compatibilidad se utiliza la API de Anthropic, con sede en
+          Los datos se alojan en infraestructura de Supabase y el sitio en Vercel, ambos fuera de la República
+          Argentina. Para el resumen orientativo de compatibilidad se utiliza la API de Anthropic, con sede en
           Estados Unidos. El detalle está en la <a href="/legal/privacidad">política de privacidad</a>, que forma
           parte de estos términos.
         </p>

@@ -101,7 +101,15 @@ export default function VacantesEmpleador() {
                 <h3>{v.puesto}</h3>
                 <p className="mono" style={{ fontSize: '0.85rem', margin: 0 }}>
                   {v.postulaciones?.[0]?.count || 0} postulantes · Estado: {v.estado}
+                  {v.cantidad_puestos > 1 && ` · ${v.cantidad_puestos} puestos`}
                 </p>
+                {v.cierra_at && v.estado === 'activa' && (
+                  <p className="mono" style={{ fontSize: '0.78rem', margin: '4px 0 0', color: 'var(--tierra)' }}>
+                    Cierra el {new Date(v.cierra_at).toLocaleString('es-AR', {
+                      day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+                    })}
+                  </p>
+                )}
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
                 <a className="btn secundario" href={`/empleador/vacantes/${v.id}`}>Ver postulantes</a>
