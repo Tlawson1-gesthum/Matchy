@@ -246,6 +246,7 @@ export default function VacantesCandidato() {
           );
         })}
         {vacantesFiltradas.length > 0 && (
+          <>
           <div className="aviso-legal" style={{ marginTop: 20 }}>
             <strong>Sobre el porcentaje de compatibilidad.</strong> Se calcula comparando lo que cargaste en tu CV
             con los requisitos que el local declaró en la vacante: puesto, años de experiencia, turno,
@@ -271,6 +272,7 @@ export default function VacantesCandidato() {
             ni que trabajes gratis a prueba. Las entrevistas se hacen en el local, en horario comercial. Si algo te
             resulta raro, tocá "Reportar" en el aviso.
           </div>
+          </>
         )}
         <div style={{ height: 40 }} />
       </div>
