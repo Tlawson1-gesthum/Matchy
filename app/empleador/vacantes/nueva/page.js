@@ -42,7 +42,7 @@ export default function NuevaVacante() {
         .maybeSingle();
 
       if (!emp) {
-        setError('Esta cuenta no tiene un local asociado. Si te registraste como candidato, necesitás una cuenta aparte para publicar vacantes.');
+        setError('Tu cuenta existe pero todavía no cargaste los datos de tu local. Completalos y lo verificamos.');
         setVerificando(false);
         return;
       }
@@ -95,10 +95,13 @@ export default function NuevaVacante() {
       <div>
       <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
         <div className="container" style={{ maxWidth: 520 }}>
-          <h1>No podemos publicar todavía</h1>
+          <h1>Falta cargar tu local</h1>
           <div className="card">
             <p>{error}</p>
-            <a className="btn" href="/empleador/registro">Registrar mi local</a>
+            <p style={{ fontSize: '0.88rem', color: 'var(--texto-suave)' }}>
+              No vas a tener que crear otra cuenta: entrás con el mismo email y solo completás los datos del local.
+            </p>
+            <a className="btn" href="/empleador/registro">Completar los datos de mi local</a>
           </div>
         </div>
       </div>

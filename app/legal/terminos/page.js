@@ -79,8 +79,12 @@ export default function Terminos() {
         <ul>
           <li>Ser un establecimiento real, con actividad comercial efectiva en la zona declarada.</li>
           <li>Publicar únicamente vacantes reales y vigentes.</li>
-          <li>No solicitar a los candidatos dinero, documentación personal sensible, ni tareas no remuneradas
-          como parte del proceso de selección.</li>
+          <li>No solicitar ni ofrecer dinero a ningún candidato a cambio del puesto o de avanzar en el proceso
+          de selección.</li>
+          <li>No pedir claves bancarias, datos de tarjetas, documentación personal innecesaria, ni tareas no
+          remuneradas a modo de prueba.</li>
+          <li>No utilizar Matchy para cometer fraude, estafas, trata de personas, explotación laboral ni ningún
+          otro delito, ni para captar personas con fines distintos a una oferta de empleo real.</li>
           <li>Usar los datos de los candidatos exclusivamente para el proceso de selección, y no cederlos a terceros.</li>
           <li>Cumplir la normativa laboral y previsional aplicable.</li>
         </ul>

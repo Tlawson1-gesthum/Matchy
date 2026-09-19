@@ -84,7 +84,10 @@ export default function AdminLocales() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
+      <Encabezado
+        links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]}
+        destacado={{ href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes.length }}
+      />
       <div className="container" style={{ maxWidth: 820 }}>
         <h1>Locales registrados</h1>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}

@@ -19,7 +19,7 @@ function IconoMenu() {
   );
 }
 
-export default function Encabezado({ links = [] }) {
+export default function Encabezado({ links = [], destacado = null }) {
   const [abierto, setAbierto] = useState(false);
 
   return (
@@ -27,7 +27,14 @@ export default function Encabezado({ links = [] }) {
       <a className="cabecera-marca" href="/">Matchy</a>
 
       <div className="cabecera-iconos">
-        <span className="icono-plano" title="Posadas y alrededores" aria-label="Posadas y alrededores">
+        {destacado && (
+          <a className="btn-destacado" href={destacado.href}>
+            {destacado.texto}
+            {destacado.cantidad > 0 && <span className="burbuja">{destacado.cantidad}</span>}
+          </a>
+        )}
+
+        <span className="icono-plano" title="Posadas y Garupá" aria-label="Posadas y Garupá">
           <IconoPin />
         </span>
 

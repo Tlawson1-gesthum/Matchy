@@ -11,6 +11,7 @@ export default function VacantesEmpleador() {
   const [vacantes, setVacantes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [esAdmin, setEsAdmin] = useState(false);
+  const [pendientes, setPendientes] = useState(0);
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -22,6 +23,14 @@ export default function VacantesEmpleador() {
     const { data: admin } = await supabase
       .from('administradores').select('id').eq('id', uid).maybeSingle();
     setEsAdmin(!!admin);
+
+    if (admin) {
+      const { count } = await supabase
+        .from('empleadores')
+        .select('id', { count: 'exact', head: true })
+        .eq('estado', 'pendiente');
+      setPendientes(count || 0);
+    }
 
     const { data } = await supabase
       .from('vacantes')
@@ -54,7 +63,10 @@ export default function VacantesEmpleador() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} />
+      <Encabezado
+        links={[{ href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]}
+        destacado={esAdmin ? { href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes } : null}
+      />
       <div className="container">
         <h1>Mis vacantes</h1>
         {vacantes.length === 0 && (
