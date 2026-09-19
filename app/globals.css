@@ -662,3 +662,44 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 @media (max-width: 480px) {
   .btn-destacado { padding: 8px 12px; font-size: 0.8rem; }
 }
+
+.detalle-mejora {
+  margin-top: 10px;
+  font-size: 0.86rem;
+}
+
+.detalle-mejora summary {
+  cursor: pointer;
+  color: var(--oro-oscuro);
+  font-size: 0.84rem;
+}
+
+.marca-editado {
+  font-size: 0.78rem;
+  color: #7E6520;
+  background: #F6F1DF;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 8px 0 0;
+  line-height: 1.45;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--blanco);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 13px 22px;
+  font-family: var(--font-cuerpo);
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-google:hover { border-color: var(--verde); }
+.btn-google:disabled { opacity: 0.6; cursor: not-allowed; }

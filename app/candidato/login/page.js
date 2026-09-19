@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
+import BotonGoogle from '../../../components/BotonGoogle';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -64,6 +65,10 @@ export default function LoginCandidato() {
       <div className="panel-auth" style={{ paddingTop: 36 }}>
       <h1>Iniciar sesión</h1>
       <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>
+      <div className="card" style={{ marginBottom: 16 }}>
+        <BotonGoogle rol="candidato" texto="Entrar con Google" />
+      </div>
+
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
           <label>Email</label>

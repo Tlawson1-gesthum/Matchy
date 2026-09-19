@@ -58,6 +58,17 @@ export default function Terminos() {
           y debe ser tomada por una persona. Cualquier candidato puede solicitar la revisión humana de su
           posición escribiendo a <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
         </p>
+        <p>
+          El porcentaje se calcula con los datos del CV tal como estaban al momento de la postulación y queda
+          congelado: modificar el CV después no altera las postulaciones ya enviadas. Si un candidato modifica su
+          CV con posterioridad, el empleador es informado de ello.
+        </p>
+        <p>
+          Matchy no verifica la veracidad de lo que declara cada persona, y ningún cálculo automático puede
+          hacerlo. La defensa real contra la información falsa en un CV es la entrevista, las referencias, y que
+          mentir tenga consecuencias. El sistema está diseñado para que mentir sea incómodo y rastreable, no para
+          hacerlo imposible: la verificación final es responsabilidad del empleador.
+        </p>
 
         <h2>6. Prohibición de discriminar</h2>
         <p>

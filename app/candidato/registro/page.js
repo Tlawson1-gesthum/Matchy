@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
+import BotonGoogle from '../../../components/BotonGoogle';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -83,7 +84,9 @@ export default function RegistroCandidato() {
             ¿Ya sos usuario? <Link href="/candidato/login">Iniciá sesión</Link>.
           </p>
 
-          <div className="linea-o">o registrate acá</div>
+          <BotonGoogle rol="candidato" texto="Registrarme con Google" />
+
+          <div className="linea-o">o con tu email</div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-field">

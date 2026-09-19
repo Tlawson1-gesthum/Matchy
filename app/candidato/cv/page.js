@@ -8,6 +8,7 @@ import {
   PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA,
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
+import VerificarTelefono from '../../../components/VerificarTelefono';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -147,13 +148,14 @@ export default function CvForm() {
     const herramientas = (cv.herramientas_nivel || []).map((h) => h.nombre);
     const idiomas = (cv.idiomas_nivel || []).map((i) => i.nombre);
     const payload = { ...cv, herramientas, idiomas, anios_experiencia, perfil_completo_pct, updated_at: new Date().toISOString() };
+    if (cv.nombre_bloqueado) delete payload.nombre;
     const { error } = await supabase.from('cvs').update(payload).eq('id', userId);
     setGuardando(false);
     if (error) {
       setMensaje('Hubo un error al guardar: ' + error.message);
     } else {
-      setCv(payload);
-      setMensaje('CV guardado');
+      setCv((c) => ({ ...c, ...payload }));
+      setMensaje('CV guardado. Las postulaciones que ya enviaste no cambian: su porcentaje quedó congelado.');
       setGuardadoOk(true);
     }
   }
@@ -179,6 +181,18 @@ export default function CvForm() {
           </p>
         </div>
 
+        <VerificarTelefono
+          telefonoInicial={cv.telefono || ''}
+          verificadoAt={cv.telefono_verificado_at}
+          onVerificado={async (numero) => {
+            await supabase.from('cvs').update({
+              telefono: numero,
+              telefono_verificado_at: new Date().toISOString(),
+            }).eq('id', userId);
+            setCv((c) => ({ ...c, telefono: numero, telefono_verificado_at: new Date().toISOString() }));
+          }}
+        />
+
         {/* DATOS PERSONALES */}
         <div className="card" style={{ marginBottom: 20 }}>
           <h3>Datos personales</h3>
@@ -188,7 +202,23 @@ export default function CvForm() {
           </div>
           <div className="form-field">
             <label>Nombre completo</label>
-            <input value={cv.nombre} onChange={(e) => set('nombre', e.target.value)} />
+            <input
+              value={cv.nombre}
+              disabled={cv.nombre_bloqueado}
+              onChange={(e) => set('nombre', e.target.value)}
+            />
+            {cv.nombre_bloqueado ? (
+              <p className="ayuda-campo">
+                Tu nombre quedó fijo después de tu primera postulación, para que los locales sepan con quién están
+                hablando. Si está mal escrito, escribinos a{' '}
+                <a href="mailto:gozzasabores@gmail.com?subject=Corregir%20mi%20nombre">gozzasabores@gmail.com</a>.
+              </p>
+            ) : (
+              <p className="ayuda-campo">
+                Poné tu nombre real, como figura en tu documento. Va a quedar fijo cuando te postules por primera
+                vez.
+              </p>
+            )}
           </div>
           <div className="form-field">
             <label>Foto (opcional)</label>

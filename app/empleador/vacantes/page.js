@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import VerificarTelefono from '../../../components/VerificarTelefono';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -12,6 +13,7 @@ export default function VacantesEmpleador() {
   const [cargando, setCargando] = useState(true);
   const [esAdmin, setEsAdmin] = useState(false);
   const [pendientes, setPendientes] = useState(0);
+  const [empleador, setEmpleador] = useState(null);
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -20,6 +22,9 @@ export default function VacantesEmpleador() {
       router.push('/empleador/login');
       return;
     }
+    const { data: emp } = await supabase.from('empleadores').select('*').eq('id', uid).maybeSingle();
+    setEmpleador(emp);
+
     const { data: admin } = await supabase
       .from('administradores').select('id').eq('id', uid).maybeSingle();
     setEsAdmin(!!admin);
@@ -69,6 +74,20 @@ export default function VacantesEmpleador() {
       />
       <div className="container">
         <h1>Mis vacantes</h1>
+
+        {empleador && !empleador.telefono_verificado_at && (
+          <VerificarTelefono
+            telefonoInicial={empleador.telefono || ''}
+            verificadoAt={empleador.telefono_verificado_at}
+            onVerificado={async (numero) => {
+              await supabase.from('empleadores').update({
+                telefono: numero,
+                telefono_verificado_at: new Date().toISOString(),
+              }).eq('id', empleador.id);
+              setEmpleador((e) => ({ ...e, telefono: numero, telefono_verificado_at: new Date().toISOString() }));
+            }}
+          />
+        )}
         {vacantes.length === 0 && (
           <div className="card">
             <p style={{ marginTop: 0 }}>Todavía no publicaste ninguna vacante.</p>

@@ -77,15 +77,19 @@ export default function RankingVacante({ params }) {
       .in('postulacion_id', posts.map((p) => p.id));
 
     const conPuntaje = posts.map((p) => {
-      const cv = porId[p.candidato_id] || {};
-      const { puntaje, razonesPositivas, razonesNegativas } = calcularPuntaje(vac, cv);
+      const cvActual = porId[p.candidato_id] || {};
+      // El puntaje es el que quedó congelado al postularse. Si la postulación es
+      // anterior a esta función, lo calculamos con los datos actuales.
+      const base = p.cv_snapshot || cvActual;
+      const calculo = calcularPuntaje(vac, base);
       return {
         ...p,
-        cv,
+        cv: cvActual,
+        cvCongelado: p.cv_snapshot || null,
         entrevista: (entrevistas || []).find((e) => e.postulacion_id === p.id) || null,
-        puntaje: p.puntaje || puntaje,
-        razonesPositivas,
-        razonesNegativas,
+        puntaje: p.puntaje != null ? p.puntaje : calculo.puntaje,
+        razonesPositivas: p.razones_positivas?.length ? p.razones_positivas : calculo.razonesPositivas,
+        razonesNegativas: p.razones_negativas?.length ? p.razones_negativas : calculo.razonesNegativas,
       };
     });
 
@@ -253,8 +257,14 @@ export default function RankingVacante({ params }) {
           perfil. Recordá que la Ley 23.592 y la Ley de Contrato de Trabajo prohíben seleccionar por motivos
           discriminatorios como edad, sexo, nacionalidad, apariencia, religión, ideología o situación familiar.
           <p style={{ margin: '10px 0 0' }}>
-            Matchy no participa de las entrevistas ni de la contratación, y no responde por lo que ocurra entre vos
-            y los candidatos.
+            El porcentaje se calcula con el CV tal como estaba cuando la persona se postuló, y queda congelado:
+            editarlo después no modifica su posición. Si alguien modificó su CV más tarde, te lo avisamos debajo de
+            su nombre.
+          </p>
+          <p style={{ margin: '10px 0 0' }}>
+            Ningún cálculo reemplaza la verificación: confirmá la experiencia en la entrevista y con las
+            referencias. Matchy no participa de las entrevistas ni de la contratación, y no responde por lo que
+            ocurra entre vos y los candidatos.
           </p>
         </div>
 
@@ -275,6 +285,12 @@ export default function RankingVacante({ params }) {
                 <p className="mono" style={{ fontSize: '0.78rem' }}>
                   {p.cv.anios_experiencia || 0} años de experiencia · {p.cv.ciudad || 'Posadas'} · {p.cv.contacto || 'sin contacto'}
                 </p>
+                {p.cv_editado_despues && (
+                  <p className="marca-editado">
+                    Modificó su CV después de postularse. El porcentaje corresponde al CV del momento de la
+                    postulación; el enlace "Ver CV" muestra la versión actual.
+                  </p>
+                )}
               </div>
               {p.cv.id && (
                 <a className="btn blanco" href={`/cv/${p.cv.id}`} target="_blank" rel="noreferrer">Ver CV</a>

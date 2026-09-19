@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
-import { calcularPuntaje } from '../../../lib/scoring';
+import { calcularPuntaje, comoMejorar } from '../../../lib/scoring';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -27,6 +27,7 @@ export default function VacantesCandidato() {
   const [vacantes, setVacantes] = useState([]);
   const [conteos, setConteos] = useState({});
   const [postuladas, setPostuladas] = useState(new Set());
+  const [misPostulaciones, setMisPostulaciones] = useState({});
   const [filtroPuesto, setFiltroPuesto] = useState('');
   const [filtroCiudad, setFiltroCiudad] = useState('');
   const [detalleOtro, setDetalleOtro] = useState({});
@@ -78,23 +79,49 @@ export default function VacantesCandidato() {
       setConteos(cuenta);
 
       const { data: post } = await supabase
-        .from('postulaciones').select('vacante_id').eq('candidato_id', uid);
+        .from('postulaciones').select('*').eq('candidato_id', uid);
       setPostuladas(new Set((post || []).map((p) => p.vacante_id)));
+      setMisPostulaciones(Object.fromEntries((post || []).map((p) => [p.vacante_id, p])));
 
       setCargando(false);
     }
     cargar();
   }, [router]);
 
-  async function postularse(vacanteId, puestoOtro) {
-    const { error } = await supabase.from('postulaciones').insert({
-      vacante_id: vacanteId,
+  async function postularse(vacante, puestoOtro) {
+    if (!miCv) return;
+    const { puntaje, razonesPositivas, razonesNegativas } = calcularPuntaje(vacante, miCv);
+
+    // Congelamos el CV tal como está ahora: editarlo después no cambia esta postulación.
+    const snapshot = {
+      nombre: miCv.nombre,
+      puestos: miCv.puestos,
+      experiencia: miCv.experiencia,
+      anios_experiencia: miCv.anios_experiencia,
+      habilidades: miCv.habilidades,
+      herramientas: miCv.herramientas,
+      disponibilidad_horaria: miCv.disponibilidad_horaria,
+      turno: miCv.turno,
+      movilidad_propia: miCv.movilidad_propia,
+      certificado_manipulacion: miCv.certificado_manipulacion,
+      certificado_url: miCv.certificado_url,
+      congelado_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase.from('postulaciones').insert({
+      vacante_id: vacante.id,
       candidato_id: userId,
       puesto_otro: puestoOtro || null,
-    });
+      puntaje,
+      razones_positivas: razonesPositivas,
+      razones_negativas: razonesNegativas,
+      cv_snapshot: snapshot,
+    }).select().single();
+
     if (!error) {
-      setPostuladas((s) => new Set([...s, vacanteId]));
-      setConteos((c) => ({ ...c, [vacanteId]: (c[vacanteId] || 0) + 1 }));
+      setPostuladas((s) => new Set([...s, vacante.id]));
+      setConteos((c) => ({ ...c, [vacante.id]: (c[vacante.id] || 0) + 1 }));
+      if (data) setMisPostulaciones((m) => ({ ...m, [vacante.id]: data }));
     }
   }
 
@@ -212,19 +239,41 @@ export default function VacantesCandidato() {
                 </button>
               </p>
 
-              {miCv && (() => {
+              {miCv && !postuladas.has(v.id) && (() => {
                 const { puntaje } = calcularPuntaje(v, miCv);
                 const clase = puntaje >= 70 ? '' : puntaje >= 40 ? 'tibio' : 'frio';
+                const mejoras = comoMejorar(v, miCv);
                 return (
-                  <p style={{ margin: '0 0 12px' }}>
+                  <div style={{ margin: '0 0 12px' }}>
                     <span className={`match-chip ${clase}`}>Tenés {puntaje}% de matchyar</span>
-                  </p>
+                    {mejoras.length > 0 && puntaje < 85 && (
+                      <details className="detalle-mejora">
+                        <summary>Cómo podrías mejorar tu compatibilidad</summary>
+                        <ul style={{ margin: '8px 0 0', paddingLeft: 18 }}>
+                          {mejoras.map((m, i) => <li key={i}>{m}</li>)}
+                        </ul>
+                        <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: 'var(--texto-suave)' }}>
+                          Cargá solo lo que sea cierto. El porcentaje se congela cuando te postulás, y el empleador
+                          verifica la experiencia en la entrevista y con tus referencias.
+                        </p>
+                      </details>
+                    )}
+                  </div>
                 );
               })()}
 
               {postuladas.has(v.id) ? (
                 <div className="aviso-postulado">
-                  Ya te postulaste. Te avisamos por mail y por acá si hacés match con el empleador.
+                  <strong>Ya te postulaste.</strong>
+                  {misPostulaciones[v.id]?.puntaje != null && (
+                    <> Quedaste con <strong>{misPostulaciones[v.id].puntaje}% de compatibilidad</strong>, calculado
+                    con tu CV tal como estaba al momento de postularte.</>
+                  )}
+                  {' '}Te avisamos por mail y por acá si hacés match con el empleador.
+                  <p style={{ margin: '8px 0 0', fontSize: '0.84rem' }}>
+                    Si editás tu CV ahora, esta postulación no cambia: el porcentaje quedó congelado cuando la
+                    enviaste.
+                  </p>
                 </div>
               ) : v.puesto === 'Otro' ? (
                 <div>
@@ -235,12 +284,12 @@ export default function VacantesCandidato() {
                       onChange={(e) => setDetalleOtro((d) => ({ ...d, [v.id]: e.target.value }))}
                     />
                   </div>
-                  <button className="btn" disabled={!detalleOtro[v.id]} onClick={() => postularse(v.id, detalleOtro[v.id])}>
+                  <button className="btn" disabled={!detalleOtro[v.id]} onClick={() => postularse(v, detalleOtro[v.id])}>
                     Postularme
                   </button>
                 </div>
               ) : (
-                <button className="btn" onClick={() => postularse(v.id)}>Postularme</button>
+                <button className="btn" onClick={() => postularse(v)}>Postularme</button>
               )}
             </div>
           );
@@ -257,8 +306,8 @@ export default function VacantesCandidato() {
               empleador, y esa decisión la toma una persona. Un porcentaje bajo no te impide postularte.
             </p>
             <p style={{ margin: '10px 0 0' }}>
-              Si creés que tu porcentaje no refleja tu perfil, primero revisá que tu CV esté completo. Si aun así
-              querés que una persona lo revise, escribinos a{' '}
+              Si creés que tu porcentaje no refleja tu perfil, primero revisá que tu CV esté completo. Si aún
+              querés que una persona de nuestro equipo lo revise, escribinos a{' '}
               <a href="mailto:gozzasabores@gmail.com?subject=Revisi%C3%B3n%20humana%20de%20mi%20compatibilidad">
                 gozzasabores@gmail.com
               </a>{' '}
