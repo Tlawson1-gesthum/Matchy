@@ -19,7 +19,10 @@ export default function Consentimiento() {
     }
     await supabase
       .from('cvs')
-      .update({ consentimiento_at: new Date().toISOString() })
+      .update({
+        consentimiento_at: new Date().toISOString(),
+        acepto_tyc_at: new Date().toISOString(),
+      })
       .eq('id', userId);
     router.push('/candidato/cv');
   }
@@ -35,13 +38,22 @@ export default function Consentimiento() {
       <h1>Antes de armar tu CV</h1>
       <div className="card">
         <p>
-          Los datos que cargues (nombre, foto, experiencia, contacto, etc.) van a quedar
-          <strong> visibles públicamente</strong> para que los locales gastronómicos de
-          Posadas puedan encontrarte y contactarte.
+          Los datos que cargues (nombre, foto, experiencia, contacto) van a quedar{' '}
+          <strong>visibles públicamente</strong> para que los locales gastronómicos verificados de Posadas y
+          alrededores puedan encontrarte y contactarte.
         </p>
         <p>
-          No te vamos a pedir DNI ni tu fecha de nacimiento completa. Vos decidís qué
-          mostrar, y podés editar o eliminar tu perfil cuando quieras desde tu cuenta.
+          No te vamos a pedir DNI ni tu fecha de nacimiento completa. La foto y la edad son opcionales. Vos decidís
+          qué mostrar, y podés editar o eliminar tu perfil cuando quieras desde tu cuenta.
+        </p>
+        <p>
+          Los contactos de referencia que cargues son la excepción: no se muestran en tu CV público, y solo se le
+          entregan a un local cuando decide avanzar con tu postulación.
+        </p>
+        <p>
+          Tus datos se alojan en servidores ubicados en San Pablo, Brasil, y parte de la información se procesa en
+          Estados Unidos para generar el resumen orientativo que ve el empleador. El detalle está en la{' '}
+          <a href="/legal/privacidad" target="_blank">política de privacidad</a>.
         </p>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
         <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>

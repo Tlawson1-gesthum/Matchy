@@ -30,6 +30,7 @@ export default function RankingVacante({ params }) {
   const [procesandoIA, setProcesandoIA] = useState(false);
   const [horarios, setHorarios] = useState({});
   const [error, setError] = useState('');
+  const [referencias, setReferencias] = useState({});
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -66,7 +67,7 @@ export default function RankingVacante({ params }) {
 
     // Paso 2: los CVs de esos candidatos, en una sola consulta.
     const ids = posts.map((p) => p.candidato_id);
-    const { data: cvs } = await supabase.from('cvs').select('*').in('id', ids);
+    const { data: cvs } = await supabase.from('cvs_publicos').select('*').in('id', ids);
     const porId = Object.fromEntries((cvs || []).map((c) => [c.id, c]));
 
     // Paso 3: las entrevistas ya propuestas.
@@ -171,6 +172,29 @@ export default function RankingVacante({ params }) {
     cargar();
   }
 
+  async function preseleccionar(postulacion) {
+    const { error: err } = await supabase
+      .from('postulaciones').update({ estado: 'preseleccionado' }).eq('id', postulacion.id);
+    if (err) { setError('No se pudo preseleccionar: ' + err.message); return; }
+
+    setPostulaciones((lista) =>
+      lista.map((x) => (x.id === postulacion.id ? { ...x, estado: 'preseleccionado' } : x))
+    );
+
+    const { data, error: errRef } = await supabase
+      .rpc('referencias_de_candidato', { p_candidato_id: postulacion.candidato_id });
+    if (!errRef) {
+      setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
+    }
+  }
+
+  async function verReferencias(postulacion) {
+    const { data, error: errRef } = await supabase
+      .rpc('referencias_de_candidato', { p_candidato_id: postulacion.candidato_id });
+    if (errRef) { setError('No se pudieron cargar las referencias: ' + errRef.message); return; }
+    setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
+  }
+
   async function exportarExcel() {
     const XLSX = await import('xlsx');
     const filas = postulaciones.map((p) => ({
@@ -222,6 +246,18 @@ export default function RankingVacante({ params }) {
           {procesandoIA && <span style={{ marginLeft: 12 }}>Generando resúmenes...</span>}
         </div>
 
+        <div className="aviso-legal">
+          <strong>Cómo leer este orden.</strong> El porcentaje compara los datos del CV con los requisitos que
+          cargaste en la vacante. Es una ayuda para priorizar la lectura, no una evaluación de la persona ni de su
+          idoneidad: la decisión de entrevistar y contratar es tuya y tiene que tomarla una persona, revisando cada
+          perfil. Recordá que la Ley 23.592 y la Ley de Contrato de Trabajo prohíben seleccionar por motivos
+          discriminatorios como edad, sexo, nacionalidad, apariencia, religión, ideología o situación familiar.
+          <p style={{ margin: '10px 0 0' }}>
+            Matchy no participa de las entrevistas ni de la contratación, y no responde por lo que ocurra entre vos
+            y los candidatos.
+          </p>
+        </div>
+
         {postulaciones.length === 0 && <p>Todavía no hay postulantes.</p>}
 
         {postulaciones.map((p) => (
@@ -251,11 +287,45 @@ export default function RankingVacante({ params }) {
                   Volver a considerar
                 </button>
               ) : (
-                <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'descartado')}>
-                  No me interesa
-                </button>
+                <>
+                  {p.estado !== 'preseleccionado' && (
+                    <button className="btn blanco" onClick={() => preseleccionar(p)}>
+                      Avanzar con esta persona
+                    </button>
+                  )}
+                  {p.estado === 'preseleccionado' && !referencias[p.candidato_id] && (
+                    <button className="btn blanco" onClick={() => verReferencias(p)}>
+                      Ver referencias
+                    </button>
+                  )}
+                  <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'descartado')}>
+                    No me interesa
+                  </button>
+                </>
               )}
             </div>
+
+            {referencias[p.candidato_id] && (
+              <div className="aviso-legal" style={{ marginTop: 12 }}>
+                <strong>Referencias declaradas por el candidato</strong>
+                {referencias[p.candidato_id].length === 0 ? (
+                  <p style={{ margin: '8px 0 0' }}>No cargó contactos de referencia.</p>
+                ) : (
+                  referencias[p.candidato_id].map((r, i) => (
+                    <p key={i} style={{ margin: '8px 0 0' }}>
+                      {r.ref_nombre}
+                      {r.ref_relacion ? `, ${r.ref_relacion}` : ''}
+                      {r.empresa ? ` en ${r.empresa}` : ''}
+                      {r.ref_email ? ` · ${r.ref_email}` : ''}
+                      {r.ref_celular ? ` · ${r.ref_celular}` : ''}
+                    </p>
+                  ))
+                )}
+                <p style={{ margin: '10px 0 0', fontSize: '0.8rem', color: 'var(--texto-suave)' }}>
+                  Usá estos contactos solo para verificar la experiencia de esta postulación.
+                </p>
+              </div>
+            )}
 
             {p.entrevista ? (
               <div style={{ marginTop: 10 }}>

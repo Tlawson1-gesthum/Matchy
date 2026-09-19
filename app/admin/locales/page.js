@@ -13,6 +13,7 @@ export default function AdminLocales() {
   const [locales, setLocales] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [reportes, setReportes] = useState([]);
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -36,6 +37,14 @@ export default function AdminLocales() {
 
     if (err) setError(err.message);
     setLocales(data || []);
+
+    const { data: reps } = await supabase
+      .from('reportes')
+      .select('*')
+      .eq('estado', 'abierto')
+      .order('created_at', { ascending: false });
+    setReportes(reps || []);
+
     setCargando(false);
   }
 
@@ -46,7 +55,12 @@ export default function AdminLocales() {
       const ok = window.confirm(`¿Rechazar a ${nombre}? No va a poder publicar vacantes.`);
       if (!ok) return;
     }
-    const { error: err } = await supabase.from('empleadores').update({ estado }).eq('id', id);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error: err } = await supabase.from('empleadores').update({
+      estado,
+      verificado_at: new Date().toISOString(),
+      verificado_por: userData?.user?.id || null,
+    }).eq('id', id);
     if (err) { setError('No se pudo actualizar: ' + err.message); return; }
     setLocales((l) => l.map((x) => (x.id === id ? { ...x, estado } : x)));
   }
@@ -74,6 +88,28 @@ export default function AdminLocales() {
       <div className="container" style={{ maxWidth: 820 }}>
         <h1>Locales registrados</h1>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+
+        {reportes.length > 0 && (
+          <div className="aviso-legal" style={{ borderLeft: '3px solid var(--tierra)' }}>
+            <strong>{reportes.length} {reportes.length === 1 ? 'aviso reportado' : 'avisos reportados'} sin revisar</strong>
+            {reportes.map((r) => (
+              <p key={r.id} style={{ margin: '8px 0 0', fontSize: '0.86rem' }}>
+                {new Date(r.created_at).toLocaleDateString('es-AR')}: {r.motivo}
+              </p>
+            ))}
+          </div>
+        )}
+
+        <div className="aviso-legal">
+          <strong>Antes de aprobar un local, verificá.</strong>
+          <ul style={{ margin: '8px 0 0', paddingLeft: 18 }}>
+            <li>Que la red social exista, tenga publicaciones recientes y coincida con el nombre de fantasía.</li>
+            <li>Que la dirección corresponda a un local comercial y no a una casa particular.</li>
+            <li>Que el CUIT sea de una empresa o monotributista, buscándolo en el padrón de AFIP.</li>
+            <li>Llamá al teléfono del responsable y confirmá que trabaja ahí. Es el paso que más fraude evita.</li>
+            <li>Si algo no cierra, rechazalo. Es preferible perder un local real que habilitar uno falso.</li>
+          </ul>
+        </div>
 
         <h3 style={{ marginTop: 24 }}>
           Esperando aprobación ({pendientes.length})
@@ -115,6 +151,13 @@ function FichaLocal({ local, onCambiar }) {
         <p style={{ margin: '3px 0' }}><strong>CUIT:</strong> {local.cuit || '—'}</p>
         <p style={{ margin: '3px 0' }}><strong>Dirección:</strong> {local.direccion || '—'}</p>
         <p style={{ margin: '3px 0' }}><strong>Teléfono:</strong> {local.telefono || '—'}</p>
+        <p style={{ margin: '3px 0' }}><strong>Contacto público:</strong> {local.contacto || '—'}</p>
+        <p style={{ margin: '3px 0' }}>
+          <strong>Declaración jurada:</strong>{' '}
+          {local.declaracion_jurada_at
+            ? `firmada el ${new Date(local.declaracion_jurada_at).toLocaleDateString('es-AR')}`
+            : 'no firmada (alta anterior al requisito)'}
+        </p>
         <p style={{ margin: '3px 0' }}>
           <strong>Redes:</strong>{' '}
           {insta ? (

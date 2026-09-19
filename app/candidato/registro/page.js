@@ -20,12 +20,24 @@ export default function RegistroCandidato() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [aceptaTyc, setAceptaTyc] = useState(false);
+  const [esMayor, setEsMayor] = useState(false);
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+
+    if (!esMayor) {
+      setError('Para usar Matchy tenés que ser mayor de 18 años.');
+      return;
+    }
+    if (!aceptaTyc) {
+      setError('Necesitamos que aceptes los términos y la política de privacidad para crear tu cuenta.');
+      return;
+    }
+
     setCargando(true);
 
     const { data, error: errAuth } = await supabase.auth.signUp({ email, password });
@@ -44,7 +56,11 @@ export default function RegistroCandidato() {
     const userId = data.user?.id;
     if (userId) {
       await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
-      await supabase.from('cvs').insert({ id: userId });
+      await supabase.from('cvs').insert({
+        id: userId,
+        acepto_tyc_at: new Date().toISOString(),
+        declara_mayor_edad: true,
+      });
     }
 
     setCargando(false);
@@ -93,6 +109,20 @@ export default function RegistroCandidato() {
               />
               <p style={{ fontSize: '0.8rem', color: '#7A746A', margin: '6px 0 0' }}>Mínimo 6 caracteres.</p>
             </div>
+
+            <label className="casilla-legal">
+              <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
+              <span>Declaro que soy mayor de 18 años.</span>
+            </label>
+
+            <label className="casilla-legal">
+              <input type="checkbox" checked={aceptaTyc} onChange={(e) => setAceptaTyc(e.target.checked)} />
+              <span>
+                Leí y acepto los <a href="/legal/terminos" target="_blank">términos y condiciones</a> y la{' '}
+                <a href="/legal/privacidad" target="_blank">política de privacidad</a>, incluida la transferencia
+                de mis datos a servidores ubicados fuera del país que allí se detalla.
+              </span>
+            </label>
 
             {error && <p style={{ color: '#B5432A' }}>{error}</p>}
 

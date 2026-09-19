@@ -201,6 +201,11 @@ export default function CvForm() {
           <div className="form-field">
             <label>Edad (opcional)</label>
             <input type="number" value={cv.edad || ''} onChange={(e) => set('edad', e.target.value)} />
+            <p style={{ fontSize: '0.8rem', color: 'var(--texto-suave)', margin: '6px 0 0' }}>
+              La edad y la foto son opcionales y podés dejarlas vacías. Nadie puede rechazarte por tu edad ni por
+              tu apariencia: la Ley 23.592 y la Ley de Contrato de Trabajo lo prohíben. Tampoco influyen en tu
+              porcentaje de compatibilidad.
+            </p>
           </div>
           <div className="form-field">
             <label>Dónde vivís</label>
@@ -290,6 +295,10 @@ export default function CvForm() {
 
               <div style={{ borderTop: '1px solid #EEEBE4', paddingTop: 12, marginTop: 4 }}>
                 <strong style={{ fontSize: '0.88rem' }}>Contacto de referencia (opcional)</strong>
+                <div className="tip" style={{ marginTop: 8 }}>
+                  Estos datos no se muestran en tu CV público. Solo se le entregan a un local cuando decide avanzar
+                  con vos. Cargá a alguien únicamente si esa persona te autorizó a compartir su contacto.
+                </div>
                 <div className="form-field" style={{ marginTop: 8 }}>
                   <label>Nombre</label>
                   <input value={exp.ref_nombre || ''} onChange={(e) => editarExperiencia(i, 'ref_nombre', e.target.value)} />

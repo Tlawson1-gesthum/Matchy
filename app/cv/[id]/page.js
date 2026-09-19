@@ -13,10 +13,9 @@ const supabaseServidor = createClient(
 
 export default async function CvPublico({ params }) {
   const { data: cv } = await supabaseServidor
-    .from('cvs')
+    .from('cvs_publicos')
     .select('*')
     .eq('id', params.id)
-    .eq('publico', true)
     .single();
 
   if (!cv) {

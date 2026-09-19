@@ -106,6 +106,14 @@ export default function EntrevistasCandidato() {
         <h1>Mis entrevistas</h1>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
 
+        <div className="aviso-legal">
+          <strong>Cuidate en la entrevista.</strong> Las entrevistas se hacen en el local y en horario comercial.
+          Nadie puede pedirte dinero, tus claves bancarias ni que trabajes gratis a modo de prueba. Contale a
+          alguien de confianza adónde vas. Matchy coordina el contacto pero no participa de la entrevista ni
+          responde por lo que ocurra en ella: si algo te resulta raro, no vayas y escribinos a{' '}
+          <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
+        </div>
+
         {entrevistas.length === 0 && (
           <div className="card">
             <p style={{ marginTop: 0 }}>Todavía no tenés propuestas de entrevista.</p>
