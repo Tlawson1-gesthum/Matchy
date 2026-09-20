@@ -1094,3 +1094,159 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 }
 
 .lista-secundaria a { color: var(--oro-oscuro); }
+
+/* ============================================================
+   PANEL DE ADMINISTRACIÓN — FICHA DE LOCAL
+   ============================================================ */
+.ficha-local {
+  background: var(--blanco);
+  border: 1px solid #E6E3DA;
+  border-radius: 14px;
+  padding: 22px 24px 0;
+  margin-bottom: 16px;
+}
+
+.ficha-local-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #F0EEE7;
+}
+
+.ficha-local-nombre {
+  font-family: var(--font-titulos);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--verde);
+  margin: 0 0 3px;
+  letter-spacing: -0.015em;
+}
+
+.ficha-local-rubro {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.pildora {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pildora.aprobado { background: #E7EFE7; color: #3C6144; }
+.pildora.pendiente { background: #F1EFE7; color: #7A7359; }
+.pildora.rechazado { background: #F4E7E2; color: #8F4030; }
+
+.ficha-local-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 32px;
+  padding: 20px 0 4px;
+}
+
+@media (min-width: 680px) {
+  .ficha-local-grid { grid-template-columns: 1fr 1fr; gap: 4px 40px; }
+}
+
+.ficha-bloque { min-width: 0; }
+
+.ficha-bloque-titulo {
+  font-family: var(--font-datos);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--verde-claro);
+  margin: 0 0 12px;
+  font-weight: 500;
+}
+
+.ficha-bloque + .ficha-bloque { margin-top: 20px; }
+
+@media (min-width: 680px) {
+  .ficha-bloque + .ficha-bloque { margin-top: 0; }
+}
+
+.dato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+
+.dato-rotulo {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8E8C80;
+}
+
+.dato-valor {
+  font-size: 0.94rem;
+  color: var(--texto);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.enlace-sutil {
+  color: var(--verde-claro);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  margin-left: 8px;
+  font-size: 0.84rem;
+}
+
+.dato-valor > .enlace-sutil:only-child { margin-left: 0; }
+
+.enlace-sutil:hover {
+  color: var(--verde);
+  border-bottom-color: var(--verde);
+}
+
+.ficha-local-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid #F0EEE7;
+  padding: 14px 0;
+  margin-top: 6px;
+}
+
+.ficha-nota {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.ficha-botones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.btn-rechazar {
+  background: transparent;
+  color: #9C3A22;
+  border: 1px solid #E8D3CC;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-family: var(--font-cuerpo);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-rechazar:hover { border-color: #C8705C; background: #FBF4F2; }
+
+.ficha-local .btn { padding: 10px 22px; font-size: 0.9rem; }

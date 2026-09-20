@@ -239,6 +239,16 @@ export default function AdminLocales() {
         ))}
         <div style={{ height: 40 }} />
       </div>
+      <Pie />
+    </div>
+  );
+}
+
+function Dato({ etiqueta: rotulo, children }) {
+  return (
+    <div className="dato">
+      <span className="dato-rotulo">{rotulo}</span>
+      <span className="dato-valor">{children || '—'}</span>
     </div>
   );
 }
@@ -247,69 +257,85 @@ function FichaLocal({ local, onCambiar }) {
   const enlacePublico = (local.red_social || '').startsWith('http')
     ? local.red_social
     : `https://${(local.red_social || '').replace('@', '')}`;
+
+  const estadoClase =
+    local.estado === 'aprobado' ? 'aprobado' : local.estado === 'rechazado' ? 'rechazado' : 'pendiente';
+
   return (
-    <div className="card" style={{ marginBottom: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+    <article className="ficha-local">
+      <header className="ficha-local-cabecera">
         <div>
-          <h3 style={{ marginBottom: 2 }}>{local.nombre_local || '(sin nombre)'}</h3>
-          <p className="mono" style={{ fontSize: '0.76rem', margin: 0 }}>
-            {etiqueta(TIPOS_LOCAL, local.tipo_local)} · {local.ciudad}
+          <h3 className="ficha-local-nombre">{local.nombre_local || '(sin nombre)'}</h3>
+          <p className="ficha-local-rubro">
+            {[etiqueta(TIPOS_LOCAL, local.tipo_local), local.ciudad].filter(Boolean).join(' · ')}
           </p>
         </div>
-        <span className={`badge ${local.estado === 'aprobado' ? 'alto' : local.estado === 'rechazado' ? 'bajo' : 'medio'}`}>
-          {local.estado}
-        </span>
-      </div>
+        <span className={`pildora ${estadoClase}`}>{local.estado}</span>
+      </header>
 
-      <div style={{ marginTop: 12, fontSize: '0.9rem' }}>
-        <p style={{ margin: '3px 0' }}><strong>Responsable:</strong> {local.nombre_responsable || '—'}</p>
-        <p style={{ margin: '3px 0' }}><strong>Razón social:</strong> {local.razon_social || '—'}</p>
-        <p style={{ margin: '3px 0' }}>
-          <strong>CUIT:</strong> {local.cuit || '—'}
-          {local.cuit && (
-            <>
-              {' '}
-              <a
-                href={`https://www.afip.gob.ar/sitio/externos/default.asp#tab3`}
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: '0.82rem' }}
-              >
-                verificar en AFIP
+      <div className="ficha-local-grid">
+        <section className="ficha-bloque">
+          <h4 className="ficha-bloque-titulo">Datos fiscales</h4>
+          <Dato etiqueta="Responsable">{local.nombre_responsable}</Dato>
+          <Dato etiqueta="Razón social">{local.razon_social}</Dato>
+          <Dato etiqueta="CUIT">
+            {local.cuit ? (
+              <>
+                {local.cuit}
+                <a
+                  className="enlace-sutil"
+                  href="https://www.afip.gob.ar/sitio/externos/default.asp#tab3"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  verificar en AFIP
+                </a>
+              </>
+            ) : null}
+          </Dato>
+          <Dato etiqueta="Declaración jurada">
+            {local.declaracion_jurada_at
+              ? `Firmada el ${new Date(local.declaracion_jurada_at).toLocaleDateString('es-AR')}`
+              : 'Sin firmar (alta anterior al requisito)'}
+          </Dato>
+        </section>
+
+        <section className="ficha-bloque">
+          <h4 className="ficha-bloque-titulo">Contacto y ubicación</h4>
+          <Dato etiqueta="Dirección">{local.direccion}</Dato>
+          <Dato etiqueta="Teléfono del responsable">{local.telefono}</Dato>
+          <Dato etiqueta="Contacto público">{local.contacto}</Dato>
+          <Dato etiqueta="Enlace público">
+            {local.red_social ? (
+              <a className="enlace-sutil" href={enlacePublico} target="_blank" rel="noreferrer">
+                {local.red_social}
               </a>
-            </>
-          )}
-        </p>
-        <p style={{ margin: '3px 0' }}><strong>Dirección:</strong> {local.direccion || '—'}</p>
-        <p style={{ margin: '3px 0' }}><strong>Teléfono:</strong> {local.telefono || '—'}</p>
-        <p style={{ margin: '3px 0' }}><strong>Contacto público:</strong> {local.contacto || '—'}</p>
-        <p style={{ margin: '3px 0' }}>
-          <strong>Declaración jurada:</strong>{' '}
-          {local.declaracion_jurada_at
-            ? `firmada el ${new Date(local.declaracion_jurada_at).toLocaleDateString('es-AR')}`
-            : 'no firmada (alta anterior al requisito)'}
-        </p>
-        <p style={{ margin: '3px 0' }}>
-          <strong>Enlace público:</strong>{' '}
-          {local.red_social ? (
-            <a href={enlacePublico} target="_blank" rel="noreferrer">{local.red_social}</a>
-          ) : '—'}
-        </p>
+            ) : null}
+          </Dato>
+        </section>
       </div>
 
-      <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
-        {local.estado !== 'aprobado' && (
-          <button className="btn" onClick={() => onCambiar(local.id, 'aprobado', local.nombre_local)}>
-            Aprobar
-          </button>
+      <footer className="ficha-local-acciones">
+        {local.estado === 'aprobado' && (
+          <span className="ficha-nota">
+            {local.verificado_at
+              ? `Aprobado el ${new Date(local.verificado_at).toLocaleDateString('es-AR')}`
+              : 'Aprobado'}
+          </span>
         )}
-        {local.estado !== 'rechazado' && (
-          <button className="btn blanco" onClick={() => onCambiar(local.id, 'rechazado', local.nombre_local)}>
-            Rechazar
-          </button>
-        )}
-      </div>
-      <Pie />
-    </div>
+        <div className="ficha-botones">
+          {local.estado !== 'rechazado' && (
+            <button className="btn-rechazar" onClick={() => onCambiar(local.id, 'rechazado', local.nombre_local)}>
+              Rechazar
+            </button>
+          )}
+          {local.estado !== 'aprobado' && (
+            <button className="btn" onClick={() => onCambiar(local.id, 'aprobado', local.nombre_local)}>
+              Aprobar
+            </button>
+          )}
+        </div>
+      </footer>
+    </article>
   );
 }
