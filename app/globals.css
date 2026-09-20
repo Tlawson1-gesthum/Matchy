@@ -871,3 +871,36 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 }
 
 .tarjeta-acceso a { color: var(--oro-oscuro); }
+
+.pasos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.paso {
+  font-family: var(--font-datos);
+  font-size: 0.74rem;
+  color: var(--texto-suave);
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 5px 14px;
+}
+
+.paso.activo { background: var(--verde); color: var(--blanco); border-color: var(--verde); }
+.paso.hecho { color: var(--verde); border-color: var(--verde); }
+
+.chequeo-ok {
+  font-size: 0.82rem;
+  color: #2F6B3C;
+  margin: 6px 0 0;
+}
+
+.chequeo-mal {
+  font-size: 0.82rem;
+  color: #9C3A22;
+  margin: 6px 0 0;
+  line-height: 1.45;
+}

@@ -217,9 +217,9 @@ export default function AdminLocales() {
         <div className="aviso-legal">
           <strong>Antes de aprobar un local, verificá.</strong>
           <ul style={{ margin: '8px 0 0', paddingLeft: 18 }}>
-            <li>Que la red social exista, tenga publicaciones recientes y coincida con el nombre de fantasía.</li>
+            <li>Abrí el enlace público: que exista, tenga publicaciones recientes y coincida con el nombre de fantasía.</li>
             <li>Que la dirección corresponda a un local comercial y no a una casa particular.</li>
-            <li>Que el CUIT sea de una empresa o monotributista, buscándolo en el padrón de AFIP.</li>
+            <li>Buscá el CUIT en el padrón de AFIP y confirmá que la razón social coincida con la declarada.</li>
             <li>Llamá al teléfono del responsable y confirmá que trabaja ahí. Es el paso que más fraude evita.</li>
             <li>Si algo no cierra, rechazalo. Es preferible perder un local real que habilitar uno falso.</li>
           </ul>
@@ -244,7 +244,9 @@ export default function AdminLocales() {
 }
 
 function FichaLocal({ local, onCambiar }) {
-  const insta = (local.red_social || '').replace('@', '');
+  const enlacePublico = (local.red_social || '').startsWith('http')
+    ? local.red_social
+    : `https://${(local.red_social || '').replace('@', '')}`;
   return (
     <div className="card" style={{ marginBottom: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
@@ -262,7 +264,22 @@ function FichaLocal({ local, onCambiar }) {
       <div style={{ marginTop: 12, fontSize: '0.9rem' }}>
         <p style={{ margin: '3px 0' }}><strong>Responsable:</strong> {local.nombre_responsable || '—'}</p>
         <p style={{ margin: '3px 0' }}><strong>Razón social:</strong> {local.razon_social || '—'}</p>
-        <p style={{ margin: '3px 0' }}><strong>CUIT:</strong> {local.cuit || '—'}</p>
+        <p style={{ margin: '3px 0' }}>
+          <strong>CUIT:</strong> {local.cuit || '—'}
+          {local.cuit && (
+            <>
+              {' '}
+              <a
+                href={`https://www.afip.gob.ar/sitio/externos/default.asp#tab3`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ fontSize: '0.82rem' }}
+              >
+                verificar en AFIP
+              </a>
+            </>
+          )}
+        </p>
         <p style={{ margin: '3px 0' }}><strong>Dirección:</strong> {local.direccion || '—'}</p>
         <p style={{ margin: '3px 0' }}><strong>Teléfono:</strong> {local.telefono || '—'}</p>
         <p style={{ margin: '3px 0' }}><strong>Contacto público:</strong> {local.contacto || '—'}</p>
@@ -273,9 +290,9 @@ function FichaLocal({ local, onCambiar }) {
             : 'no firmada (alta anterior al requisito)'}
         </p>
         <p style={{ margin: '3px 0' }}>
-          <strong>Redes:</strong>{' '}
-          {insta ? (
-            <a href={`https://instagram.com/${insta}`} target="_blank" rel="noreferrer">@{insta}</a>
+          <strong>Enlace público:</strong>{' '}
+          {local.red_social ? (
+            <a href={enlacePublico} target="_blank" rel="noreferrer">{local.red_social}</a>
           ) : '—'}
         </p>
       </div>
