@@ -117,6 +117,10 @@ export default function NuevaVacante() {
       <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
       <div className="container" style={{ maxWidth: 600 }}>
         <h1>Publicar vacante</h1>
+        <p>
+          ¿Primera vez? <a href="/vacante-ejemplo" target="_blank">Mirá un ejemplo</a> de cómo se ve una vacante
+          bien cargada y una mal cargada.
+        </p>
 
         {empleador.estado === 'pendiente' && (
           <div className="tip">

@@ -51,6 +51,8 @@ export default function RegistroEmpleador() {
 
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [subiendoLogo, setSubiendoLogo] = useState(false);
+  const [logoUrl, setLogoUrl] = useState('');
 
   const chequeoCuit = revisarCuit(form.cuit);
   const chequeoRed = revisarRedSocial(form.red_social);
@@ -76,6 +78,25 @@ export default function RegistroEmpleador() {
 
   function set(campo, valor) {
     setForm((f) => ({ ...f, [campo]: valor }));
+  }
+
+  async function subirLogo(e) {
+    const file = e.target.files[0];
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData?.user?.id;
+    if (!file || !uid) return;
+    setSubiendoLogo(true);
+    const ext = file.name.split('.').pop();
+    const path = `${uid}/logo.${ext}`;
+    const { error: errUp } = await supabase.storage
+      .from('logos-locales').upload(path, file, { upsert: true });
+    if (!errUp) {
+      const { data } = supabase.storage.from('logos-locales').getPublicUrl(path);
+      setLogoUrl(`${data.publicUrl}?t=${Date.now()}`);
+    } else {
+      setError('No se pudo subir el logo: ' + errUp.message);
+    }
+    setSubiendoLogo(false);
   }
 
   async function crearCuenta(e) {
@@ -131,6 +152,7 @@ export default function RegistroEmpleador() {
       direccion: form.direccion,
       telefono: form.telefono,
       red_social: chequeoRed.normalizada || form.red_social,
+      logo_url: logoUrl || null,
       contacto: form.contacto,
       estado: 'pendiente',
       acepto_tyc_at: ahora,
@@ -217,6 +239,22 @@ export default function RegistroEmpleador() {
                 <label>Nombre de fantasía</label>
                 <input required value={form.nombre_local} onChange={(e) => set('nombre_local', e.target.value)} />
               </div>
+              <div className="form-field">
+                <label>Logo del local (opcional)</label>
+                <input type="file" accept="image/*" onChange={subirLogo} />
+                {subiendoLogo && <p className="ayuda-campo">Subiendo...</p>}
+                {logoUrl && (
+                  <img
+                    src={logoUrl}
+                    alt=""
+                    style={{ width: 64, height: 64, borderRadius: 10, objectFit: 'cover', marginTop: 10, border: '1px solid var(--borde)' }}
+                  />
+                )}
+                <p className="ayuda-campo">
+                  Aparece junto al nombre en cada vacante. Un aviso con logo se reconoce más rápido.
+                </p>
+              </div>
+
               <div className="form-field">
                 <label>Razón social</label>
                 <input required value={form.razon_social} onChange={(e) => set('razon_social', e.target.value)} />

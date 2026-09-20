@@ -92,7 +92,10 @@ export default function VacantesEmpleador() {
         {vacantes.length === 0 && (
           <div className="card">
             <p style={{ marginTop: 0 }}>Todavía no publicaste ninguna vacante.</p>
-            <a className="btn" href="/empleador/vacantes/nueva">Publicar la primera</a>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <a className="btn" href="/empleador/vacantes/nueva">Publicar la primera</a>
+              <a className="btn blanco" href="/vacante-ejemplo">Ver un ejemplo</a>
+            </div>
           </div>
         )}
         {[...vacantes].sort((a, b) => (a.estado === 'activa' ? -1 : 1) - (b.estado === 'activa' ? -1 : 1)).map((v) => (

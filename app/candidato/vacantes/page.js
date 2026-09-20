@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
-import { calcularPuntaje, comoMejorar } from '../../../lib/scoring';
+import { calcularPuntaje } from '../../../lib/scoring';
 import TickerActividad from '../../../components/TickerActividad';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -233,13 +233,20 @@ export default function VacantesCandidato() {
           return (
             <div key={v.id} className="card vacante" style={{ marginBottom: 18 }}>
               <div className="vacante-cabecera">
-                <div>
-                  <span className="vacante-local">{v.local?.nombre_local || 'Local de Posadas'}</span>
-                  <span className="vacante-tipo">
-                    {etiqueta(TIPOS_LOCAL, v.local?.tipo_local) || 'Gastronomía'}
-                    {v.local?.ciudad ? ` · ${v.local.ciudad}` : ''}
-                    {v.local?.direccion ? ` · ${v.local.direccion}` : ''}
-                  </span>
+                <div className="vacante-identidad">
+                  {v.local?.logo_url && (
+                    <img className="vacante-logo" src={v.local.logo_url} alt="" />
+                  )}
+                  <div style={{ minWidth: 0 }}>
+                    <span className="vacante-local">{v.local?.nombre_local || 'Local de Posadas'}</span>
+                    <span className="vacante-tipo">
+                      {[
+                        etiqueta(TIPOS_LOCAL, v.local?.tipo_local) || 'Gastronomía',
+                        v.local?.ciudad,
+                        v.local?.direccion,
+                      ].filter(Boolean).join(' • ')}
+                    </span>
+                  </div>
                 </div>
                 <div className="etiquetas-vacante">
                   {cierre && !cierre.vencida && (
@@ -251,7 +258,7 @@ export default function VacantesCandidato() {
                 </div>
               </div>
 
-              <h3 style={{ margin: '10px 0 6px' }}>
+              <h3 className="vacante-puesto">
                 {v.puesto === 'Otro' && v.puesto_otro ? v.puesto_otro : v.puesto}
               </h3>
 
@@ -268,61 +275,36 @@ export default function VacantesCandidato() {
                 {v.certificado_requerido && <span>Certificado de manipulación</span>}
               </div>
 
-              {v.descripcion && <p style={{ marginTop: 12 }}>{v.descripcion}</p>}
-
-              <p className="mono vacante-meta">{textoAntiguedad(v.created_at)}</p>
+              {v.descripcion && <p className="vacante-descripcion">{v.descripcion}</p>}
 
               <div className="senales-vacante">
                 {mirando > 1 && (
                   <span>
-                    <span aria-hidden="true">👁️</span>
+                    <span className="icono" aria-hidden="true">👁️</span>
                     {mirando} {mirando === 1 ? 'persona miró' : 'personas miraron'} esta vacante esta semana
                   </span>
                 )}
                 {cantidad > 0 && (
                   <span>
-                    <span aria-hidden="true">🔥</span>
+                    <span className="icono" aria-hidden="true">🔥</span>
                     {cantidad} {cantidad === 1 ? 'persona ya se postuló' : 'personas ya se postularon'}
                   </span>
                 )}
                 {cantidad === 0 && (
                   <span>
-                    <span aria-hidden="true">✨</span>
+                    <span className="icono" aria-hidden="true">✨</span>
                     Nadie se postuló todavía: sé la primera persona
                   </span>
                 )}
               </div>
 
-              <p style={{ margin: '0 0 10px' }}>
-                <button
-                  className="enlace-reporte"
-                  onClick={() => reportar(v)}
-                  type="button"
-                >
-                  Reportar este aviso
-                </button>
-              </p>
-
               {miCv && !postuladas.has(v.id) && (() => {
                 const { puntaje } = calcularPuntaje(v, miCv);
                 const clase = puntaje >= 70 ? '' : puntaje >= 40 ? 'tibio' : 'frio';
-                const mejoras = comoMejorar(v, miCv);
                 return (
-                  <div style={{ margin: '0 0 12px' }}>
+                  <p style={{ margin: '0 0 14px' }}>
                     <span className={`match-chip ${clase}`}>Tenés {puntaje}% de matchyar</span>
-                    {mejoras.length > 0 && puntaje < 85 && (
-                      <details className="detalle-mejora">
-                        <summary>Cómo podrías mejorar tu compatibilidad</summary>
-                        <ul style={{ margin: '8px 0 0', paddingLeft: 18 }}>
-                          {mejoras.map((m, i) => <li key={i}>{m}</li>)}
-                        </ul>
-                        <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: 'var(--texto-suave)' }}>
-                          Cargá solo lo que sea cierto. El porcentaje se congela cuando te postulás, y el empleador
-                          verifica la experiencia en la entrevista y con tus referencias.
-                        </p>
-                      </details>
-                    )}
-                  </div>
+                  </p>
                 );
               })()}
 
@@ -368,6 +350,14 @@ export default function VacantesCandidato() {
                   )}
                 </>
               )}
+
+              <p className="vacante-meta">
+                {textoAntiguedad(v.created_at)}
+                <span aria-hidden="true"> · </span>
+                <button className="enlace-reporte" onClick={() => reportar(v)} type="button">
+                  Reportar este aviso
+                </button>
+              </p>
             </div>
           );
         })}
