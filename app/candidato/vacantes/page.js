@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
 import TickerActividad from '../../../components/TickerActividad';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -36,7 +37,7 @@ function textoAntiguedad(fecha) {
   return `Publicada hace ${Math.floor(d / 7)} semanas`;
 }
 
-export default function VacantesCandidato() {
+function VacantesCandidatoContenido() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [vacantes, setVacantes] = useState([]);
@@ -363,7 +364,7 @@ export default function VacantesCandidato() {
         })}
         {vacantesFiltradas.length > 0 && (
           <>
-          <div className="aviso-legal" style={{ marginTop: 20 }}>
+          <div className="nota-final" style={{ marginTop: 28 }}>
             <strong>Sobre el porcentaje de compatibilidad.</strong> Se calcula comparando lo que cargaste en tu CV
             con los requisitos que el local declaró en la vacante: puesto, años de experiencia, turno,
             disponibilidad, movilidad, certificado y herramientas. No evalúa tus cualidades como persona ni tu
@@ -382,7 +383,7 @@ export default function VacantesCandidato() {
             </p>
           </div>
 
-          <div className="aviso-legal">
+          <div className="nota-final">
             <strong>Cuidate de los avisos falsos.</strong> Matchy es gratis para vos y verificamos cada local antes
             de habilitarlo. Ningún empleador serio te va a pedir dinero para darte el puesto, ni tu clave bancaria,
             ni que trabajes gratis a prueba. Las entrevistas se hacen en el local, en horario comercial. Si algo te
@@ -394,5 +395,13 @@ export default function VacantesCandidato() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function VacantesCandidato(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <VacantesCandidatoContenido {...props} />
+    </GuardiaRol>
   );
 }

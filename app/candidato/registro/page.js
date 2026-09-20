@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import BotonGoogle from '../../../components/BotonGoogle';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -17,7 +18,7 @@ function traducirError(msg) {
   return msg;
 }
 
-export default function RegistroCandidato() {
+function RegistroCandidatoContenido() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -142,5 +143,13 @@ export default function RegistroCandidato() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function RegistroCandidato(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <RegistroCandidatoContenido {...props} />
+    </GuardiaRol>
   );
 }

@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import VerificarTelefono from '../../../components/VerificarTelefono';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
-export default function VacantesEmpleador() {
+function VacantesEmpleadorContenido() {
   const router = useRouter();
   const [vacantes, setVacantes] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -140,5 +141,13 @@ export default function VacantesEmpleador() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function VacantesEmpleador(props) {
+  return (
+    <GuardiaRol rol="empleador">
+      <VacantesEmpleadorContenido {...props} />
+    </GuardiaRol>
   );
 }

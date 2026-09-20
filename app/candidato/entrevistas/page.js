@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -14,7 +15,7 @@ const ESTADOS = {
   reagendar_propuesto: 'Propusiste otro horario',
 };
 
-export default function EntrevistasCandidato() {
+function EntrevistasCandidatoContenido() {
   const router = useRouter();
   const [entrevistas, setEntrevistas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -197,5 +198,13 @@ export default function EntrevistasCandidato() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function EntrevistasCandidato(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <EntrevistasCandidatoContenido {...props} />
+    </GuardiaRol>
   );
 }

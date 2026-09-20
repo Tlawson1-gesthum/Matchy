@@ -6,6 +6,7 @@ import { supabase } from '../../../../lib/supabaseClient';
 import { calcularPuntaje } from '../../../../lib/scoring';
 import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
+import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
 
@@ -22,7 +23,7 @@ function badgeClase(puntaje) {
   return 'bajo';
 }
 
-export default function RankingVacante({ params }) {
+function RankingVacanteContenido({ params }) {
   const router = useRouter();
   const [vacante, setVacante] = useState(null);
   const [postulaciones, setPostulaciones] = useState([]);
@@ -437,5 +438,13 @@ export default function RankingVacante({ params }) {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function RankingVacante(props) {
+  return (
+    <GuardiaRol rol="empleador">
+      <RankingVacanteContenido {...props} />
+    </GuardiaRol>
   );
 }

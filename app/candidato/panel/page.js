@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import GuardiaRol from '../../../components/GuardiaRol';
+import { IconoMaletin, IconoSobre, IconoCalendario, IconoMegafono } from '../../../components/IconosPanel';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -29,7 +31,7 @@ function queFalta(cv) {
   return faltas;
 }
 
-export default function PanelCandidato() {
+function PanelCandidatoContenido() {
   const router = useRouter();
   const [cv, setCv] = useState(null);
   const [postulaciones, setPostulaciones] = useState([]);
@@ -85,23 +87,33 @@ export default function PanelCandidato() {
       <div className="container" style={{ maxWidth: 900 }}>
         <h1>Hola{cv.nombre ? `, ${cv.nombre.split(' ')[0]}` : ''}</h1>
 
-        <div className="fila-cifras" style={{ marginBottom: 8 }}>
-          <div>
-            <div className="panel-cifra">{postulaciones.length}</div>
-            <div className="panel-cifra-label">{postulaciones.length === 1 ? 'postulación' : 'postulaciones'}</div>
+        <div className="metricas">
+          <div className="metrica">
+            <span className="metrica-icono"><IconoMaletin /></span>
+            <span className="metrica-numero">{postulaciones.length}</span>
+            <span className="metrica-label">{postulaciones.length === 1 ? 'Postulación' : 'Postulaciones'}</span>
           </div>
-          <div>
-            <div className="panel-cifra">{pendientes}</div>
-            <div className="panel-cifra-label">entrevistas por responder</div>
+
+          <div className="metrica">
+            <span className="metrica-icono"><IconoSobre /></span>
+            <span className="metrica-numero">{pendientes}</span>
+            <span className="metrica-label">Entrevistas por responder</span>
           </div>
-          <div>
-            <div className="panel-cifra">{confirmadas}</div>
-            <div className="panel-cifra-label">entrevistas confirmadas</div>
+
+          <div className="metrica">
+            <span className="metrica-icono"><IconoCalendario /></span>
+            <span className="metrica-numero">{confirmadas}</span>
+            <span className="metrica-label">Entrevistas confirmadas</span>
           </div>
-          <div>
-            <div className="panel-cifra">{vacantesAbiertas}</div>
-            <div className="panel-cifra-label">vacantes abiertas hoy</div>
-          </div>
+
+          <a className="metrica destacada" href="/candidato/vacantes">
+            <span className="metrica-icono">
+              <IconoMegafono />
+              {vacantesAbiertas > 0 && <span className="punto-estado" aria-hidden="true" />}
+            </span>
+            <span className="metrica-numero">{vacantesAbiertas}</span>
+            <span className="metrica-label">Vacantes abiertas hoy</span>
+          </a>
         </div>
 
         <div className="panel-grid">
@@ -128,34 +140,42 @@ export default function PanelCandidato() {
 
           <div className="card">
             <h3>Qué hacer ahora</h3>
-            <ul style={{ paddingLeft: 18, margin: '10px 0 0' }}>
-              {pct < 100 && <li style={{ marginBottom: 8 }}>Terminá de cargar tu CV: es lo que más mueve la aguja.</li>}
-              {pendientes > 0 && (
-                <li style={{ marginBottom: 8 }}>
-                  Tenés {pendientes} {pendientes === 1 ? 'propuesta' : 'propuestas'} de entrevista sin responder.{' '}
-                  <a href="/candidato/entrevistas">Respondé acá</a>.
+
+            {pendientes > 0 ? (
+              <a className="cta-principal" href="/candidato/entrevistas">
+                Responder {pendientes} {pendientes === 1 ? 'entrevista' : 'entrevistas'}
+              </a>
+            ) : (
+              <a className="cta-principal" href="/candidato/vacantes">Ver vacantes abiertas</a>
+            )}
+
+            <ul className="lista-secundaria">
+              {pct < 100 && (
+                <li>
+                  Terminá de cargar tu CV: es lo que más mueve la aguja.{' '}
+                  <a href="/candidato/cv">Seguir cargándolo</a>.
                 </li>
               )}
-              {postulaciones.length === 0 && vacantesAbiertas > 0 && (
-                <li style={{ marginBottom: 8 }}>
-                  Todavía no te postulaste a nada. <a href="/candidato/vacantes">Mirá las vacantes abiertas</a>.
+              {pendientes > 0 && vacantesAbiertas > 0 && (
+                <li>
+                  Hay {vacantesAbiertas} {vacantesAbiertas === 1 ? 'vacante abierta' : 'vacantes abiertas'}.{' '}
+                  <a href="/candidato/vacantes">Mirarlas</a>.
                 </li>
               )}
-              <li style={{ marginBottom: 8 }}>
+              <li>
                 Compartí el link de tu CV por WhatsApp cuando golpees puertas.{' '}
                 <a href="/candidato/mi-perfil">Copialo acá</a>.
               </li>
               {!cv.certificado_manipulacion && !cv.certificado_url && (
-                <li style={{ marginBottom: 8 }}>
+                <li>
                   Sacá el certificado de manipulación de alimentos: muchas vacantes lo piden como requisito
                   excluyente.
                 </li>
               )}
               {cv.certificado_manipulacion && !cv.certificado_url && (
-                <li style={{ marginBottom: 8 }}>
-                  Subí una foto de tu certificado de manipulación de alimentos.{' '}
-                  <a href="/candidato/cv">Cargalo acá</a>. Declararlo sin el archivo suma la mitad de puntos en las
-                  vacantes que lo piden, porque el local no puede confirmarlo.
+                <li>
+                  Subí una foto de tu certificado de manipulación.{' '}
+                  <a href="/candidato/cv">Cargalo acá</a>. Sin el archivo suma la mitad de puntos.
                 </li>
               )}
             </ul>
@@ -168,5 +188,13 @@ export default function PanelCandidato() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function PanelCandidato(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <PanelCandidatoContenido {...props} />
+    </GuardiaRol>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
@@ -14,6 +14,22 @@ export default function LoginCandidato() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [yaTieneSesion, setYaTieneSesion] = useState(false);
+
+  // Si ya hay una sesión abierta no mostramos los accesos: evita que alguien
+  // entre con otra cuenta por encima de la que ya está usando.
+  useEffect(() => {
+    async function revisar() {
+      const { data } = await supabase.auth.getUser();
+      const u = data?.user;
+      if (!u) return;
+      setYaTieneSesion(true);
+      const { data: perfil } = await supabase
+        .from('perfiles').select('role').eq('id', u.id).maybeSingle();
+      router.replace(perfil?.role === 'empleador' ? '/empleador/vacantes' : '/candidato/panel');
+    }
+    revisar();
+  }, [router]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -58,6 +74,8 @@ export default function LoginCandidato() {
     setCargando(false);
     router.push('/candidato/panel');
   }
+
+  if (yaTieneSesion) return <div className="container">Ya tenés una sesión abierta, te llevamos a tu panel...</div>;
 
   return (
     <div>

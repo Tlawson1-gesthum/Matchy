@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 import ListaEditable from '../../../../components/ListaEditable';
 import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../../lib/opciones';
+import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
 
-export default function NuevaVacante() {
+function NuevaVacanteContenido() {
   const router = useRouter();
   const [empleador, setEmpleador] = useState(null);
   const [verificando, setVerificando] = useState(true);
@@ -256,5 +257,13 @@ export default function NuevaVacante() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function NuevaVacante(props) {
+  return (
+    <GuardiaRol rol="empleador">
+      <NuevaVacanteContenido {...props} />
+    </GuardiaRol>
   );
 }

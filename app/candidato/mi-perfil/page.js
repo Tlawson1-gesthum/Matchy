@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import CvHoja from '../../../components/CvHoja';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
-export default function MiPerfil() {
+function MiPerfilContenido() {
   const router = useRouter();
   const [cv, setCv] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -55,5 +56,13 @@ export default function MiPerfil() {
       <div style={{ height: 40 }} />
       <Pie />
     </div>
+  );
+}
+
+export default function MiPerfil(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <MiPerfilContenido {...props} />
+    </GuardiaRol>
   );
 }

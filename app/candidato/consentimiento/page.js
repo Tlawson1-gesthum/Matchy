@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
-export default function Consentimiento() {
+function ConsentimientoContenido() {
   const router = useRouter();
   const [error, setError] = useState('');
 
@@ -70,5 +71,13 @@ export default function Consentimiento() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function Consentimiento(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <ConsentimientoContenido {...props} />
+    </GuardiaRol>
   );
 }

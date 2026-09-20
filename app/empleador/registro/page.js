@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import { TIPOS_LOCAL, LOCALIDADES, revisarCuit, revisarRedSocial } from '../../../lib/opciones';
 import BotonGoogle from '../../../components/BotonGoogle';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -33,7 +34,7 @@ const LOCAL_VACIO = {
   telefono: '', red_social: '', contacto: '',
 };
 
-export default function RegistroEmpleador() {
+function RegistroEmpleadorContenido() {
   const router = useRouter();
   const [paso, setPaso] = useState('cargando'); // cargando | cuenta | local
   const [usuario, setUsuario] = useState(null);
@@ -359,5 +360,13 @@ export default function RegistroEmpleador() {
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function RegistroEmpleador(props) {
+  return (
+    <GuardiaRol rol="empleador">
+      <RegistroEmpleadorContenido {...props} />
+    </GuardiaRol>
   );
 }

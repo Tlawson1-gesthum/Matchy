@@ -9,6 +9,7 @@ import {
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
 import VerificarTelefono from '../../../components/VerificarTelefono';
+import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -47,7 +48,7 @@ const CV_VACIO = {
   certificado_manipulacion: false, certificado_url: '',
 };
 
-export default function CvForm() {
+function CvFormContenido() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [cv, setCv] = useState(CV_VACIO);
@@ -179,6 +180,10 @@ export default function CvForm() {
           <p style={{ fontSize: '0.85rem', marginBottom: 0, marginTop: 10 }}>
             ¿No sabés cómo va a quedar? <a href="/cv-modelo" target="_blank">Mirá un CV de ejemplo</a> antes de empezar.
           </p>
+          <p style={{ fontSize: '0.85rem', marginBottom: 0, marginTop: 8, color: 'var(--texto-suave)' }}>
+            No hace falta que termines hoy. Apretá "Guardar CV" cuando quieras y seguí después desde donde lo
+            dejaste: lo cargado no se pierde.
+          </p>
         </div>
 
         <VerificarTelefono
@@ -274,15 +279,36 @@ export default function CvForm() {
         <div className="card" style={{ marginBottom: 20 }}>
           <h3>Presentación</h3>
           <div className="tip">
-            <strong>Tres cosas que conviene incluir:</strong>
+            <strong>Escribí al menos cuatro o cinco líneas.</strong> Una presentación de dos renglones deja el CV
+            pobre y el empleador pasa al siguiente. Tres cosas que conviene incluir:
             <ul style={{ margin: '8px 0 0 0', paddingLeft: 18 }}>
-              <li>Contá quién sos más allá del puesto: si trabajás bien en equipo, si te manejás con presión, si sos de llegar antes. Eso no se lee en tu experiencia.</li>
-              <li>Escribí como hablás, en primera persona y sin exagerar. Tres líneas honestas convencen más que un párrafo de adjetivos.</li>
-              <li>Cerrá con lo que buscás en el próximo trabajo: aprender un oficio, estabilidad horaria, crecer a encargado. Al local le sirve saber si coincide con lo que ofrece.</li>
+              <li>Quién sos más allá del puesto: si trabajás bien en equipo, si te manejás con presión, si sos de
+              llegar antes. Eso no se lee en tu experiencia.</li>
+              <li>Escribí como hablás, en primera persona. Evitá listas de adjetivos sueltos: "responsable",
+              "presentable" o "creativo" no dicen nada porque los pone todo el mundo. Contá una situación en su
+              lugar.</li>
+              <li>Cerrá con lo que buscás en el próximo trabajo. Si querés hablar de sueldo, dejalo para el campo
+              de pretensión salarial o para la entrevista, no acá.</li>
             </ul>
           </div>
+
+          <div className="tip">
+            <strong>Ejemplo de lo que no conviene:</strong> "Tengo experiencia comprobable. Se trabajar bajo
+            presion y liderar un equipo."
+            <br />
+            <strong style={{ display: 'block', marginTop: 8 }}>Mejor así:</strong> "Llevo 4 años en gastronomía,
+            los últimos dos como encargado de un local de 12 mesas. Coordinaba un equipo de 5 personas, armaba los
+            turnos y hacía el cierre de caja. Me manejo bien cuando el salón se llena porque me anticipo a los
+            pedidos en vez de correr atrás. Busco un lugar donde quedarme varios años y seguir creciendo."
+          </div>
           <div className="form-field">
-            <textarea rows={5} value={cv.presentacion} onChange={(e) => set('presentacion', e.target.value)} />
+            <textarea rows={6} value={cv.presentacion} onChange={(e) => set('presentacion', e.target.value)} />
+            {cv.presentacion && cv.presentacion.trim().length < 180 && (
+              <p className="marca-editado">
+                Tu presentación tiene {cv.presentacion.trim().length} caracteres. Con menos de 180 suele quedar
+                pobre: contá un poco más de tu experiencia y de cómo trabajás.
+              </p>
+            )}
           </div>
         </div>
 
@@ -290,8 +316,10 @@ export default function CvForm() {
         <div className="card" style={{ marginBottom: 20 }}>
           <h3>Experiencia laboral</h3>
           <div className="tip">
-            Tip: en la descripción contá qué hacías concretamente. Cuántas mesas atendías por turno, de cuántas personas
-            era el equipo, qué volumen manejaban los fines de semana.
+            <strong>En la descripción, dos o tres renglones por trabajo.</strong> "Encargado de todo el local" no
+            dice nada; contá qué hacías concretamente: cuántas mesas atendías por turno, de cuántas personas era el
+            equipo, si manejabas caja, stock o proveedores, qué volumen tenían los fines de semana. Es la parte del
+            CV que más mira el empleador y la que más pesa en tu compatibilidad.
           </div>
           {cv.experiencia.map((exp, i) => (
             <div key={i} className="card" style={{ marginBottom: 12, background: '#FAFAF8' }}>
@@ -320,7 +348,13 @@ export default function CvForm() {
               </label>
               <div className="form-field">
                 <label>¿Qué hacías en ese puesto?</label>
-                <textarea rows={3} value={exp.descripcion} onChange={(e) => editarExperiencia(i, 'descripcion', e.target.value)} />
+                <textarea rows={4} value={exp.descripcion} onChange={(e) => editarExperiencia(i, 'descripcion', e.target.value)} />
+                {exp.descripcion && exp.descripcion.trim().length < 80 && (
+                  <p className="marca-editado">
+                    Contá un poco más: cuántas mesas o personas manejabas, qué tareas tenías a cargo, qué días
+                    eran los fuertes.
+                  </p>
+                )}
               </div>
 
               <div style={{ borderTop: '1px solid #EEEBE4', paddingTop: 12, marginTop: 4 }}>
@@ -397,8 +431,12 @@ export default function CvForm() {
         <div className="card" style={{ marginBottom: 20 }}>
           <h3>Habilidades</h3>
           <div className="tip">
-            Ejemplos que valen en gastronomía: atención al cliente, trabajo bajo presión, manejo de bandeja, armado de mise en place,
-            control de stock, cierre de caja, limpieza de estación, trabajo en equipo, puntualidad.
+            Cargá habilidades del oficio, no cualidades personales. "Educado", "presentable" o "lindo" no son
+            habilidades y restan seriedad al CV.
+            <br />
+            Ejemplos que sí valen: atención al cliente, manejo de bandeja, armado de mise en place, toma de pedidos
+            con comandera, control de stock, cierre de caja, manejo de caja chica, limpieza de estación, armado de
+            turnos, trato con proveedores.
           </div>
           <ListaEditable
             items={cv.habilidades}
@@ -500,16 +538,37 @@ export default function CvForm() {
 
         {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : '#B5432A' }}>{mensaje}</p>}
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 40 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
           <button className="btn" onClick={guardar} disabled={guardando}>
             {guardando ? 'Guardando...' : 'Guardar CV'}
           </button>
           {guardadoOk && (
-            <a className="btn secundario" href="/candidato/mi-perfil">Ver y descargar en PDF</a>
+            <a className="btn blanco" href="/candidato/mi-perfil">Ver y descargar en PDF</a>
           )}
         </div>
+
+        {guardadoOk && (
+          <div className="card" style={{ marginBottom: 40, textAlign: 'center' }}>
+            <h3 style={{ marginBottom: 6 }}>Tu CV está guardado</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--texto-suave)', margin: '0 0 16px' }}>
+              Ahora lo que importa es usarlo. Mirá qué locales están buscando gente en Posadas.
+            </p>
+            <a className="cta-principal" href="/candidato/vacantes">Postulate a vacantes</a>
+            <p style={{ fontSize: '0.82rem', color: 'var(--texto-suave)', margin: '12px 0 0' }}>
+              Podés volver a editar tu CV cuando quieras desde tu panel.
+            </p>
+          </div>
+        )}
       </div>
       <Pie />
     </div>
+  );
+}
+
+export default function CvForm(props) {
+  return (
+    <GuardiaRol rol="candidato">
+      <CvFormContenido {...props} />
+    </GuardiaRol>
   );
 }
