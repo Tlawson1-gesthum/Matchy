@@ -202,7 +202,7 @@ function RegistroEmpleadorContenido() {
                   <p className="ayuda-campo">Mínimo 6 caracteres.</p>
                 </div>
                 {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-                <button className="btn ancho" type="submit" disabled={cargando}>
+                <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
                   {cargando ? 'Creando cuenta...' : 'Continuar'}
                 </button>
               </form>
@@ -351,7 +351,7 @@ function RegistroEmpleadorContenido() {
               </label>
 
               {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-              <button className="btn ancho" type="submit" disabled={cargando}>
+              <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
                 {cargando ? 'Guardando...' : 'Registrar mi local'}
               </button>
             </form>

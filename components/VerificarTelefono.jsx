@@ -6,7 +6,8 @@ import { supabase } from '../lib/supabaseClient';
 // Verificación por código de un solo uso enviado por WhatsApp o SMS.
 // Requiere que el proveedor de teléfono esté configurado en Supabase
 // (Authentication → Sign In / Providers → Phone).
-export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, onVerificado }) {
+export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, onVerificado, sinMarco = false, color = 'verde' }) {
+  const clasePrincipal = color === 'oxido' ? 'btn-oxido-solido' : 'btn-verde-solido en-linea';
   const [telefono, setTelefono] = useState(telefonoInicial);
   const [codigo, setCodigo] = useState('');
   const [etapa, setEtapa] = useState(verificadoAt ? 'listo' : 'inicio');
@@ -68,8 +69,8 @@ export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, 
   }
 
   return (
-    <div className="card" style={{ marginBottom: 18 }}>
-      <h3>Verificá tu teléfono</h3>
+    <div className={sinMarco ? '' : 'card'} style={sinMarco ? undefined : { marginBottom: 18 }}>
+      {!sinMarco && <h3>Verificá tu teléfono</h3>}
       <p style={{ fontSize: '0.9rem' }}>
         Te mandamos un código por WhatsApp. Verificar el teléfono le da confianza a la otra parte y nos ayuda a
         mantener afuera a las cuentas falsas.
@@ -87,7 +88,7 @@ export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, 
             />
           </div>
           {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-          <button className="btn" type="button" onClick={enviarCodigo} disabled={cargando}>
+          <button className={clasePrincipal} type="button" onClick={enviarCodigo} disabled={cargando}>
             {cargando ? 'Enviando...' : 'Enviarme el código'}
           </button>
         </>
@@ -101,10 +102,10 @@ export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, 
           </div>
           {error && <p style={{ color: '#B5432A' }}>{error}</p>}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button className="btn" type="button" onClick={confirmarCodigo} disabled={cargando}>
+            <button className={clasePrincipal} type="button" onClick={confirmarCodigo} disabled={cargando}>
               {cargando ? 'Verificando...' : 'Confirmar'}
             </button>
-            <button className="btn blanco" type="button" onClick={() => setEtapa('inicio')}>
+            <button className="btn-accion" type="button" onClick={() => setEtapa('inicio')}>
               Cambiar el número
             </button>
           </div>

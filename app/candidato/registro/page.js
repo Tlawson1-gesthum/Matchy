@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import BotonGoogle from '../../../components/BotonGoogle';
+import CampoContrasena from '../../../components/CampoContrasena';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -85,14 +86,15 @@ function RegistroCandidatoContenido() {
             ¿Ya sos usuario? <Link href="/candidato/login">Iniciá sesión</Link>.
           </p>
 
-          <BotonGoogle rol="candidato" texto="Registrarme con Google" />
+          <BotonGoogle rol="candidato" texto="Continuar con Google" destacado />
 
           <div className="linea-o">o con tu email</div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-field">
-              <label>Email</label>
+              <label htmlFor="registro-email">Email</label>
               <input
+                id="registro-email"
                 type="email"
                 required
                 autoComplete="email"
@@ -101,18 +103,13 @@ function RegistroCandidatoContenido() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="form-field">
-              <label>Contraseña</label>
-              <input
-                type="password"
-                required
-                minLength={6}
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <p style={{ fontSize: '0.8rem', color: '#7A746A', margin: '6px 0 0' }}>Mínimo 6 caracteres.</p>
-            </div>
+            <CampoContrasena
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={6}
+              ayuda="Mínimo 6 caracteres."
+            />
 
             <label className="casilla-legal">
               <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
@@ -128,15 +125,15 @@ function RegistroCandidatoContenido() {
               </span>
             </label>
 
-            {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+            {error && <p className="mensaje-error" role="alert">{error}</p>}
 
-            <button className="btn ancho" type="submit" disabled={cargando}>
+            <button className="btn-verde-solido" type="submit" disabled={cargando}>
               {cargando ? 'Creando tu cuenta...' : 'Crear cuenta y armar mi CV'}
             </button>
           </form>
         </div>
 
-        <p style={{ fontSize: '0.82rem', color: '#7A746A', marginTop: 16 }}>
+        <p className="ayuda-contraste" style={{ marginTop: 16 }}>
           Antes de publicar nada te vamos a explicar exactamente qué datos quedan visibles, y solo seguís si estás
           de acuerdo.
         </p>

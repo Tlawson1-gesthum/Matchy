@@ -50,7 +50,7 @@ export default function ListaEditable({ items, onChange, niveles, placeholder })
             ))}
           </select>
         )}
-        <button type="button" className="btn secundario" onClick={agregar}>Agregar</button>
+        <button type="button" className="btn-accion" onClick={agregar}>Agregar</button>
       </div>
 
       {(items || []).length > 0 && (

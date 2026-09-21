@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
+import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../lib/fechas';
+import BotonWhatsApp from '../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -21,6 +23,7 @@ function EntrevistasCandidatoContenido() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [horarioAlt, setHorarioAlt] = useState({});
+  const [proponiendo, setProponiendo] = useState(null); // id de la entrevista con el selector abierto
 
   async function cargar() {
     setError('');
@@ -79,6 +82,12 @@ function EntrevistasCandidatoContenido() {
   useEffect(() => { cargar(); }, []);
 
   async function responder(id, estado) {
+    if (estado === 'rechazada') {
+      const ok = window.confirm(
+        '¿Seguro que no podés ir? El local va a ver que rechazaste la entrevista. Si el problema es el horario, mejor proponé otro.'
+      );
+      if (!ok) return;
+    }
     const { error: err } = await supabase
       .from('entrevistas').update({ estado, updated_at: new Date().toISOString() }).eq('id', id);
     if (err) { setError('No se pudo guardar tu respuesta: ' + err.message); return; }
@@ -89,11 +98,12 @@ function EntrevistasCandidatoContenido() {
     const nuevoHorario = horarioAlt[id];
     if (!nuevoHorario) return;
     const { error: err } = await supabase.from('entrevistas').update({
-      horario_alternativo: nuevoHorario,
+      horario_alternativo: horarioParaGuardar(nuevoHorario),
       estado: 'reagendar_propuesto',
       updated_at: new Date().toISOString(),
     }).eq('id', id);
     if (err) { setError('No se pudo proponer el horario: ' + err.message); return; }
+    setProponiendo(null);
     cargar();
   }
 
@@ -105,7 +115,7 @@ function EntrevistasCandidatoContenido() {
 
       <div className="container" style={{ maxWidth: 760 }}>
         <h1>Mis entrevistas</h1>
-        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+        {error && <p className="mensaje-error" role="alert">{error}</p>}
 
         <div className="aviso-legal">
           <strong>Cuidate en la entrevista.</strong> Las entrevistas se hacen en el local y en horario comercial.
@@ -140,55 +150,77 @@ function EntrevistasCandidatoContenido() {
 
               <p style={{ marginTop: 12 }}>
                 Horario propuesto:{' '}
-                <strong>{new Date(e.horario_propuesto).toLocaleString('es-AR')}</strong>
+                <strong>{formatearHorario(e.horario_propuesto)}</strong>
               </p>
               {e.horario_alternativo && (
                 <p style={{ margin: '4px 0' }}>
                   Tu propuesta alternativa:{' '}
-                  <strong>{new Date(e.horario_alternativo).toLocaleString('es-AR')}</strong>
+                  <strong>{formatearHorario(e.horario_alternativo)}</strong>
                 </p>
               )}
               <p><span className="badge medio">{ESTADOS[e.estado] || e.estado}</span></p>
 
               {e.estado === 'pendiente' && e.propuesta_por === 'empleador' && (
-                <p style={{ fontSize: '0.88rem', color: '#6B655C' }}>
+                <p className="ayuda-contraste">
                   El local propuso este horario. Respondé para confirmar la entrevista.
                 </p>
               )}
 
               {e.estado === 'reagendar_propuesto' && (
-                <p style={{ fontSize: '0.88rem', color: '#6B655C' }}>
+                <p className="ayuda-contraste">
                   Propusiste otro horario. El local tiene que confirmarlo.
                 </p>
               )}
 
               {e.estado === 'pendiente' && (
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <button className="btn" onClick={() => responder(e.id, 'confirmada')}>Confirmar</button>
-                  <button className="btn blanco" onClick={() => responder(e.id, 'rechazada')}>No puedo ir</button>
-                  <input
-                    type="datetime-local"
-                    onChange={(ev) => setHorarioAlt((s) => ({ ...s, [e.id]: ev.target.value }))}
-                  />
-                  <button
-                    className="btn mostaza"
-                    disabled={!horarioAlt[e.id]}
-                    onClick={() => proponerReagendar(e.id)}
-                  >
-                    Proponer otro horario
-                  </button>
-                </div>
+                <>
+                  <div className="botonera-entrevista">
+                    <button className="btn-verde-solido en-linea" onClick={() => responder(e.id, 'confirmada')}>
+                      Confirmar
+                    </button>
+                    <button
+                      className="btn-accion"
+                      aria-expanded={proponiendo === e.id}
+                      aria-controls={`proponer-${e.id}`}
+                      onClick={() => setProponiendo(proponiendo === e.id ? null : e.id)}
+                    >
+                      Proponer otro horario
+                    </button>
+                    <button className="btn-accion quitar" onClick={() => responder(e.id, 'rechazada')}>
+                      No puedo ir
+                    </button>
+                  </div>
+
+                  {proponiendo === e.id && (
+                    <div className="panel-proponer" id={`proponer-${e.id}`}>
+                      <label htmlFor={`horario-${e.id}`}>¿Qué día y horario te queda bien?</label>
+                      <input
+                        id={`horario-${e.id}`}
+                        type="datetime-local"
+                        min={minimoSelector()}
+                        value={horarioAlt[e.id] || ''}
+                        onChange={(ev) => setHorarioAlt((s) => ({ ...s, [e.id]: ev.target.value }))}
+                      />
+                      <div className="botonera-entrevista">
+                        <button
+                          className="btn-verde-solido en-linea"
+                          disabled={!horarioAlt[e.id]}
+                          onClick={() => proponerReagendar(e.id)}
+                        >
+                          Enviar propuesta
+                        </button>
+                        <button className="btn-accion" onClick={() => setProponiendo(null)}>Cancelar</button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {e.estado === 'confirmada' && (
                 <div>
                   {e.local?.direccion && <p style={{ margin: '4px 0' }}>Dirección: {e.local.direccion}</p>}
                   {e.local?.contacto && <p style={{ margin: '4px 0' }}>Contacto: <strong>{e.local.contacto}</strong></p>}
-                  {wpp && (
-                    <a className="btn blanco" href={wpp} target="_blank" rel="noreferrer">
-                      Escribir por WhatsApp
-                    </a>
-                  )}
+                  <BotonWhatsApp href={wpp} />
                 </div>
               )}
             </div>

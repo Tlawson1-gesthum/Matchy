@@ -205,7 +205,7 @@ export default function AdminLocales() {
                       Reactivar la vacante
                     </button>
                   )}
-                  <button className="btn" onClick={() => resolverReporte(r, 'suspender_local')}>
+                  <button className="btn-oxido-solido" onClick={() => resolverReporte(r, 'suspender_local')}>
                     Suspender el local
                   </button>
                 </div>
@@ -330,7 +330,7 @@ function FichaLocal({ local, onCambiar }) {
             </button>
           )}
           {local.estado !== 'aprobado' && (
-            <button className="btn" onClick={() => onCambiar(local.id, 'aprobado', local.nombre_local)}>
+            <button className="btn-oxido-solido" onClick={() => onCambiar(local.id, 'aprobado', local.nombre_local)}>
               Aprobar
             </button>
           )}

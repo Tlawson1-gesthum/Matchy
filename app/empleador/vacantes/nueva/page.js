@@ -106,7 +106,7 @@ function NuevaVacanteContenido() {
             <p style={{ fontSize: '0.88rem', color: 'var(--texto-suave)' }}>
               No vas a tener que crear otra cuenta: entrás con el mismo email y solo completás los datos del local.
             </p>
-            <a className="btn" href="/empleador/registro">Completar los datos de mi local</a>
+            <a className="btn-oxido-solido" href="/empleador/registro">Completar los datos de mi local</a>
           </div>
         </div>
       </div>
@@ -211,11 +211,13 @@ function NuevaVacanteContenido() {
             <input type="number" min="0" step="0.5" value={form.experiencia_minima_anios} onChange={(e) => set('experiencia_minima_anios', e.target.value)} />
           </div>
 
-          <label style={{ display: 'block', marginBottom: 12 }}>
-            <input type="checkbox" checked={form.movilidad_requerida} onChange={(e) => set('movilidad_requerida', e.target.checked)} /> Requiere movilidad propia
+          <label className="casilla-legal">
+            <input type="checkbox" checked={form.movilidad_requerida} onChange={(e) => set('movilidad_requerida', e.target.checked)} />
+            <span>Requiere movilidad propia</span>
           </label>
-          <label style={{ display: 'block', marginBottom: 16 }}>
-            <input type="checkbox" checked={form.certificado_requerido} onChange={(e) => set('certificado_requerido', e.target.checked)} /> Requiere certificado de manipulación de alimentos
+          <label className="casilla-legal">
+            <input type="checkbox" checked={form.certificado_requerido} onChange={(e) => set('certificado_requerido', e.target.checked)} />
+            <span>Requiere certificado de manipulación de alimentos</span>
           </label>
 
           <div className="form-field">
@@ -240,7 +242,11 @@ function NuevaVacanteContenido() {
                 <li>Qué ofrecés más allá del sueldo: comida del personal, propinas, posibilidad de crecer, horarios fijos. Eso es lo que decide entre dos avisos parecidos.</li>
               </ul>
             </div>
-            <textarea rows={5} value={form.descripcion} onChange={(e) => set('descripcion', e.target.value)} />
+            <textarea rows={7} value={form.descripcion} onChange={(e) => set('descripcion', e.target.value)} />
+            <p className="ayuda-contraste">
+              Separá los temas en párrafos dejando un renglón en blanco. Para armar una lista, empezá cada línea con
+              un guion (-).
+            </p>
           </div>
 
           <div className="form-field">
@@ -249,7 +255,7 @@ function NuevaVacanteContenido() {
           </div>
 
           {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-          <button className="btn" type="submit" disabled={cargando}>
+          <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
             {cargando ? 'Publicando...' : 'Publicar vacante'}
           </button>
         </form>

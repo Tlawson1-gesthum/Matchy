@@ -618,12 +618,6 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   color: #43443C;
 }
 
-.vacante-descripcion {
-  font-size: 1rem;
-  line-height: 1.62;
-  color: #3E3F38;
-  margin: 0 0 20px;
-}
 
 .senales-vacante {
   display: flex;
@@ -747,22 +741,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 .aviso-legal strong { color: var(--verde); }
 
-.casilla-legal {
-  display: flex;
-  gap: 11px;
-  align-items: flex-start;
-  font-size: 0.87rem;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
 
-.casilla-legal input {
-  margin-top: 3px;
-  flex-shrink: 0;
-  width: 17px;
-  height: 17px;
-  accent-color: var(--verde);
-}
 
 .ayuda-campo {
   font-size: 0.8rem;
@@ -887,28 +866,9 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 /* ============================================================
    PIE
    ============================================================ */
-.pie-aviso {
-  max-width: 62ch;
-  margin: 18px auto 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--borde);
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: var(--texto-suave);
-  text-align: left;
-}
 
-.pie-legal {
-  font-size: 0.8rem;
-  color: var(--texto-suave);
-  margin: 8px 0 0;
-}
 
-.pie-legal a { color: var(--texto-suave); }
 
-@media (min-width: 640px) {
-  .pie-aviso { text-align: center; }
-}
 
 @media (max-width: 480px) {
   .btn-destacado { padding: 8px 12px; font-size: 0.8rem; }
@@ -945,7 +905,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   margin: 18px 0 8px;
 }
 
-@media (min-width: 760px) {
+@media (min-width: 768px) {
   .metricas { grid-template-columns: repeat(4, 1fr); }
 }
 
@@ -1321,3 +1281,570 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 }
 
 .hero-texto { min-width: 0; }
+
+/* ============================================================
+   REGISTRO: ACCESIBILIDAD Y USO TÁCTIL
+   ============================================================ */
+
+/* Casillas: toda la fila es clickeable y el área táctil supera los 44px */
+.casilla-legal {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--texto);
+  margin: 0 0 8px;
+  padding: 10px 10px;
+  min-height: 44px;
+  border-radius: 10px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.casilla-legal:hover { background: rgba(38, 64, 44, 0.04); }
+
+.casilla-legal input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #3A5A40;
+}
+
+.casilla-legal input:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+/* Texto de ayuda con contraste suficiente (7:1 sobre la tarjeta) */
+.ayuda-contraste {
+  font-size: 0.84rem;
+  color: #55564B;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.mensaje-error {
+  color: #9C3A22;
+  font-size: 0.9rem;
+  margin: 4px 0 12px;
+}
+
+/* Campo de contraseña con botón de mostrar u ocultar */
+.campo-contrasena { position: relative; }
+
+.campo-contrasena input { padding-right: 52px; }
+
+.boton-ojo {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: #55564B;
+  cursor: pointer;
+}
+
+.boton-ojo:hover { color: var(--verde); }
+
+.boton-ojo:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: -3px;
+}
+
+/* Google como acción principal: sombra sutil */
+.btn-google.destacado {
+  box-shadow: 0 1px 2px rgba(38, 64, 44, 0.08), 0 2px 6px rgba(38, 64, 44, 0.08);
+  min-height: 50px;
+}
+
+.btn-google.destacado:hover {
+  box-shadow: 0 2px 4px rgba(38, 64, 44, 0.1), 0 4px 12px rgba(38, 64, 44, 0.1);
+}
+
+.btn-google:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+/* Botón principal sólido: verde oliva con texto blanco (contraste 7.7:1) */
+.btn-verde-solido {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  padding: 14px 22px;
+  margin-top: 8px;
+  background: #3A5A40;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btn-verde-solido:hover { filter: brightness(1.1); }
+
+.btn-verde-solido:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 3px;
+}
+
+.btn-verde-solido:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-verde-solido { transition: none; }
+}
+
+/* Botón sólido naranja óxido: texto blanco con contraste 6:1 */
+.btn-oxido-solido {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 26px;
+  background: #A6461F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-cuerpo);
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btn-oxido-solido:hover { filter: brightness(1.1); }
+
+.btn-oxido-solido:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 3px;
+}
+
+.tip strong { color: #3E3A2A; }
+
+/* Métricas en pantallas muy angostas: que los números no aprieten las etiquetas */
+@media (max-width: 380px) {
+  .metricas { gap: 10px; }
+  .metrica { padding: 14px 12px 12px; }
+  .metrica-numero { font-size: 1.8rem; }
+  .metrica-label { font-size: 0.76rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-oxido-solido { transition: none; }
+}
+
+/* ============================================================
+   FORMULARIO DEL CV: ACORDEÓN
+   ============================================================ */
+.seccion-acordeon {
+  background: var(--blanco);
+  border: 1px solid #E6E3DA;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.seccion-resumen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 14px 18px;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ocultar el triángulo nativo en todos los navegadores */
+.seccion-resumen::-webkit-details-marker { display: none; }
+.seccion-resumen::marker { content: ''; }
+
+.seccion-resumen:hover { background: rgba(38, 64, 44, 0.03); }
+
+.seccion-resumen:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: -3px;
+  border-radius: 14px;
+}
+
+.seccion-titulo {
+  flex: 1;
+  font-size: 1.05rem;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.seccion-estado {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.seccion-estado.completo { background: #E7EFE7; color: #2F5A38; }
+.seccion-estado.pendiente { background: #F6E7DF; color: #8F3E22; }
+.seccion-estado.opcional { background: #EFEEE8; color: #55564B; }
+
+.seccion-chevron {
+  color: var(--verde);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.seccion-acordeon[open] .seccion-chevron { transform: rotate(180deg); }
+.seccion-acordeon[open] .seccion-resumen { border-bottom: 1px solid #F0EEE7; }
+
+.seccion-cuerpo { padding: 18px 18px 20px; }
+
+@media (max-width: 420px) {
+  .seccion-resumen { padding: 12px 14px; gap: 8px; }
+  .seccion-titulo { font-size: 0.98rem; }
+  .seccion-cuerpo { padding: 16px 14px 18px; }
+}
+
+/* ============================================================
+   BOTONES DE ACCIÓN SECUNDARIOS (agregar, quitar)
+   ============================================================ */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--verde);
+  border: 1px solid #C9CDBE;
+  border-radius: 999px;
+  font-family: var(--font-cuerpo);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-accion:hover { border-color: var(--verde); background: rgba(38, 64, 44, 0.04); }
+
+.btn-accion.quitar { color: #8F3E22; border-color: #E6CFC6; }
+.btn-accion.quitar:hover { border-color: #A6461F; background: #FBF4F2; }
+
+.btn-accion:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+/* Variante en línea del botón verde sólido (Guardar CV, Enviarme el código) */
+.btn-verde-solido.en-linea {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  margin-top: 0;
+  padding: 13px 30px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   PÍLDORAS DE PUESTOS
+   ============================================================ */
+.grupo-pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pildora-puesto {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #D6D2C4;
+  border-radius: 999px;
+  background: var(--blanco);
+  color: var(--texto);
+  font-size: 0.92rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pildora-puesto:hover { border-color: var(--verde); }
+
+.pildora-puesto.elegida {
+  background: #3A5A40;
+  border-color: #3A5A40;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.pildora-puesto.bloqueada { opacity: 0.5; cursor: not-allowed; }
+
+.pildora-puesto:focus-within {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+/* Oculto a la vista pero accesible para teclado y lectores de pantalla */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seccion-chevron { transition: none; }
+}
+
+/* ============================================================
+   TEXTO LIBRE CON FORMATO (descripción de vacantes)
+   ============================================================ */
+.vacante-descripcion {
+  font-size: 1rem;
+  line-height: 1.62;
+  color: #3E3F38;
+  margin: 0 0 20px;
+}
+
+.texto-formateado p {
+  margin: 0 0 12px;
+  white-space: pre-line;
+}
+
+.texto-formateado ul {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.texto-formateado li { margin-bottom: 4px; }
+.texto-formateado li::marker { color: var(--oro-oscuro); }
+
+.texto-formateado > :last-child { margin-bottom: 0; }
+
+/* ============================================================
+   FILTROS DEL LISTADO (apilados en celular)
+   ============================================================ */
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 16px;
+}
+
+.filtros .form-field { margin-bottom: 14px; }
+
+@media (min-width: 640px) {
+  .filtros { grid-template-columns: 1fr 1fr; }
+}
+
+/* ============================================================
+   PIE: TEXTO LEGAL LEGIBLE Y ENLACES TÁCTILES
+   ============================================================ */
+.pie-aviso {
+  max-width: 62ch;
+  margin: 18px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--borde);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4A4A40;
+  text-align: left;
+}
+
+.pie-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 0.84rem;
+  color: #4A4A40;
+  margin: 10px 0 0;
+}
+
+.pie-legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: #3E3F38;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 8px;
+}
+
+.pie-legal a:hover { color: var(--verde); background: rgba(38, 64, 44, 0.05); }
+
+.pie-legal a:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 0;
+}
+
+/* ============================================================
+   ENTREVISTAS: BOTONERA Y WHATSAPP
+   ============================================================ */
+.botonera-entrevista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 480px) {
+  .botonera-entrevista { flex-direction: column; }
+  .botonera-entrevista > button,
+  .botonera-entrevista > a { width: 100%; }
+}
+
+.panel-proponer {
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.panel-proponer label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--verde);
+  margin-bottom: 8px;
+}
+
+.panel-proponer input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  background: var(--blanco);
+}
+
+.panel-proponer input:focus {
+  outline: 3px solid var(--verde);
+  outline-offset: 1px;
+}
+
+/* WhatsApp: verde azulado oscuro con texto blanco (contraste 6.4:1) */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 13px 26px;
+  margin-top: 12px;
+  background: #0E6B5C;
+  color: #FFFFFF;
+  border-radius: 999px;
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: filter 0.15s ease;
+}
+
+.btn-whatsapp:hover { filter: brightness(1.12); }
+
+.btn-whatsapp:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .btn-whatsapp { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-whatsapp { transition: none; }
+}
+
+/* Variante de ancho completo del botón óxido (formularios del local) */
+.btn-oxido-solido.ancho { display: flex; width: 100%; min-height: 50px; }
+.btn-oxido-solido:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .btn-oxido-solido { width: 100%; }
+}
+
+/* Selector de horario + botón: apilado en celular, en fila desde 768px */
+.fila-proponer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.fila-proponer input[type="datetime-local"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  background: var(--blanco);
+}
+
+.fila-proponer input[type="datetime-local"]:focus {
+  outline: 3px solid var(--verde);
+  outline-offset: 1px;
+}
+
+@media (min-width: 768px) {
+  .fila-proponer { flex-direction: row; align-items: center; flex-wrap: wrap; }
+  .fila-proponer input[type="datetime-local"] { width: auto; flex: 1 1 220px; }
+  .fila-proponer .btn-oxido-solido { width: auto; }
+}
+
+/* Botón rectangular de contorno (Ver CV) */
+.btn-contorno-rect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid #C9C6B8;
+  border-radius: 6px;
+  background: var(--blanco);
+  color: var(--verde);
+  font-family: var(--font-cuerpo);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.btn-contorno-rect:hover { border-color: var(--verde); background: rgba(38, 64, 44, 0.04); }
+
+.btn-contorno-rect:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}

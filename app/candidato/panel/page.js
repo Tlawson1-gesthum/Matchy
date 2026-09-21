@@ -126,14 +126,16 @@ function PanelCandidatoContenido() {
 
             {pct < 100 && (
               <div className="tip" style={{ marginTop: 12 }}>
-                Un CV incompleto reduce tus chances: los locales filtran por experiencia, disponibilidad y herramientas,
-                y si esos datos faltan tu perfil queda más abajo en el orden. Te falta cargar {faltas.slice(0, 3).join(', ')}
+                <strong>Un CV incompleto reduce tus chances:</strong> los locales filtran por{' '}
+                <strong>experiencia</strong>, <strong>disponibilidad</strong> y <strong>herramientas</strong>, y si esos
+                datos faltan tu perfil queda <strong>más abajo en el orden</strong>. Te falta cargar{' '}
+                {faltas.slice(0, 3).join(', ')}
                 {faltas.length > 3 ? ` y ${faltas.length - 3} cosa${faltas.length - 3 === 1 ? '' : 's'} más` : ''}.
               </div>
             )}
 
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 14 }}>
-              <a className="btn" href="/candidato/cv">{pct === 100 ? 'Editar mi CV' : 'Completar mi CV'}</a>
+              <a className="btn-oxido-solido" href="/candidato/cv">{pct === 100 ? 'Editar mi CV' : 'Completar mi CV'}</a>
               <a className="btn blanco" href="/candidato/mi-perfil">Ver y descargar</a>
             </div>
           </div>

@@ -79,6 +79,7 @@ function VacantesEmpleadorContenido() {
 
         {empleador && !empleador.telefono_verificado_at && (
           <VerificarTelefono
+            color="oxido"
             telefonoInicial={empleador.telefono || ''}
             verificadoAt={empleador.telefono_verificado_at}
             onVerificado={async (numero) => {
@@ -94,7 +95,7 @@ function VacantesEmpleadorContenido() {
           <div className="card">
             <p style={{ marginTop: 0 }}>Todavía no publicaste ninguna vacante.</p>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <a className="btn" href="/empleador/vacantes/nueva">Publicar la primera</a>
+              <a className="btn-oxido-solido" href="/empleador/vacantes/nueva">Publicar la primera</a>
               <a className="btn blanco" href="/vacante-ejemplo">Ver un ejemplo</a>
             </div>
           </div>

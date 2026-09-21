@@ -2,6 +2,7 @@
 
 import Encabezado from '../../components/Encabezado';
 import Pie from '../../components/Pie';
+import TextoFormateado from '../../components/TextoFormateado';
 
 // Vacante de ejemplo para que el local entienda qué cambia según cómo la complete.
 // Los datos son inventados y está aclarado en pantalla.
@@ -13,7 +14,7 @@ const BUENA = {
   cierre: 'Cierra en 3 días',
   cupo: 'Solo 1 vacante',
   descripcion:
-    'Somos un resto-bar de 14 mesas en el centro, con cocina abierta. El turno noche arranca 19:30 y el equipo es de 6 personas: dos en salón, tres en cocina y el encargado. Jueves, viernes y sábado son los días fuertes, con dos vueltas de mesas. Buscamos a alguien que tome pedidos con comandera, arme la mise en place del salón y haga el cierre de su sector. Ofrecemos sueldo de convenio en blanco desde el primer día, comida del personal en cada turno, propinas repartidas en partes iguales y francos fijos los lunes y martes. El encargado actual entró como mozo hace dos años.',
+    'Somos un resto-bar de 14 mesas en el centro, con cocina abierta. El turno noche arranca 19:30 y el equipo es de 6 personas: dos en salón, tres en cocina y el encargado. Jueves, viernes y sábado son los días fuertes, con dos vueltas de mesas.\n\nQué vas a hacer:\n- Tomar pedidos con comandera\n- Armar la mise en place del salón\n- Hacer el cierre de tu sector\n\nQué ofrecemos:\n- Sueldo de convenio en blanco desde el primer día\n- Comida del personal en cada turno\n- Propinas repartidas en partes iguales\n- Francos fijos los lunes y martes\n\nEl encargado actual entró como mozo hace dos años.',
 };
 
 const MALA = {
@@ -49,7 +50,7 @@ function Tarjeta({ v, mala }) {
         {v.etiquetas.map((e) => <span key={e}>{e}</span>)}
       </div>
 
-      <p className="vacante-descripcion">{v.descripcion}</p>
+      <TextoFormateado texto={v.descripcion} className="vacante-descripcion" />
 
       <div className="senales-vacante">
         <span>
@@ -117,7 +118,7 @@ export default function VacanteEjemplo() {
         </div>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 28 }}>
-          <a className="btn" href="/empleador/vacantes/nueva">Publicar mi vacante</a>
+          <a className="btn-oxido-solido" href="/empleador/vacantes/nueva">Publicar mi vacante</a>
           <a className="btn blanco" href="/empleador/vacantes">Volver a mis vacantes</a>
         </div>
       </main>

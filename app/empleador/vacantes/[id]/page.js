@@ -6,6 +6,8 @@ import { supabase } from '../../../../lib/supabaseClient';
 import { calcularPuntaje } from '../../../../lib/scoring';
 import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
+import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../../lib/fechas';
+import BotonWhatsApp from '../../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
@@ -136,7 +138,7 @@ function RankingVacanteContenido({ params }) {
     if (!horario) return;
     const { error: err } = await supabase.from('entrevistas').insert({
       postulacion_id: postulacionId,
-      horario_propuesto: horario,
+      horario_propuesto: horarioParaGuardar(horario),
       propuesta_por: 'empleador',
       estado: 'pendiente',
     });
@@ -156,7 +158,7 @@ function RankingVacanteContenido({ params }) {
   async function responderEntrevista(entrevistaId, estado, horario) {
     const cambios = { estado, updated_at: new Date().toISOString() };
     if (horario) {
-      cambios.horario_propuesto = horario;
+      cambios.horario_propuesto = horarioParaGuardar(horario);
       cambios.horario_alternativo = null;
       cambios.estado = 'pendiente';
       cambios.propuesta_por = 'empleador';
@@ -294,28 +296,28 @@ function RankingVacanteContenido({ params }) {
                 )}
               </div>
               {p.cv.id && (
-                <a className="btn blanco" href={`/cv/${p.cv.id}`} target="_blank" rel="noreferrer">Ver CV</a>
+                <a className="btn-contorno-rect" href={`/cv/${p.cv.id}`} target="_blank" rel="noreferrer">Ver CV<span className="solo-lector"> de {p.cv.nombre || 'la persona'} (se abre en otra pestaña)</span></a>
               )}
             </div>
 
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
               {p.estado === 'descartado' ? (
-                <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'postulado')}>
+                <button className="btn-accion" onClick={() => cambiarEstado(p.id, 'postulado')}>
                   Volver a considerar
                 </button>
               ) : (
                 <>
                   {p.estado !== 'preseleccionado' && (
-                    <button className="btn blanco" onClick={() => preseleccionar(p)}>
+                    <button className="btn-accion" onClick={() => preseleccionar(p)}>
                       Avanzar con esta persona
                     </button>
                   )}
                   {p.estado === 'preseleccionado' && !referencias[p.candidato_id] && (
-                    <button className="btn blanco" onClick={() => verReferencias(p)}>
+                    <button className="btn-accion" onClick={() => verReferencias(p)}>
                       Ver referencias
                     </button>
                   )}
-                  <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'descartado')}>
+                  <button className="btn-accion quitar" onClick={() => cambiarEstado(p.id, 'descartado')}>
                     No me interesa
                   </button>
                 </>
@@ -347,7 +349,7 @@ function RankingVacanteContenido({ params }) {
             {p.entrevista ? (
               <div style={{ marginTop: 10 }}>
                 <p style={{ margin: 0 }}>
-                  Entrevista: <strong>{new Date(p.entrevista.horario_propuesto).toLocaleString('es-AR')}</strong>
+                  Entrevista: <strong>{formatearHorario(p.entrevista.horario_propuesto)}</strong>
                   {' '}<span className="badge medio">{ESTADOS_ENTREVISTA[p.entrevista.estado] || p.entrevista.estado}</span>
                 </p>
 
@@ -355,25 +357,26 @@ function RankingVacanteContenido({ params }) {
                   <div className="aviso-reagendar">
                     <p style={{ margin: '0 0 10px' }}>
                       El candidato no puede en ese horario y propone{' '}
-                      <strong>{new Date(p.entrevista.horario_alternativo).toLocaleString('es-AR')}</strong>.
+                      <strong>{formatearHorario(p.entrevista.horario_alternativo)}</strong>.
                     </p>
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-                      <button className="btn" onClick={() => aceptarHorarioAlternativo(p.entrevista)}>
+                    <div className="fila-proponer">
+                      <button className="btn-oxido-solido" onClick={() => aceptarHorarioAlternativo(p.entrevista)}>
                         Aceptar ese horario
                       </button>
                       <input
                         type="datetime-local"
+                        min={minimoSelector()}
                         onChange={(e) => setHorarios((s) => ({ ...s, [`re-${p.entrevista.id}`]: e.target.value }))}
                       />
                       <button
-                        className="btn blanco"
+                        className="btn-accion"
                         disabled={!horarios[`re-${p.entrevista.id}`]}
                         onClick={() => responderEntrevista(p.entrevista.id, 'pendiente', horarios[`re-${p.entrevista.id}`])}
                       >
                         Proponer otro horario
                       </button>
                       <button
-                        className="btn blanco"
+                        className="btn-accion"
                         onClick={() => {
                           if (window.confirm(`¿Descartar a ${p.cv.nombre || 'este candidato'}? Se cancela la entrevista.`)) {
                             responderEntrevista(p.entrevista.id, 'rechazada');
@@ -390,46 +393,33 @@ function RankingVacanteContenido({ params }) {
                 {p.entrevista.estado === 'rechazada' && (
                   <div className="aviso-reagendar">
                     <p style={{ margin: '0 0 10px' }}>El candidato no puede asistir.</p>
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <div className="fila-proponer">
                       <input
                         type="datetime-local"
+                        min={minimoSelector()}
                         onChange={(e) => setHorarios((s) => ({ ...s, [`re-${p.entrevista.id}`]: e.target.value }))}
                       />
                       <button
-                        className="btn"
+                        className="btn-oxido-solido"
                         disabled={!horarios[`re-${p.entrevista.id}`]}
                         onClick={() => responderEntrevista(p.entrevista.id, 'pendiente', horarios[`re-${p.entrevista.id}`])}
                       >
                         Proponer otra fecha
                       </button>
-                      <button className="btn blanco" onClick={() => cambiarEstado(p.id, 'descartado')}>
+                      <button className="btn-accion quitar" onClick={() => cambiarEstado(p.id, 'descartado')}>
                         Descartar candidato
                       </button>
                     </div>
                   </div>
                 )}
-                {linkWhatsApp(
-                  p.cv.contacto,
-                  `Hola ${p.cv.nombre || ''}, te escribo por Matchy: te propuse una entrevista para el puesto de ${vacante.puesto}.`
-                ) && (
-                  <a
-                    className="btn blanco"
-                    style={{ marginTop: 10 }}
-                    href={linkWhatsApp(
-                      p.cv.contacto,
-                      `Hola ${p.cv.nombre || ''}, te escribo por Matchy: te propuse una entrevista para el puesto de ${vacante.puesto}.`
-                    )}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Avisarle por WhatsApp
-                  </a>
-                )}
+                <div style={{ marginTop: 10 }}>
+                  <BotonWhatsApp href={linkWhatsApp(p.cv.contacto, `Hola ${p.cv.nombre || ''}, te escribo por Matchy: te propuse una entrevista para el puesto de ${vacante.puesto}.`)} texto="Avisarle por WhatsApp" />
+                </div>
               </div>
             ) : p.estado === 'descartado' ? null : (
-              <div style={{ marginTop: 10, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                <input type="datetime-local" onChange={(e) => setHorarios((s) => ({ ...s, [p.id]: e.target.value }))} />
-                <button className="btn" onClick={() => proponerEntrevista(p.id)}>Proponer entrevista</button>
+              <div className="fila-proponer">
+                <input type="datetime-local" min={minimoSelector()} onChange={(e) => setHorarios((s) => ({ ...s, [p.id]: e.target.value }))} />
+                <button className="btn-oxido-solido" onClick={() => proponerEntrevista(p.id)}>Proponer entrevista</button>
               </div>
             )}
           </div>

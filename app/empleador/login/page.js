@@ -95,7 +95,7 @@ export default function LoginEmpleador() {
           />
         </div>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}
-        <button className="btn ancho" type="submit" disabled={cargando}>
+        <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
           {cargando ? 'Entrando...' : 'Entrar'}
         </button>
       </form>

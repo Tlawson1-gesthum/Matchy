@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
 import TickerActividad from '../../../components/TickerActividad';
+import TextoFormateado from '../../../components/TextoFormateado';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -200,17 +201,17 @@ function VacantesCandidatoContenido() {
 
         <TickerActividad datos={actividad} />
 
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <div className="form-field" style={{ minWidth: 200, flex: '1 1 200px' }}>
-            <label>Filtrar por puesto</label>
-            <select value={filtroPuesto} onChange={(e) => setFiltroPuesto(e.target.value)}>
+        <div className="filtros">
+          <div className="form-field">
+            <label htmlFor="filtro-puesto">Filtrar por puesto</label>
+            <select id="filtro-puesto" value={filtroPuesto} onChange={(e) => setFiltroPuesto(e.target.value)}>
               <option value="">Todos</option>
               {puestosDisponibles.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
-          <div className="form-field" style={{ minWidth: 200, flex: '1 1 200px' }}>
-            <label>Filtrar por localidad</label>
-            <select value={filtroCiudad} onChange={(e) => setFiltroCiudad(e.target.value)}>
+          <div className="form-field">
+            <label htmlFor="filtro-localidad">Filtrar por localidad</label>
+            <select id="filtro-localidad" value={filtroCiudad} onChange={(e) => setFiltroCiudad(e.target.value)}>
               <option value="">Todas</option>
               {ciudadesDisponibles.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -276,7 +277,7 @@ function VacantesCandidatoContenido() {
                 {v.certificado_requerido && <span>Certificado de manipulación</span>}
               </div>
 
-              {v.descripcion && <p className="vacante-descripcion">{v.descripcion}</p>}
+              {v.descripcion && <TextoFormateado texto={v.descripcion} className="vacante-descripcion" />}
 
               <div className="senales-vacante">
                 {mirando > 1 && (

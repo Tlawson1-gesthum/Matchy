@@ -9,6 +9,7 @@ import {
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
 import VerificarTelefono from '../../../components/VerificarTelefono';
+import SeccionAcordeon from '../../../components/SeccionAcordeon';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -37,6 +38,30 @@ function calcularCompletoPct(cv) {
   return Math.round((llenos / campos.length) * 100);
 }
 
+// Estado de cada sección del formulario, en el orden en que aparecen.
+// "opcional" no cuenta para decidir qué sección se abre primero.
+const ORDEN_SECCIONES = [
+  'telefono', 'datos', 'puestos', 'presentacion', 'experiencia', 'formacion',
+  'habilidades', 'herramientas', 'idiomas', 'disponibilidad', 'certificado',
+];
+
+function estadoSecciones(cv) {
+  return {
+    // La verificación por WhatsApp todavía no está activada: se muestra como opcional.
+    telefono: cv.telefono_verificado_at ? 'completo' : 'opcional',
+    datos: cv.nombre && cv.contacto && cv.ciudad ? 'completo' : 'pendiente',
+    puestos: cv.puestos?.length ? 'completo' : 'pendiente',
+    presentacion: cv.presentacion?.trim() ? 'completo' : 'pendiente',
+    experiencia: cv.experiencia?.length ? 'completo' : 'pendiente',
+    formacion: cv.formacion?.length ? 'completo' : 'pendiente',
+    habilidades: cv.habilidades?.length ? 'completo' : 'pendiente',
+    herramientas: cv.herramientas_nivel?.length ? 'completo' : 'pendiente',
+    idiomas: cv.idiomas_nivel?.length ? 'completo' : 'opcional',
+    disponibilidad: cv.disponibilidad_horaria && cv.disponible_desde ? 'completo' : 'pendiente',
+    certificado: cv.certificado_url ? 'completo' : 'opcional',
+  };
+}
+
 const CV_VACIO = {
   nombre: '', foto_url: '', edad: '', ciudad: 'Posadas', contacto: '',
   puestos: [], presentacion: '',
@@ -58,6 +83,7 @@ function CvFormContenido() {
   const [subiendoCert, setSubiendoCert] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [guardadoOk, setGuardadoOk] = useState(false);
+  const [abiertas, setAbiertas] = useState(new Set());
 
   useEffect(() => {
     async function cargar() {
@@ -66,7 +92,11 @@ function CvFormContenido() {
       if (!uid) { router.push('/candidato/login'); return; }
       setUserId(uid);
       const { data } = await supabase.from('cvs').select('*').eq('id', uid).single();
-      if (data) setCv({ ...CV_VACIO, ...data });
+      const completo = { ...CV_VACIO, ...(data || {}) };
+      if (data) setCv(completo);
+      const estados = estadoSecciones(completo);
+      const primera = ORDEN_SECCIONES.find((id) => estados[id] === 'pendiente');
+      setAbiertas(new Set(primera ? [primera] : []));
       setCargando(false);
     }
     cargar();
@@ -164,6 +194,19 @@ function CvFormContenido() {
   if (cargando) return <div className="container">Cargando...</div>;
 
   const pct = calcularCompletoPct(cv);
+  const estados = estadoSecciones(cv);
+
+  function alternarSeccion(id, abierta) {
+    setAbiertas((prev) => {
+      const nueva = new Set(prev);
+      if (abierta) nueva.add(id); else nueva.delete(id);
+      return nueva;
+    });
+  }
+
+  function propsSeccion(id) {
+    return { estado: estados[id], abierta: abiertas.has(id), onToggle: alternarSeccion };
+  }
 
   return (
     <div>
@@ -186,7 +229,9 @@ function CvFormContenido() {
           </p>
         </div>
 
+        <SeccionAcordeon id="telefono" titulo="Verificá tu teléfono" {...propsSeccion('telefono')}>
         <VerificarTelefono
+          sinMarco
           telefonoInicial={cv.telefono || ''}
           verificadoAt={cv.telefono_verificado_at}
           onVerificado={async (numero) => {
@@ -197,10 +242,10 @@ function CvFormContenido() {
             setCv((c) => ({ ...c, telefono: numero, telefono_verificado_at: new Date().toISOString() }));
           }}
         />
+        </SeccionAcordeon>
 
         {/* DATOS PERSONALES */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Datos personales</h3>
+        <SeccionAcordeon id="datos" titulo="Datos personales" {...propsSeccion('datos')}>
           <div className="tip">
             Tip: usá una foto con buena luz, de frente y sin lentes de sol, donde se te vea de los hombros para arriba
             ocupando alrededor del 60% del recuadro. Una foto donde apenas se te distingue resta en vez de sumar.
@@ -252,32 +297,39 @@ function CvFormContenido() {
             <label>Contacto (WhatsApp o email)</label>
             <input value={cv.contacto} onChange={(e) => set('contacto', e.target.value)} />
           </div>
-        </div>
+        </SeccionAcordeon>
 
         {/* PUESTOS */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Puestos que te interesan (hasta 3)</h3>
+        <SeccionAcordeon id="puestos" titulo="Puestos que te interesan (hasta 3)" {...propsSeccion('puestos')}>
           <div className="tip">
             Elegí solo los puestos que realmente podrías cubrir. Cuando te postules a una vacante concreta vas a poder
             aclarar el detalle si hace falta.
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {PUESTOS.filter((p) => p !== 'Otro').map((p) => (
-              <label key={p} style={{
-                border: '1px solid #DDD8CE', borderRadius: 20, padding: '6px 14px',
-                background: cv.puestos.includes(p) ? '#2B4632' : 'transparent',
-                color: cv.puestos.includes(p) ? '#fff' : '#2B2620', cursor: 'pointer', fontSize: '0.88rem',
-              }}>
-                <input type="checkbox" checked={cv.puestos.includes(p)} onChange={() => togglePuesto(p)} style={{ display: 'none' }} />
-                {p}
-              </label>
-            ))}
+          <div className="grupo-pildoras" role="group" aria-label="Puestos que te interesan">
+            {PUESTOS.filter((p) => p !== 'Otro').map((p) => {
+              const elegido = cv.puestos.includes(p);
+              const lleno = !elegido && cv.puestos.length >= 3;
+              return (
+                <label key={p} className={`pildora-puesto${elegido ? ' elegida' : ''}${lleno ? ' bloqueada' : ''}`}>
+                  <input
+                    type="checkbox"
+                    className="solo-lector"
+                    checked={elegido}
+                    disabled={lleno}
+                    onChange={() => togglePuesto(p)}
+                  />
+                  {p}
+                </label>
+              );
+            })}
           </div>
-        </div>
+          <p className="ayuda-contraste" aria-live="polite">
+            {cv.puestos.length} de 3 elegidos{cv.puestos.length >= 3 ? '. Para cambiar uno, primero destildá otro.' : '.'}
+          </p>
+        </SeccionAcordeon>
 
         {/* PRESENTACIÓN */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Presentación</h3>
+        <SeccionAcordeon id="presentacion" titulo="Presentación" {...propsSeccion('presentacion')}>
           <div className="tip">
             <strong>Escribí al menos cuatro o cinco líneas.</strong> Una presentación de dos renglones deja el CV
             pobre y el empleador pasa al siguiente. Tres cosas que conviene incluir:
@@ -310,11 +362,10 @@ function CvFormContenido() {
               </p>
             )}
           </div>
-        </div>
+        </SeccionAcordeon>
 
         {/* EXPERIENCIA */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Experiencia laboral</h3>
+        <SeccionAcordeon id="experiencia" titulo="Experiencia laboral" {...propsSeccion('experiencia')}>
           <div className="tip">
             <strong>En la descripción, dos o tres renglones por trabajo.</strong> "Encargado de todo el local" no
             dice nada; contá qué hacías concretamente: cuántas mesas atendías por turno, de cuántas personas era el
@@ -381,15 +432,14 @@ function CvFormContenido() {
                 </div>
               </div>
 
-              <button type="button" className="btn secundario" onClick={() => borrarExperiencia(i)}>Quitar experiencia</button>
+              <button type="button" className="btn-accion quitar" onClick={() => borrarExperiencia(i)}>Quitar experiencia</button>
             </div>
           ))}
-          <button type="button" className="btn secundario" onClick={agregarExperiencia}>+ Agregar experiencia</button>
-        </div>
+          <button type="button" className="btn-accion" onClick={agregarExperiencia}>+ Agregar experiencia</button>
+        </SeccionAcordeon>
 
         {/* FORMACIÓN */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Formación y cursos</h3>
+        <SeccionAcordeon id="formacion" titulo="Formación y cursos" {...propsSeccion('formacion')}>
           <div className="tip">
             <strong>Cómo cargar tus cursos:</strong>
             <ul style={{ margin: '8px 0 0 0', paddingLeft: 18 }}>
@@ -421,15 +471,14 @@ function CvFormContenido() {
                   <input value={f.anio} onChange={(e) => editarFormacion(i, 'anio', e.target.value)} />
                 </div>
               </div>
-              <button type="button" className="btn secundario" onClick={() => borrarFormacion(i)}>Quitar</button>
+              <button type="button" className="btn-accion quitar" onClick={() => borrarFormacion(i)}>Quitar formación</button>
             </div>
           ))}
-          <button type="button" className="btn secundario" onClick={agregarFormacion}>+ Agregar formación</button>
-        </div>
+          <button type="button" className="btn-accion" onClick={agregarFormacion}>+ Agregar formación</button>
+        </SeccionAcordeon>
 
         {/* HABILIDADES */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Habilidades</h3>
+        <SeccionAcordeon id="habilidades" titulo="Habilidades" {...propsSeccion('habilidades')}>
           <div className="tip">
             Cargá habilidades del oficio, no cualidades personales. "Educado", "presentable" o "lindo" no son
             habilidades y restan seriedad al CV.
@@ -443,11 +492,10 @@ function CvFormContenido() {
             onChange={(v) => set('habilidades', v)}
             placeholder="Escribí una habilidad y apretá Agregar"
           />
-        </div>
+        </SeccionAcordeon>
 
         {/* HERRAMIENTAS */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Herramientas</h3>
+        <SeccionAcordeon id="herramientas" titulo="Herramientas" {...propsSeccion('herramientas')}>
           <div className="tip">
             Ejemplos: sistema de gestión (FUDO, Maxirest), caja registradora, posnet, parrilla, plancha, horno convector,
             cafetera express, molinillo, licuadora industrial, freidora.
@@ -458,11 +506,10 @@ function CvFormContenido() {
             niveles={NIVELES_HERRAMIENTA}
             placeholder="Escribí una herramienta"
           />
-        </div>
+        </SeccionAcordeon>
 
         {/* IDIOMAS */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Idiomas</h3>
+        <SeccionAcordeon id="idiomas" titulo="Idiomas" {...propsSeccion('idiomas')}>
           <div className="tip">
             En Posadas el portugués suma mucho por el turismo brasileño. Si lo entendés y te podés hacer entender,
             cargalo aunque no lo hables perfecto.
@@ -473,11 +520,10 @@ function CvFormContenido() {
             niveles={NIVELES_IDIOMA}
             placeholder="Escribí un idioma"
           />
-        </div>
+        </SeccionAcordeon>
 
         {/* DISPONIBILIDAD */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Disponibilidad</h3>
+        <SeccionAcordeon id="disponibilidad" titulo="Disponibilidad" {...propsSeccion('disponibilidad')}>
           <div className="form-field">
             <label>Disponibilidad horaria</label>
             <select value={cv.disponibilidad_horaria} onChange={(e) => set('disponibilidad_horaria', e.target.value)}>
@@ -498,25 +544,26 @@ function CvFormContenido() {
               {DISPONIBLE_DESDE.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
             </select>
           </div>
-          <label style={{ display: 'block', marginBottom: 12 }}>
-            <input type="checkbox" checked={cv.movilidad_propia} onChange={(e) => set('movilidad_propia', e.target.checked)} /> Tengo movilidad propia
+          <label className="casilla-legal">
+            <input type="checkbox" checked={cv.movilidad_propia} onChange={(e) => set('movilidad_propia', e.target.checked)} />
+            <span>Tengo movilidad propia</span>
           </label>
           <div className="form-field">
             <label>Pretensión salarial (opcional)</label>
             <input value={cv.pretension_salarial} onChange={(e) => set('pretension_salarial', e.target.value)} />
           </div>
-        </div>
+        </SeccionAcordeon>
 
         {/* CERTIFICADO */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <h3>Certificado de manipulación de alimentos</h3>
+        <SeccionAcordeon id="certificado" titulo="Certificado de manipulación de alimentos" {...propsSeccion('certificado')}>
           <div className="tip">
             Si ya lo tenés, subilo. Marcar la casilla sin el archivo suma la mitad de puntos en las vacantes que lo
             piden como requisito, porque el local no tiene cómo confirmarlo. Con el archivo cargado suma el total y
             le ahorrás un trámite a quien te contrate.
           </div>
-          <label style={{ display: 'block', marginBottom: 12 }}>
-            <input type="checkbox" checked={cv.certificado_manipulacion} onChange={(e) => set('certificado_manipulacion', e.target.checked)} /> Tengo el certificado vigente
+          <label className="casilla-legal">
+            <input type="checkbox" checked={cv.certificado_manipulacion} onChange={(e) => set('certificado_manipulacion', e.target.checked)} />
+            <span>Tengo el certificado vigente</span>
           </label>
           {cv.certificado_manipulacion && !cv.certificado_url && (
             <p className="marca-editado">
@@ -534,12 +581,12 @@ function CvFormContenido() {
               </p>
             )}
           </div>
-        </div>
+        </SeccionAcordeon>
 
         {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : '#B5432A' }}>{mensaje}</p>}
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
-          <button className="btn" onClick={guardar} disabled={guardando}>
+          <button className="btn-verde-solido en-linea" onClick={guardar} disabled={guardando}>
             {guardando ? 'Guardando...' : 'Guardar CV'}
           </button>
           {guardadoOk && (
