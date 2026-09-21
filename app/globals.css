@@ -217,52 +217,13 @@ a { color: var(--oro-oscuro); }
 /* ============================================================
    PORTADA
    ============================================================ */
-.portada-titular {
-  max-width: 13ch;
-  font-family: var(--font-titulos);
-  font-size: clamp(2.2rem, 9vw, 3.3rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.028em;
-  color: var(--verde);
-  margin: 22px 0 34px;
-}
 
-.portada-pulso {
-  font-family: var(--font-datos);
-  font-size: 0.74rem;
-  color: var(--texto-suave);
-  margin: -22px 0 30px;
-}
 
-.portada-pulso b { color: var(--oro-oscuro); font-weight: 500; }
 
-.tarjetas-portada { display: grid; gap: 22px; }
 
-@media (min-width: 820px) {
-  .tarjetas-portada { grid-template-columns: 1fr 1fr; }
-  .portada-titular { max-width: 18ch; }
-}
 
-.tarjeta-portada {
-  background: var(--panel);
-  border: 1px solid var(--borde);
-  border-radius: 16px;
-  padding: 28px 26px 30px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
 
-.tarjeta-portada h2 { margin: 0; }
 
-.tarjeta-portada p {
-  color: var(--texto);
-  margin: 0 0 8px;
-  max-width: 34ch;
-}
 
 /* ============================================================
    BOTONES
@@ -1250,3 +1211,113 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .btn-rechazar:hover { border-color: #C8705C; background: #FBF4F2; }
 
 .ficha-local .btn { padding: 10px 22px; font-size: 0.9rem; }
+
+/* ============================================================
+   PORTADA (mobile first)
+   ============================================================ */
+.portada { padding-top: 8px; }
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.hero-ilustracion img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
+
+.portada-titular {
+  font-family: var(--font-titulos);
+  font-size: clamp(2rem, 8.5vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.028em;
+  color: var(--verde);
+  margin: 0 0 14px;
+}
+
+.portada-subtitulo {
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: #4A4A40;
+  margin: 0;
+  max-width: 42ch;
+}
+
+@media (min-width: 860px) {
+  .hero {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    margin: 12px 0 40px;
+  }
+}
+
+.tarjetas-portada {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+@media (min-width: 760px) {
+  .tarjetas-portada { grid-template-columns: 1fr 1fr; gap: 22px; }
+}
+
+.tarjeta-portada {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 30px 26px 26px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.tarjeta-portada h2 { margin: 0; }
+
+.tarjeta-portada p {
+  color: var(--texto);
+  margin: 0 0 8px;
+  max-width: 34ch;
+}
+
+/* Botones de la portada: color sólido y texto blanco con buen contraste */
+.btn-portada {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 200px;
+  padding: 13px 30px;
+  border-radius: 999px;
+  color: #FFFFFF;
+  font-family: var(--font-cuerpo);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.btn-portada.verde { background: #3A5A40; }
+.btn-portada.oxido { background: #A6461F; }
+
+.btn-portada:hover { filter: brightness(1.1); }
+.btn-portada:active { transform: translateY(1px); }
+
+.btn-portada:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-portada, .cta-principal { transition: none; }
+}
+
+.hero-texto { min-width: 0; }
