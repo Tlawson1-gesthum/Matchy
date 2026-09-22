@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import Encabezado from './Encabezado';
 import Pie from './Pie';
+import PantallaCarga from './PantallaCarga';
 
 // Envuelve una pantalla y solo la muestra si la sesión tiene el rol esperado.
 // Una cuenta es de candidato o de local, nunca las dos cosas.
@@ -39,7 +40,7 @@ export default function GuardiaRol({ rol, children }) {
     window.location.href = rol === 'empleador' ? '/empleador/login' : '/candidato/login';
   }
 
-  if (estado === 'verificando') return <div className="container">Verificando tu cuenta...</div>;
+  if (estado === 'verificando') return <PantallaCarga texto="Verificando tu cuenta..." />;
   if (estado === 'ok' || estado === 'sin_sesion') return children;
 
   const esCandidato = rolActual === 'candidato';

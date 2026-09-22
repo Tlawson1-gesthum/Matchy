@@ -8,6 +8,7 @@ import BotonGoogle from '../../../components/BotonGoogle';
 import CampoContrasena from '../../../components/CampoContrasena';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 export default function LoginCandidato() {
   const router = useRouter();
@@ -76,7 +77,7 @@ export default function LoginCandidato() {
     router.push('/candidato/panel');
   }
 
-  if (yaTieneSesion) return <div className="container">Ya tenés una sesión abierta, te llevamos a tu panel...</div>;
+  if (yaTieneSesion) return <PantallaCarga texto="Ya tenés una sesión abierta. Te llevamos a tu panel..." />;
 
   return (
     <div>

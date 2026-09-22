@@ -7,6 +7,7 @@ import CvHoja from '../../../components/CvHoja';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function MiPerfilContenido() {
   const router = useRouter();
@@ -36,7 +37,7 @@ function MiPerfilContenido() {
     window.location.href = '/';
   }
 
-  if (!cv) return <div className="container">Cargando...</div>;
+  if (!cv) return <PantallaCarga texto="Preparando tu CV..." />;
 
   return (
     <div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 const BUCKETS = ['fotos-perfil', 'certificados', 'logos-locales'];
 
@@ -61,7 +62,7 @@ export default function EliminarCuenta() {
       <main className="panel-auth" style={{ paddingTop: 36, maxWidth: 560 }}>
         <h1>Eliminar mi cuenta</h1>
 
-        {estado === 'cargando' && <p>Cargando...</p>}
+        {estado === 'cargando' && <PantallaCarga texto="Cargando..." />}
 
         {estado === 'sin_sesion' && (
           <div className="card">

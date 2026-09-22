@@ -7,6 +7,7 @@ import GuardiaRol from '../../../components/GuardiaRol';
 import { IconoMaletin, IconoSobre, IconoCalendario, IconoMegafono } from '../../../components/IconosPanel';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function pctCompleto(cv) {
   const campos = [
@@ -72,7 +73,7 @@ function PanelCandidatoContenido() {
     window.location.href = '/';
   }
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Preparando tu panel..." />;
   if (!cv) return <div className="container">No encontramos tu CV.</div>;
 
   const pct = pctCompleto(cv);

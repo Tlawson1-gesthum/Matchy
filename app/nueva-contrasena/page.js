@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import CampoContrasena from '../../components/CampoContrasena';
+import PantallaCarga from '../../components/PantallaCarga';
 import Encabezado from '../../components/Encabezado';
 import Pie from '../../components/Pie';
 
@@ -57,7 +58,7 @@ export default function NuevaContrasena() {
       <main className="panel-auth" style={{ paddingTop: 36 }}>
         <h1>Crear una contraseña nueva</h1>
 
-        {estado === 'verificando' && <p>Verificando el enlace...</p>}
+        {estado === 'verificando' && <PantallaCarga texto="Verificando el enlace..." />}
 
         {estado === 'invalido' && (
           <div className="card">

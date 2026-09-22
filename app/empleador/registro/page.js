@@ -12,6 +12,7 @@ import CampoContrasena from '../../../components/CampoContrasena';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -175,7 +176,7 @@ function RegistroEmpleadorContenido() {
     router.push('/empleador/vacantes');
   }
 
-  if (paso === 'cargando') return <div className="container">Cargando...</div>;
+  if (paso === 'cargando') return <PantallaCarga texto="Verificando tu cuenta..." />;
 
   return (
     <div>

@@ -9,6 +9,7 @@ import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../
 import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
+import PantallaCarga from '../../../../components/PantallaCarga';
 
 function NuevaVacanteContenido() {
   const router = useRouter();
@@ -147,7 +148,7 @@ function NuevaVacanteContenido() {
     router.push('/empleador/vacantes');
   }
 
-  if (verificando) return <div className="container">Cargando...</div>;
+  if (verificando) return <PantallaCarga texto="Preparando el formulario..." />;
 
   if (!empleador) {
     return (

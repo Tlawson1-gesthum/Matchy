@@ -15,6 +15,7 @@ import { comprimirImagen } from '../../../lib/imagenes';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function calcularAniosExperiencia(experiencia) {
   let totalMeses = 0;
@@ -222,7 +223,7 @@ function CvFormContenido() {
     }
   }
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Cargando tu CV..." />;
 
   const pct = calcularCompletoPct(cv);
   const estados = estadoSecciones(cv);

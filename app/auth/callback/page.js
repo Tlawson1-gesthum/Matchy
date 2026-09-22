@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function Callback() {
   const router = useRouter();
@@ -55,15 +56,20 @@ function Callback() {
   }, [router, params]);
 
   return (
-    <div className="container">
-      <p>{error ? `Hubo un problema: ${error}` : 'Entrando...'}</p>
-    </div>
+    error ? (
+      <div className="container">
+        <p className="mensaje-error" role="alert">Hubo un problema al entrar: {error}</p>
+        <a href="/">Volver al inicio</a>
+      </div>
+    ) : (
+      <PantallaCarga texto="Entrando a tu cuenta..." retraso={0} />
+    )
   );
 }
 
 export default function CallbackPage() {
   return (
-    <Suspense fallback={<div className="container">Entrando...</div>}>
+    <Suspense fallback={<PantallaCarga texto="Entrando a tu cuenta..." retraso={0} />}>
       <Callback />
     </Suspense>
   );

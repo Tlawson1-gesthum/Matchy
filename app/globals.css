@@ -1953,3 +1953,107 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .aviso-estado.pendiente { background: #F6F1DF; border-color: #E8DDB8; color: #4F4630; }
 .aviso-estado.rechazado { background: #FBF1ED; border-color: #EBCFC4; color: #6E2E1B; }
 .aviso-estado strong { display: block; margin-bottom: 2px; }
+
+/* ============================================================
+   PANTALLA DE CARGA CON EL ISOTIPO ANIMADO
+   ============================================================ */
+.pantalla-carga {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px;
+  background: var(--fondo);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.pantalla-carga.visible { opacity: 1; pointer-events: auto; }
+
+.carga-isotipo {
+  width: min(148px, 38vw);
+  height: auto;
+  overflow: visible;
+}
+
+.carga-texto {
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--verde);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+/* 1. Las figuras entran desde los costados y se unen */
+.carga-figura-izq { animation: carga-entrar-izq 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) both; }
+.carga-figura-der { animation: carga-entrar-der 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) both; }
+
+@keyframes carga-entrar-izq {
+  from { transform: translateX(-90px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes carga-entrar-der {
+  from { transform: translateX(90px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* 2. Aparece la pieza de unión */
+.carga-union-aparece,
+.carga-union-late {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.carga-union-aparece { animation: carga-aparecer-union 0.35s 0.62s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+
+@keyframes carga-aparecer-union {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* 3. Tres latidos, un descanso, y vuelve a empezar mientras siga cargando */
+.carga-union-late { animation: carga-latido 2.4s 1s ease-in-out infinite; }
+
+@keyframes carga-latido {
+  0%   { transform: scale(1); }
+  9%   { transform: scale(1.1); }
+  18%  { transform: scale(1); }
+  28%  { transform: scale(1.1); }
+  37%  { transform: scale(1); }
+  47%  { transform: scale(1.1); }
+  56%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+/* El contenido aparece suave cuando la carga termina */
+@keyframes aparecer-contenido {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.container, .panel-auth { animation: aparecer-contenido 0.3s ease-out both; }
+
+/* Quien pidió menos movimiento ve el logo quieto y el contenido sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .carga-figura-izq, .carga-figura-der, .carga-union-aparece, .carga-union-late,
+  .container, .panel-auth {
+    animation: none;
+  }
+  .pantalla-carga { transition: none; }
+}
+
+/* Carga que sigue a otra: sin entrada ni fundido, las figuras ya están unidas */
+.pantalla-carga.continua { transition: none; }
+.pantalla-carga.continua .carga-figura-izq,
+.pantalla-carga.continua .carga-figura-der,
+.pantalla-carga.continua .carga-union-aparece { animation: none; }
+.pantalla-carga.continua .carga-union-late { animation-delay: 0.2s; }

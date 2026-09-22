@@ -11,6 +11,7 @@ import GuardiaRol from '../../../components/GuardiaRol';
 import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function diasDesde(fecha) {
   const ms = Date.now() - new Date(fecha).getTime();
@@ -204,7 +205,7 @@ function VacantesCandidatoContenido() {
   const ciudadesDisponibles = [...new Set(vacantes.map((v) => v.local?.ciudad).filter(Boolean))];
   const puestosDisponibles = [...new Set(vacantes.map((v) => v.puesto))];
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Buscando vacantes..." />;
 
   return (
     <div>

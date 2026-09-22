@@ -8,6 +8,7 @@ import { enviarAviso } from '../../../lib/avisos';
 import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 export default function AdminLocales() {
   const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
@@ -119,7 +120,7 @@ export default function AdminLocales() {
     setLocales((l) => l.map((x) => (x.id === id ? { ...x, estado } : x)));
   }
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Cargando locales..." />;
 
   if (!esAdmin) {
     return (

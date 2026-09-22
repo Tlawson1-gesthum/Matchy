@@ -8,6 +8,7 @@ import GuardiaRol from '../../../components/GuardiaRol';
 import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
+import PantallaCarga from '../../../components/PantallaCarga';
 
 function VacantesEmpleadorContenido() {
   const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
@@ -67,7 +68,7 @@ function VacantesEmpleadorContenido() {
     window.location.href = '/';
   }
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Preparando tu panel..." />;
 
   return (
     <div>

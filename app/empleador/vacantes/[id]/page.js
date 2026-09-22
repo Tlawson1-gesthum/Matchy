@@ -14,6 +14,7 @@ import GuardiaRol from '../../../../components/GuardiaRol';
 import { useDialogo } from '../../../../components/Dialogo';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
+import PantallaCarga from '../../../../components/PantallaCarga';
 
 const ESTADOS_ENTREVISTA = {
   pendiente: 'esperando respuesta del candidato',
@@ -247,7 +248,7 @@ function RankingVacanteContenido({ params }) {
     XLSX.writeFile(libro, `matchy-ranking-${vacante.puesto}.xlsx`);
   }
 
-  if (cargando) return <div className="container">Cargando...</div>;
+  if (cargando) return <PantallaCarga texto="Ordenando postulantes..." />;
 
   if (!vacante) {
     return (
