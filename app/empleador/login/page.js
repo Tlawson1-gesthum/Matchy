@@ -91,6 +91,9 @@ export default function LoginEmpleador() {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
         />
+        <p className="ayuda-contraste" style={{ margin: '-6px 0 14px' }}>
+          <a href="/recuperar">¿Olvidaste tu contraseña?</a>
+        </p>
         {error && <p className="mensaje-error" role="alert">{error}</p>}
         <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
           {cargando ? 'Entrando...' : 'Entrar'}

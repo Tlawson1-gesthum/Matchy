@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import { TIPOS_LOCAL, LOCALIDADES, revisarCuit, revisarRedSocial } from '../../../lib/opciones';
+import { validarArchivo, extension, TIPOS_IMAGEN } from '../../../lib/archivos';
+import { comprimirImagen } from '../../../lib/imagenes';
 import BotonGoogle from '../../../components/BotonGoogle';
 import CampoContrasena from '../../../components/CampoContrasena';
 import GuardiaRol from '../../../components/GuardiaRol';
@@ -83,15 +85,20 @@ function RegistroEmpleadorContenido() {
   }
 
   async function subirLogo(e) {
-    const file = e.target.files[0];
+    const original = e.target.files[0];
     const { data: userData } = await supabase.auth.getUser();
     const uid = userData?.user?.id;
-    if (!file || !uid) return;
+    if (!original || !uid) return;
+    if (!TIPOS_IMAGEN.includes(original.type)) {
+      setError(validarArchivo(original, { tipos: TIPOS_IMAGEN, maxMB: 2 })); e.target.value = ''; return;
+    }
+    const file = await comprimirImagen(original, { maxLado: 512, calidad: 0.86 });
+    const problema = validarArchivo(file, { tipos: TIPOS_IMAGEN, maxMB: 2 });
+    if (problema) { setError(problema); e.target.value = ''; return; }
     setSubiendoLogo(true);
-    const ext = file.name.split('.').pop();
-    const path = `${uid}/logo.${ext}`;
+    const path = `${uid}/logo.${extension(file)}`;
     const { error: errUp } = await supabase.storage
-      .from('logos-locales').upload(path, file, { upsert: true });
+      .from('logos-locales').upload(path, file, { upsert: true, contentType: file.type });
     if (!errUp) {
       const { data } = supabase.storage.from('logos-locales').getPublicUrl(path);
       setLogoUrl(`${data.publicUrl}?t=${Date.now()}`);
@@ -240,7 +247,7 @@ function RegistroEmpleadorContenido() {
               </div>
               <div className="form-field">
                 <label>Logo del local (opcional)</label>
-                <input type="file" accept="image/*" onChange={subirLogo} />
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={subirLogo} />
                 {subiendoLogo && <p className="ayuda-campo">Subiendo...</p>}
                 {logoUrl && (
                   <img

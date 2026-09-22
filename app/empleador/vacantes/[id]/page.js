@@ -6,9 +6,12 @@ import { supabase } from '../../../../lib/supabaseClient';
 import { calcularPuntaje } from '../../../../lib/scoring';
 import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
+import { rutaCertificado } from '../../../../lib/archivos';
+import { enviarAviso } from '../../../../lib/avisos';
 import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../../lib/fechas';
 import BotonWhatsApp from '../../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../../components/GuardiaRol';
+import { useDialogo } from '../../../../components/Dialogo';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
 
@@ -26,6 +29,7 @@ function badgeClase(puntaje) {
 }
 
 function RankingVacanteContenido({ params }) {
+  const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [vacante, setVacante] = useState(null);
   const [postulaciones, setPostulaciones] = useState([]);
@@ -70,7 +74,7 @@ function RankingVacanteContenido({ params }) {
 
     // Paso 2: los CVs de esos candidatos, en una sola consulta.
     const ids = posts.map((p) => p.candidato_id);
-    const { data: cvs } = await supabase.from('cvs_publicos').select('*').in('id', ids);
+    const { data: cvs } = await supabase.rpc('cvs_para_empleador', { p_ids: ids });
     const porId = Object.fromEntries((cvs || []).map((c) => [c.id, c]));
 
     // Paso 3: las entrevistas ya propuestas.
@@ -107,25 +111,32 @@ function RankingVacanteContenido({ params }) {
     const pendientes = conPuntaje.filter((p) => !p.resumen_ia && p.cv.id);
     if (pendientes.length > 0) {
       setProcesandoIA(true);
-      for (const p of pendientes) {
+      const { data: sesion } = await supabase.auth.getSession();
+      const token = sesion?.session?.access_token;
+      // De a tres en paralelo: más rápido que de a uno, sin saturar el servicio.
+      async function generar(p) {
         try {
           const res = await fetch('/api/summarize', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              vacante: vac, cv: p.cv, puntaje: p.puntaje,
-              razonesPositivas: p.razonesPositivas, razonesNegativas: p.razonesNegativas,
-            }),
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ postulacion_id: p.id }),
           });
-          const { resumen } = await res.json();
+          if (!res.ok) return;
+          const { resumen, puntaje } = await res.json();
           if (resumen) {
-            await supabase.from('postulaciones')
-              .update({ puntaje: p.puntaje, resumen_ia: resumen }).eq('id', p.id);
             setPostulaciones((lista) =>
-              lista.map((x) => (x.id === p.id ? { ...x, resumen_ia: resumen } : x))
+              lista.map((x) => (x.id === p.id ? { ...x, resumen_ia: resumen, puntaje: puntaje ?? x.puntaje } : x))
             );
           }
         } catch (e) { /* si falla uno, seguimos con el resto */ }
+      }
+
+      if (token) {
+        const cola = [...pendientes];
+        const trabajadores = Array.from({ length: Math.min(3, cola.length) }, async () => {
+          while (cola.length) await generar(cola.shift());
+        });
+        await Promise.all(trabajadores);
       }
       setProcesandoIA(false);
     }
@@ -136,13 +147,14 @@ function RankingVacanteContenido({ params }) {
   async function proponerEntrevista(postulacionId) {
     const horario = horarios[postulacionId];
     if (!horario) return;
-    const { error: err } = await supabase.from('entrevistas').insert({
+    const { data: nueva, error: err } = await supabase.from('entrevistas').insert({
       postulacion_id: postulacionId,
       horario_propuesto: horarioParaGuardar(horario),
       propuesta_por: 'empleador',
       estado: 'pendiente',
-    });
+    }).select('id').single();
     if (err) { setError('No se pudo proponer la entrevista: ' + err.message); return; }
+    enviarAviso('entrevista_propuesta', nueva?.id);
     cargar();
   }
 
@@ -165,6 +177,7 @@ function RankingVacanteContenido({ params }) {
     }
     const { error: err } = await supabase.from('entrevistas').update(cambios).eq('id', entrevistaId);
     if (err) { setError('No se pudo actualizar la entrevista: ' + err.message); return; }
+    if (horario) enviarAviso('entrevista_actualizada', entrevistaId);
     cargar();
   }
 
@@ -176,6 +189,7 @@ function RankingVacanteContenido({ params }) {
       updated_at: new Date().toISOString(),
     }).eq('id', entrevista.id);
     if (err) { setError('No se pudo confirmar: ' + err.message); return; }
+    enviarAviso('entrevista_actualizada', entrevista.id);
     cargar();
   }
 
@@ -200,6 +214,17 @@ function RankingVacanteContenido({ params }) {
       .rpc('referencias_de_candidato', { p_candidato_id: postulacion.candidato_id });
     if (errRef) { setError('No se pudieron cargar las referencias: ' + errRef.message); return; }
     setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
+  }
+
+  async function verCertificado(cv) {
+    const ruta = rutaCertificado(cv.certificado_url);
+    if (!ruta) return;
+    const { data, error: err } = await supabase.storage.from('certificados').createSignedUrl(ruta, 300);
+    if (err || !data?.signedUrl) {
+      setError('No se pudo abrir el certificado. Solo está disponible después de avanzar con la persona.');
+      return;
+    }
+    window.open(data.signedUrl, '_blank', 'noopener');
   }
 
   async function exportarExcel() {
@@ -236,6 +261,7 @@ function RankingVacanteContenido({ params }) {
   return (
     <div>
       <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
+      {dialogo}
       <div className="container">
         <h1>{vacante.puesto === 'Otro' && vacante.puesto_otro ? vacante.puesto_otro : vacante.puesto}</h1>
         <p className="mono" style={{ fontSize: '0.85rem' }}>
@@ -340,8 +366,15 @@ function RankingVacanteContenido({ params }) {
                     </p>
                   ))
                 )}
-                <p style={{ margin: '10px 0 0', fontSize: '0.8rem', color: 'var(--texto-suave)' }}>
-                  Usá estos contactos solo para verificar la experiencia de esta postulación.
+                {p.cv.certificado_url && (
+                  <p style={{ margin: '10px 0 0' }}>
+                    <button className="btn-accion" onClick={() => verCertificado(p.cv)}>
+                      Ver certificado de manipulación
+                    </button>
+                  </p>
+                )}
+                <p className="ayuda-contraste" style={{ marginTop: 10 }}>
+                  Usá estos contactos y el certificado solo para verificar esta postulación.
                 </p>
               </div>
             )}
@@ -377,8 +410,13 @@ function RankingVacanteContenido({ params }) {
                       </button>
                       <button
                         className="btn-accion"
-                        onClick={() => {
-                          if (window.confirm(`¿Descartar a ${p.cv.nombre || 'este candidato'}? Se cancela la entrevista.`)) {
+                        onClick={async () => {
+                          const ok = await confirmar('Se cancela la entrevista propuesta.', {
+                            titulo: `¿Descartar a ${p.cv.nombre || 'esta persona'}?`,
+                            textoAceptar: 'Descartar',
+                            peligro: true,
+                          });
+                          if (ok) {
                             responderEntrevista(p.entrevista.id, 'rechazada');
                             cambiarEstado(p.id, 'descartado');
                           }

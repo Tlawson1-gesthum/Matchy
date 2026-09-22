@@ -20,9 +20,9 @@ export default function Privacidad() {
 
         <h2>1. Quién es responsable de tus datos</h2>
         <p>
-          El responsable de la base de datos es [RAZÓN SOCIAL], CUIT [CUIT], con domicilio en [DOMICILIO],
-          Posadas, provincia de Misiones, Argentina. Para cualquier consulta sobre tus datos podés escribir a
-          <a href="mailto:gozzasabores@gmail.com"> gozzasabores@gmail.com</a>.
+          El responsable de la base de datos es Tomas Oliver Lawson, CUIL 20-34896158-7, con domicilio en
+          Centenario 2595, Posadas, provincia de Misiones, Argentina. Para cualquier consulta sobre tus datos
+          podés escribir a <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
         </p>
 
         <h2>2. Qué datos recolectamos</h2>
@@ -31,8 +31,10 @@ export default function Privacidad() {
         presentación, experiencia laboral, formación, habilidades, herramientas, idiomas, disponibilidad,
         movilidad, pretensión salarial (opcional) y certificado de manipulación de alimentos (opcional).</p>
         <p><strong>Si ofrecés empleo:</strong> tu email y contraseña, nombre y apellido del responsable,
-        nombre del local, razón social, CUIT, tipo de local, localidad, dirección, teléfono, red social
-        y datos de contacto.</p>
+        nombre del local, razón social, CUIT, tipo de local, localidad, dirección, teléfono, enlace público del
+        local, logo (opcional) y datos de contacto.</p>
+        <p>Si entrás con Google, recibimos tu nombre, tu email y tu foto de perfil de Google. Si verificás tu
+        teléfono, guardamos el número verificado.</p>
         <p>No solicitamos DNI, ni fecha de nacimiento completa, ni datos sensibles en el sentido de la Ley 25.326
         (salud, origen racial o étnico, opiniones políticas, convicciones religiosas, afiliación sindical o
         vida sexual). Si los cargás igual en un campo de texto libre, pedimos que no lo hagas.</p>
@@ -48,12 +50,18 @@ export default function Privacidad() {
 
         <h2>4. Quién puede ver tus datos</h2>
         <p>
-          Tu CV es público para las personas que naveguen el sitio y para los locales verificados. También podés
-          compartir su enlace con quien quieras.
+          <strong>Si buscás empleo:</strong> tu CV no aparece en ningún listado abierto. Lo ven los locales
+          verificados a cuyas vacantes te postulás, y cualquier persona a la que le compartas el enlace de tu CV.
         </p>
         <p>
-          <strong>Los contactos de referencia que cargues son la excepción:</strong> no se muestran en tu CV
-          público. Solo se le entregan a un local cuando ese local avanza específicamente con tu postulación.
+          Hay dos datos que ni siquiera esos locales ven de entrada. Los <strong>contactos de referencia</strong> y
+          tu <strong>certificado de manipulación de alimentos</strong> solo se le muestran a un local cuando decide
+          avanzar específicamente con tu postulación. El certificado se guarda como archivo privado.
+        </p>
+        <p>
+          <strong>Si ofrecés empleo:</strong> los candidatos ven el nombre, el tipo, la dirección, el enlace público
+          y el contacto del local. El CUIT, la razón social y el teléfono del responsable no se muestran a los
+          candidatos: los usamos solo para verificar el alta.
         </p>
 
         <h2>5. Dónde se alojan tus datos y transferencias internacionales</h2>
@@ -67,6 +75,11 @@ export default function Privacidad() {
           Para generar el resumen orientativo que ve el empleador, algunos datos de tu CV (nombre, años de
           experiencia, disponibilidad y compatibilidad con la vacante) se envían a la API de Anthropic, empresa
           con sede en Estados Unidos, que actúa como encargada de tratamiento.
+        </p>
+        <p>
+          Cuando se activen los avisos por mail, el envío se hará a través de Resend, un proveedor de correo con
+          sede en Estados Unidos que actúa como encargado de tratamiento y recibe solo lo necesario para enviar
+          cada aviso: tu email, tu nombre y el detalle de la novedad.
         </p>
         <p>
           Al aceptar esta política prestás tu consentimiento expreso para estas transferencias internacionales,
@@ -90,7 +103,8 @@ export default function Privacidad() {
         <h2>7. Tus derechos</h2>
         <p>
           Tenés derecho a acceder a tus datos, rectificarlos, actualizarlos y solicitar su supresión, de forma
-          gratuita. Podés ejercerlos directamente desde tu cuenta editando o eliminando tu CV, o escribiéndonos.
+          gratuita. Podés ejercerlos directamente desde el sitio: editando tu CV o los datos de tu local, o
+          eliminando tu cuenta desde la opción "Eliminar mi cuenta" de tu panel. También podés escribirnos.
         </p>
         <p>
           La Agencia de Acceso a la Información Pública, en su carácter de órgano de control de la Ley 25.326,
@@ -100,10 +114,18 @@ export default function Privacidad() {
 
         <h2>8. Conservación y seguridad</h2>
         <p>
-          Conservamos tus datos mientras mantengas tu cuenta activa. Si solicitás la baja, eliminamos tu CV y tus
-          datos personales, salvo aquello que debamos conservar por obligación legal. Aplicamos medidas técnicas
-          de seguridad, incluyendo control de acceso por usuario y cifrado en tránsito, para evitar accesos no
-          autorizados.
+          Conservamos tus datos mientras mantengas tu cuenta activa. Si eliminás tu cuenta, borramos tu CV o los
+          datos de tu local, tus archivos, tus postulaciones o vacantes y tus entrevistas.
+        </p>
+        <p>
+          La única excepción son los reportes por posibles fraudes: se conservan aunque la cuenta denunciada o la
+          que denunció se eliminen, sin los datos personales de quien reportó, porque sirven para proteger a otras
+          personas y pueden ser requeridos por una autoridad.
+        </p>
+        <p>
+          Aplicamos medidas técnicas de seguridad: control de acceso por usuario en la base de datos, archivos
+          privados cuando corresponde, límites de tamaño y tipo en los archivos que se suben, y cifrado en
+          tránsito.
         </p>
 
         <h2>9. Solo para mayores de 18 años</h2>
@@ -119,8 +141,8 @@ export default function Privacidad() {
         </p>
 
         <div className="disclaimer">
-          Los campos entre corchetes deben completarse con los datos societarios definitivos antes del
-          lanzamiento público, y este documento debe ser revisado por un profesional del derecho.
+          Documento preliminar: debe ser revisado por un profesional del derecho antes del lanzamiento público, y
+          actualizado con la región definitiva de alojamiento de los datos.
         </div>
       </main>
       <Pie />

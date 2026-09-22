@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 import ListaEditable from '../../../../components/ListaEditable';
+import { horarioParaGuardar, aValorSelector, minimoSelector } from '../../../../lib/fechas';
 import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../../lib/opciones';
 import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
@@ -31,6 +32,8 @@ function NuevaVacanteContenido() {
   });
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [editandoId, setEditandoId] = useState(null);
+  const [original, setOriginal] = useState(null);
 
   useEffect(() => {
     async function verificar() {
@@ -52,6 +55,38 @@ function NuevaVacanteContenido() {
 
       setEmpleador(emp);
       setForm((f) => ({ ...f, contacto: emp.contacto || '' }));
+
+      // Modo edición: /empleador/vacantes/nueva?editar=<id>
+      const idEditar = new URLSearchParams(window.location.search).get('editar');
+      if (idEditar) {
+        const { data: vac } = await supabase
+          .from('vacantes').select('*').eq('id', idEditar).eq('empleador_id', uid).maybeSingle();
+        if (!vac) {
+          setError('No encontramos esa vacante entre las tuyas.');
+        } else if (vac.estado !== 'activa') {
+          setError('Solo se pueden editar vacantes activas.');
+        } else {
+          setEditandoId(vac.id);
+          setOriginal(vac);
+          setForm((f) => ({
+            ...f,
+            puesto: vac.puesto || f.puesto,
+            puesto_otro: vac.puesto_otro || '',
+            turno: vac.turno || '',
+            dias_trabajo: vac.dias_trabajo || '',
+            urgencia: vac.urgencia || f.urgencia,
+            cantidad_puestos: vac.cantidad_puestos || 1,
+            cierra_at: aValorSelector(vac.cierra_at),
+            experiencia_minima_anios: vac.experiencia_minima_anios || 0,
+            disponibilidad_requerida: vac.disponibilidad_requerida || '',
+            movilidad_requerida: !!vac.movilidad_requerida,
+            certificado_requerido: !!vac.certificado_requerido,
+            herramientas_buscadas: vac.herramientas_buscadas || [],
+            descripcion: vac.descripcion || '',
+            contacto: vac.contacto || f.contacto,
+          }));
+        }
+      }
       setVerificando(false);
     }
     verificar();
@@ -66,8 +101,7 @@ function NuevaVacanteContenido() {
     setCargando(true);
     setError('');
 
-    const { error: errIns } = await supabase.from('vacantes').insert({
-      empleador_id: empleador.id,
+    const datos = {
       puesto: form.puesto,
       puesto_otro: form.puesto === 'Otro' ? form.puesto_otro : null,
       turno: form.turno || null,
@@ -75,7 +109,7 @@ function NuevaVacanteContenido() {
       tipo_local: empleador.tipo_local || null,
       urgencia: form.urgencia,
       cantidad_puestos: Number(form.cantidad_puestos) || 1,
-      cierra_at: form.cierra_at ? new Date(form.cierra_at).toISOString() : null,
+      cierra_at: horarioParaGuardar(form.cierra_at),
       experiencia_minima_anios: Number(form.experiencia_minima_anios) || 0,
       disponibilidad_requerida: form.disponibilidad_requerida,
       movilidad_requerida: form.movilidad_requerida,
@@ -83,11 +117,31 @@ function NuevaVacanteContenido() {
       herramientas_buscadas: form.herramientas_buscadas,
       descripcion: form.descripcion,
       contacto: form.contacto,
-    });
+    };
+
+    let errGuardar = null;
+    if (editandoId) {
+      ({ error: errGuardar } = await supabase.from('vacantes').update(datos).eq('id', editandoId));
+
+      // Si cambiaron los requisitos, los porcentajes guardados ya no corresponden:
+      // se borran y se recalculan la próxima vez que abras la lista de postulantes.
+      const requisitos = ['puesto', 'turno', 'experiencia_minima_anios', 'disponibilidad_requerida',
+        'movilidad_requerida', 'certificado_requerido'];
+      const cambioRequisitos =
+        original && (requisitos.some((k) => (original[k] ?? null) !== (datos[k] ?? null)) ||
+          JSON.stringify(original.herramientas_buscadas || []) !== JSON.stringify(datos.herramientas_buscadas || []));
+      if (!errGuardar && cambioRequisitos) {
+        await supabase.from('postulaciones')
+          .update({ puntaje: null, resumen_ia: null, razones_positivas: [], razones_negativas: [] })
+          .eq('vacante_id', editandoId);
+      }
+    } else {
+      ({ error: errGuardar } = await supabase.from('vacantes').insert({ empleador_id: empleador.id, ...datos }));
+    }
 
     setCargando(false);
-    if (errIns) {
-      setError('No se pudo publicar la vacante: ' + errIns.message);
+    if (errGuardar) {
+      setError((editandoId ? 'No se pudieron guardar los cambios: ' : 'No se pudo publicar la vacante: ') + errGuardar.message);
       return;
     }
     router.push('/empleador/vacantes');
@@ -117,7 +171,12 @@ function NuevaVacanteContenido() {
     <div>
       <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
       <div className="container" style={{ maxWidth: 600 }}>
-        <h1>Publicar vacante</h1>
+        <h1>{editandoId ? 'Editar vacante' : 'Publicar vacante'}</h1>
+        {editandoId && (
+          <p className="ayuda-contraste">
+            Si cambiás los requisitos, recalculamos la compatibilidad de quienes ya se postularon con los datos nuevos.
+          </p>
+        )}
         <p>
           ¿Primera vez? <a href="/vacante-ejemplo" target="_blank">Mirá un ejemplo</a> de cómo se ve una vacante
           bien cargada y una mal cargada.
@@ -197,6 +256,7 @@ function NuevaVacanteContenido() {
             <label>¿Hasta cuándo recibís postulaciones? (opcional)</label>
             <input
               type="datetime-local"
+              min={minimoSelector()}
               value={form.cierra_at}
               onChange={(e) => set('cierra_at', e.target.value)}
             />
@@ -256,7 +316,7 @@ function NuevaVacanteContenido() {
 
           {error && <p style={{ color: '#B5432A' }}>{error}</p>}
           <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
-            {cargando ? 'Publicando...' : 'Publicar vacante'}
+            {cargando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Publicar vacante'}
           </button>
         </form>
         <div style={{ height: 40 }} />

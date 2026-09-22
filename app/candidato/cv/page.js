@@ -10,6 +10,8 @@ import {
 } from '../../../lib/opciones';
 import VerificarTelefono from '../../../components/VerificarTelefono';
 import SeccionAcordeon from '../../../components/SeccionAcordeon';
+import { validarArchivo, rutaCertificado, extension, TIPOS_IMAGEN, TIPOS_CERTIFICADO } from '../../../lib/archivos';
+import { comprimirImagen } from '../../../lib/imagenes';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -145,30 +147,59 @@ function CvFormContenido() {
   }
 
   async function subirFoto(e) {
-    const file = e.target.files[0];
-    if (!file || !userId) return;
+    const original = e.target.files[0];
+    if (!original || !userId) return;
+    // Primero se revisa que sea una imagen, después se comprime y recién ahí se controla el peso
+    if (!TIPOS_IMAGEN.includes(original.type)) {
+      setMensaje(validarArchivo(original, { tipos: TIPOS_IMAGEN, maxMB: 3 })); setGuardadoOk(false); e.target.value = ''; return;
+    }
+    const file = await comprimirImagen(original, { maxLado: 800, calidad: 0.82 });
+    const problema = validarArchivo(file, { tipos: TIPOS_IMAGEN, maxMB: 3 });
+    if (problema) { setMensaje(problema); setGuardadoOk(false); e.target.value = ''; return; }
     setSubiendoFoto(true);
-    const path = `${userId}/foto.${file.name.split('.').pop()}`;
-    const { error } = await supabase.storage.from('fotos-perfil').upload(path, file, { upsert: true });
+    const path = `${userId}/foto.${extension(file)}`;
+    const { error } = await supabase.storage.from('fotos-perfil').upload(path, file, { upsert: true, contentType: file.type });
     if (!error) {
       const { data } = supabase.storage.from('fotos-perfil').getPublicUrl(path);
       set('foto_url', `${data.publicUrl}?t=${Date.now()}`);
+    } else {
+      setMensaje('No se pudo subir la foto: ' + error.message);
     }
     setSubiendoFoto(false);
   }
 
+
   async function subirCertificado(e) {
-    const file = e.target.files[0];
-    if (!file || !userId) return;
+    const original = e.target.files[0];
+    if (!original || !userId) return;
+    if (!TIPOS_CERTIFICADO.includes(original.type)) {
+      setMensaje(validarArchivo(original, { tipos: TIPOS_CERTIFICADO, maxMB: 5 })); setGuardadoOk(false); e.target.value = ''; return;
+    }
+    // Las fotos del certificado se achican pero con más resolución, para que se pueda leer
+    const file = await comprimirImagen(original, { maxLado: 1800, calidad: 0.86 });
+    const problema = validarArchivo(file, { tipos: TIPOS_CERTIFICADO, maxMB: 5 });
+    if (problema) { setMensaje(problema); setGuardadoOk(false); e.target.value = ''; return; }
     setSubiendoCert(true);
-    const path = `${userId}/certificado.${file.name.split('.').pop()}`;
-    const { error } = await supabase.storage.from('certificados').upload(path, file, { upsert: true });
+    const path = `${userId}/certificado.${extension(file)}`;
+    const { error } = await supabase.storage.from('certificados').upload(path, file, { upsert: true, contentType: file.type });
     if (!error) {
-      const { data } = supabase.storage.from('certificados').getPublicUrl(path);
-      setCv((c) => ({ ...c, certificado_url: data.publicUrl, certificado_manipulacion: true }));
+      // El archivo es privado: guardamos la ruta, no una dirección pública
+      setCv((c) => ({ ...c, certificado_url: path, certificado_manipulacion: true }));
+      setGuardadoOk(false);
+    } else {
+      setMensaje('No se pudo subir el certificado: ' + error.message);
     }
     setSubiendoCert(false);
   }
+
+  async function verMiCertificado() {
+    const ruta = rutaCertificado(cv.certificado_url);
+    if (!ruta) return;
+    const { data, error } = await supabase.storage.from('certificados').createSignedUrl(ruta, 300);
+    if (error || !data?.signedUrl) { setMensaje('No se pudo abrir el certificado.'); return; }
+    window.open(data.signedUrl, '_blank', 'noopener');
+  }
+
 
   async function guardar() {
     setGuardando(true);
@@ -271,8 +302,8 @@ function CvFormContenido() {
             )}
           </div>
           <div className="form-field">
-            <label>Foto (opcional)</label>
-            <input type="file" accept="image/*" onChange={subirFoto} />
+            <label htmlFor="archivo-foto">Foto (opcional, JPG, PNG o WEBP)</label>
+            <input id="archivo-foto" type="file" accept="image/jpeg,image/png,image/webp" onChange={subirFoto} />
             {subiendoFoto && <p>Subiendo...</p>}
             {cv.foto_url && (
               <img src={cv.foto_url} alt="" style={{ width: 88, height: 88, borderRadius: 6, objectFit: 'cover', marginTop: 10 }} />
@@ -572,12 +603,16 @@ function CvFormContenido() {
           )}
 
           <div className="form-field">
-            <label>Subir certificado (foto o PDF)</label>
-            <input type="file" accept="image/*,application/pdf" onChange={subirCertificado} />
+            <label htmlFor="archivo-certificado">Subir certificado (foto o PDF, hasta 5 MB)</label>
+            <input id="archivo-certificado" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={subirCertificado} />
+            <p className="ayuda-contraste">
+              El archivo es privado: solo lo ven vos y los locales que decidan avanzar con tu postulación. Si muestra
+              tu DNI u otro dato personal que no quieras compartir, podés taparlo antes de subirlo.
+            </p>
             {subiendoCert && <p>Subiendo...</p>}
             {cv.certificado_url && (
               <p style={{ marginTop: 8 }}>
-                <a href={cv.certificado_url} target="_blank" rel="noreferrer">Ver certificado cargado</a>
+                <button type="button" className="btn-accion" onClick={verMiCertificado}>Ver certificado cargado</button>
               </p>
             )}
           </div>

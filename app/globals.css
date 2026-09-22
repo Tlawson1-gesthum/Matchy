@@ -1855,3 +1855,101 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   outline: 3px solid var(--verde);
   outline-offset: -3px;
 }
+
+/* ============================================================
+   DIÁLOGOS (reemplazan las ventanitas del navegador)
+   ============================================================ */
+.dialogo {
+  width: min(460px, calc(100vw - 32px));
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 22px 22px 18px;
+  background: var(--blanco);
+  color: var(--texto);
+  box-shadow: 0 18px 48px rgba(38, 64, 44, 0.22);
+}
+
+.dialogo::backdrop { background: rgba(30, 32, 26, 0.45); }
+
+.dialogo-titulo { font-size: 1.2rem; margin: 0 0 8px; }
+
+.dialogo-mensaje {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0 0 16px;
+  white-space: pre-line;
+}
+
+.dialogo-texto {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-family: var(--font-cuerpo);
+  font-size: 1rem;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+.dialogo-texto:focus { outline: 3px solid var(--verde); outline-offset: 1px; }
+
+.dialogo-botones {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 420px) {
+  .dialogo-botones { flex-direction: column-reverse; }
+  .dialogo-botones > button { width: 100%; }
+}
+
+/* Acción destructiva: terracota sólido con texto blanco (contraste 6:1) */
+.btn-peligro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 24px;
+  background: #9C3A22;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-cuerpo);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-peligro:hover { filter: brightness(1.1); }
+.btn-peligro:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-peligro:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+
+.zona-peligro { border-color: #E6CFC6; }
+
+.lista-borrado {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.enlace-discreto {
+  font-size: 0.84rem;
+  color: #55564B;
+}
+
+.enlace-discreto:hover { color: #9C3A22; }
+
+.aviso-estado {
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  border: 1px solid;
+}
+
+.aviso-estado.pendiente { background: #F6F1DF; border-color: #E8DDB8; color: #4F4630; }
+.aviso-estado.rechazado { background: #FBF1ED; border-color: #EBCFC4; color: #6E2E1B; }
+.aviso-estado strong { display: block; margin-bottom: 2px; }

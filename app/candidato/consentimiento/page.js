@@ -39,17 +39,17 @@ function ConsentimientoContenido() {
       <h1>Antes de armar tu CV</h1>
       <div className="card">
         <p>
-          Los datos que cargues (nombre, foto, experiencia, contacto) van a quedar{' '}
-          <strong>visibles públicamente</strong> para que los locales gastronómicos verificados de Posadas y
-          alrededores puedan encontrarte y contactarte.
+          Los datos que cargues (nombre, foto, experiencia, contacto) los van a ver{' '}
+          <strong>los locales verificados a cuyas vacantes te postules</strong>, y cualquier persona a la que le
+          compartas el enlace de tu CV. Tu CV no aparece en ningún listado abierto.
         </p>
         <p>
           No te vamos a pedir DNI ni tu fecha de nacimiento completa. La foto y la edad son opcionales. Vos decidís
           qué mostrar, y podés editar o eliminar tu perfil cuando quieras desde tu cuenta.
         </p>
         <p>
-          Los contactos de referencia que cargues son la excepción: no se muestran en tu CV público, y solo se le
-          entregan a un local cuando decide avanzar con tu postulación.
+          Los contactos de referencia y el certificado de manipulación que cargues son la excepción: solo se le
+          muestran a un local cuando decide avanzar con tu postulación.
         </p>
         <p>
           Tus datos se alojan en servidores ubicados fuera de Argentina, y parte de la información se procesa en

@@ -1,22 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 import CvHoja from '../../../components/CvHoja';
 
-// Fuerza a que esta página se genere en el momento en que alguien la visita
-// (no durante el build), así siempre tiene las variables de entorno disponibles.
+// Se genera cuando alguien visita el enlace, no durante el build.
 export const dynamic = 'force-dynamic';
 
-// Cliente propio (sin sesión de usuario) para renderizar en el servidor.
-const supabaseServidor = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
 export default async function CvPublico({ params }) {
-  const { data: cv } = await supabaseServidor
-    .from('cvs_publicos')
-    .select('*')
-    .eq('id', params.id)
-    .single();
+  const id = String(params?.id || '');
+
+  // Un identificador con formato inválido ni siquiera se consulta
+  if (!/^[0-9a-f-]{36}$/i.test(id)) {
+    return <div className="container">Este CV no está disponible.</div>;
+  }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { auth: { persistSession: false } }
+  );
+
+  // La función devuelve un solo CV por vez: sirve para el enlace compartible,
+  // pero no permite descargar la lista completa.
+  const { data: cv } = await supabase.rpc('cv_publico', { p_id: id });
 
   if (!cv) {
     return <div className="container">Este CV no está disponible.</div>;

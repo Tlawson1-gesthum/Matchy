@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import VerificarTelefono from '../../../components/VerificarTelefono';
 import GuardiaRol from '../../../components/GuardiaRol';
+import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
 function VacantesEmpleadorContenido() {
+  const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [vacantes, setVacantes] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -50,10 +52,10 @@ function VacantesEmpleadorContenido() {
   useEffect(() => { cargar(); }, []);
 
   async function marcarCubierta(id, puesto) {
-    const ok = window.confirm(
-      `¿Marcar la vacante de ${puesto} como cubierta?\n\n` +
+    const ok = await confirmar(
       'Se va a sacar del listado público y los candidatos ya no van a poder postularse. ' +
-      'Esta acción no se puede deshacer: si necesitás volver a buscar, vas a tener que publicar una vacante nueva.'
+      'No se puede deshacer: si necesitás volver a buscar, vas a tener que publicar una vacante nueva.',
+      { titulo: `¿Marcar ${puesto} como cubierta?`, textoAceptar: 'Sí, está cubierta' }
     );
     if (!ok) return;
     await supabase.from('vacantes').update({ estado: 'cubierta' }).eq('id', id);
@@ -74,8 +76,25 @@ function VacantesEmpleadorContenido() {
         campanaHref="/empleador/vacantes"
         destacado={esAdmin ? { href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes } : null}
       />
+      {dialogo}
       <div className="container">
         <h1>Mis vacantes</h1>
+
+        {empleador?.estado === 'pendiente' && (
+          <div className="aviso-estado pendiente" role="status">
+            <strong>Tu local está en revisión.</strong> Estamos verificando los datos que cargaste. Podés ir
+            publicando vacantes: se van a mostrar apenas aprobemos el alta, normalmente dentro de las 48 horas
+            hábiles.
+          </div>
+        )}
+        {empleador?.estado === 'rechazado' && (
+          <div className="aviso-estado rechazado" role="status">
+            <strong>Tu local no está habilitado.</strong>{' '}
+            {empleador.motivo_rechazo ? `Motivo: ${empleador.motivo_rechazo}. ` : ''}
+            Tus vacantes no se muestran a los candidatos. Si creés que es un error, escribinos a{' '}
+            <a href="mailto:gozzasabores@gmail.com?subject=Revisi%C3%B3n%20de%20mi%20local">gozzasabores@gmail.com</a>.
+          </div>
+        )}
 
         {empleador && !empleador.telefono_verificado_at && (
           <VerificarTelefono
@@ -126,9 +145,12 @@ function VacantesEmpleadorContenido() {
                 )}
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
-                <a className="btn secundario" href={`/empleador/vacantes/${v.id}`}>Ver postulantes</a>
+                <a className="btn-accion" href={`/empleador/vacantes/${v.id}`}>Ver postulantes</a>
                 {v.estado === 'activa' && (
-                  <button className="btn secundario" onClick={() => marcarCubierta(v.id, v.puesto)}>Marcar cubierta</button>
+                  <a className="btn-accion" href={`/empleador/vacantes/nueva?editar=${v.id}`}>Editar</a>
+                )}
+                {v.estado === 'activa' && (
+                  <button className="btn-accion quitar" onClick={() => marcarCubierta(v.id, v.puesto)}>Marcar cubierta</button>
                 )}
               </div>
             </div>
@@ -136,8 +158,11 @@ function VacantesEmpleadorContenido() {
         ))}
 
         <p style={{ marginTop: 28, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          {esAdmin && <a className="btn secundario" href="/admin/locales">Aprobar locales</a>}
-          <button className="btn secundario" onClick={cerrarSesion}>Cerrar sesión</button>
+          {esAdmin && <a className="btn-accion" href="/admin/locales">Aprobar locales</a>}
+          <button className="btn-accion" onClick={cerrarSesion}>Cerrar sesión</button>
+        </p>
+        <p style={{ marginTop: 8 }}>
+          <a className="enlace-discreto" href="/cuenta/eliminar">Eliminar mi cuenta</a>
         </p>
       </div>
       <Pie />

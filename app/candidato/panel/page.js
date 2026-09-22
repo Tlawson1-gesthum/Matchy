@@ -184,7 +184,10 @@ function PanelCandidatoContenido() {
           </div>
         </div>
         <p style={{ marginTop: 28 }}>
-          <button className="btn secundario" onClick={cerrarSesion}>Cerrar sesión</button>
+          <button className="btn-accion" onClick={cerrarSesion}>Cerrar sesión</button>
+        </p>
+        <p style={{ marginTop: 8 }}>
+          <a className="enlace-discreto" href="/cuenta/eliminar">Eliminar mi cuenta</a>
         </p>
         <div style={{ height: 40 }} />
       </div>

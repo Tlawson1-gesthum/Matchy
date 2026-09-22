@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
 import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../lib/fechas';
+import { enviarAviso } from '../../../lib/avisos';
 import BotonWhatsApp from '../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../components/GuardiaRol';
+import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -18,6 +20,7 @@ const ESTADOS = {
 };
 
 function EntrevistasCandidatoContenido() {
+  const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [entrevistas, setEntrevistas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -63,7 +66,7 @@ function EntrevistasCandidatoContenido() {
     // Paso 4: los locales de esas vacantes
     const idsLocales = [...new Set((vacs || []).map((v) => v.empleador_id))];
     const { data: locales } = idsLocales.length
-      ? await supabase.from('empleadores').select('*').in('id', idsLocales)
+      ? await supabase.from('locales_publicos').select('*').in('id', idsLocales)
       : { data: [] };
     const localPorId = Object.fromEntries((locales || []).map((e) => [e.id, e]));
 
@@ -83,14 +86,16 @@ function EntrevistasCandidatoContenido() {
 
   async function responder(id, estado) {
     if (estado === 'rechazada') {
-      const ok = window.confirm(
-        '¿Seguro que no podés ir? El local va a ver que rechazaste la entrevista. Si el problema es el horario, mejor proponé otro.'
+      const ok = await confirmar(
+        'El local va a ver que rechazaste la entrevista. Si el problema es el horario, mejor proponé otro.',
+        { titulo: '¿Seguro que no podés ir?', textoAceptar: 'No puedo ir', textoCancelar: 'Volver', peligro: true }
       );
       if (!ok) return;
     }
     const { error: err } = await supabase
       .from('entrevistas').update({ estado, updated_at: new Date().toISOString() }).eq('id', id);
     if (err) { setError('No se pudo guardar tu respuesta: ' + err.message); return; }
+    enviarAviso('entrevista_respondida', id);
     cargar();
   }
 
@@ -103,6 +108,7 @@ function EntrevistasCandidatoContenido() {
       updated_at: new Date().toISOString(),
     }).eq('id', id);
     if (err) { setError('No se pudo proponer el horario: ' + err.message); return; }
+    enviarAviso('entrevista_respondida', id);
     setProponiendo(null);
     cargar();
   }
@@ -112,6 +118,7 @@ function EntrevistasCandidatoContenido() {
   return (
     <div>
       <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/vacantes', texto: 'Vacantes' }]} campanaHref="/candidato/entrevistas" />
+      {dialogo}
 
       <div className="container" style={{ maxWidth: 760 }}>
         <h1>Mis entrevistas</h1>

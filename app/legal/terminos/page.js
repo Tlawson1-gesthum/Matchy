@@ -15,6 +15,10 @@ export default function Terminos() {
 
         <h2>1. Qué es Matchy</h2>
         <p>
+          Matchy es operado por Tomas Oliver Lawson, CUIL 20-34896158-7, con domicilio en Centenario 2595,
+          Posadas, provincia de Misiones, Argentina.
+        </p>
+        <p>
           Matchy es una plataforma de intermediación que pone en contacto a personas que buscan empleo en el rubro
           gastronómico con locales de Posadas y alrededores que ofrecen vacantes. Matchy facilita el contacto: no
           es empleador, no es parte de la relación laboral que eventualmente surja entre las partes, y no participa
@@ -160,7 +164,8 @@ export default function Terminos() {
 
         <h2>12. Baja de la cuenta</h2>
         <p>
-          Podés eliminar tu cuenta y tus datos en cualquier momento desde el sitio o escribiéndonos. Matchy puede
+          Podés eliminar tu cuenta y tus datos en cualquier momento desde la opción "Eliminar mi cuenta" de tu
+          panel, o escribiéndonos. Matchy puede
           suspender cuentas que incumplan estos términos.
         </p>
 

@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TIPOS_LOCAL } from '../../../lib/opciones';
+import { enviarAviso } from '../../../lib/avisos';
+import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
 export default function AdminLocales() {
+  const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [esAdmin, setEsAdmin] = useState(false);
   const [locales, setLocales] = useState([]);
@@ -49,7 +52,9 @@ export default function AdminLocales() {
     const admin = userData?.user?.id || null;
 
     if (accion === 'baja_vacante') {
-      const ok = window.confirm(`¿Dar de baja la vacante de ${reporte.vacante_puesto}? Deja de verse en el listado.`);
+      const ok = await confirmar('Deja de verse en el listado de vacantes.', {
+        titulo: `¿Dar de baja la vacante de ${reporte.vacante_puesto}?`, textoAceptar: 'Dar de baja', peligro: true,
+      });
       if (!ok) return;
       await supabase.from('vacantes').update({
         estado: 'suspendida',
@@ -59,9 +64,9 @@ export default function AdminLocales() {
     }
 
     if (accion === 'suspender_local') {
-      const ok = window.confirm(
-        `¿Suspender a ${reporte.local_nombre}? Se le dan de baja todas las vacantes y no va a poder publicar más.`
-      );
+      const ok = await confirmar('Se le dan de baja todas las vacantes y no va a poder publicar más.', {
+        titulo: `¿Suspender a ${reporte.local_nombre}?`, textoAceptar: 'Suspender', peligro: true,
+      });
       if (!ok) return;
       await supabase.from('empleadores').update({
         estado: 'rechazado',
@@ -97,7 +102,9 @@ export default function AdminLocales() {
 
   async function cambiarEstado(id, estado, nombre) {
     if (estado === 'rechazado') {
-      const ok = window.confirm(`¿Rechazar a ${nombre}? No va a poder publicar vacantes.`);
+      const ok = await confirmar('No va a poder publicar vacantes.', {
+        titulo: `¿Rechazar a ${nombre}?`, textoAceptar: 'Rechazar', peligro: true,
+      });
       if (!ok) return;
     }
     const { data: userData } = await supabase.auth.getUser();
@@ -107,6 +114,8 @@ export default function AdminLocales() {
       verificado_por: userData?.user?.id || null,
     }).eq('id', id);
     if (err) { setError('No se pudo actualizar: ' + err.message); return; }
+    if (estado === 'aprobado') enviarAviso('local_aprobado', id);
+    if (estado === 'rechazado') enviarAviso('local_rechazado', id);
     setLocales((l) => l.map((x) => (x.id === id ? { ...x, estado } : x)));
   }
 
@@ -134,6 +143,7 @@ export default function AdminLocales() {
         campanaHref="/empleador/vacantes"
         destacado={{ href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes.length }}
       />
+      {dialogo}
       <div className="container" style={{ maxWidth: 820 }}>
         <h1>Locales registrados</h1>
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}

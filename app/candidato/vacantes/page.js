@@ -8,6 +8,7 @@ import { calcularPuntaje } from '../../../lib/scoring';
 import TickerActividad from '../../../components/TickerActividad';
 import TextoFormateado from '../../../components/TextoFormateado';
 import GuardiaRol from '../../../components/GuardiaRol';
+import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -39,6 +40,7 @@ function textoAntiguedad(fecha) {
 }
 
 function VacantesCandidatoContenido() {
+  const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [vacantes, setVacantes] = useState([]);
@@ -80,7 +82,7 @@ function VacantesCandidatoContenido() {
       // igual mostramos las vacantes en vez de dejar la pantalla vacía.
       const idsLocales = [...new Set((vac || []).map((v) => v.empleador_id))];
       const { data: locales } = idsLocales.length
-        ? await supabase.from('empleadores').select('*').in('id', idsLocales)
+        ? await supabase.from('locales_publicos').select('*').in('id', idsLocales)
         : { data: [] };
       const localPorId = Object.fromEntries((locales || []).map((e) => [e.id, e]));
 
@@ -92,9 +94,11 @@ function VacantesCandidatoContenido() {
       setVacantes(visibles);
 
       // Cuántos se postularon a cada una (para mostrar competencia real)
-      const { data: todas } = await supabase.from('postulaciones').select('vacante_id');
+      // La función cuenta todas las postulaciones de cada vacante. Antes contábamos las
+      // filas visibles para el candidato, que son solo las suyas, y el número salía mal.
+      const { data: totales } = await supabase.rpc('conteo_postulaciones');
       const cuenta = {};
-      for (const p of todas || []) cuenta[p.vacante_id] = (cuenta[p.vacante_id] || 0) + 1;
+      for (const t of totales || []) cuenta[t.vacante_id] = Number(t.total);
       setConteos(cuenta);
 
       const { data: post } = await supabase
@@ -128,58 +132,69 @@ function VacantesCandidatoContenido() {
 
   async function postularse(vacante, puestoOtro) {
     if (!miCv) return;
-    const { puntaje, razonesPositivas, razonesNegativas } = calcularPuntaje(vacante, miCv);
-
-    // Congelamos el CV tal como está ahora: editarlo después no cambia esta postulación.
-    const snapshot = {
-      nombre: miCv.nombre,
-      puestos: miCv.puestos,
-      experiencia: miCv.experiencia,
-      anios_experiencia: miCv.anios_experiencia,
-      habilidades: miCv.habilidades,
-      herramientas: miCv.herramientas,
-      disponibilidad_horaria: miCv.disponibilidad_horaria,
-      turno: miCv.turno,
-      movilidad_propia: miCv.movilidad_propia,
-      certificado_manipulacion: miCv.certificado_manipulacion,
-      certificado_url: miCv.certificado_url,
-      congelado_at: new Date().toISOString(),
-    };
-
+    // El puntaje y la copia congelada del CV los arma la base con los datos reales.
     const { data, error } = await supabase.from('postulaciones').insert({
       vacante_id: vacante.id,
       candidato_id: userId,
       puesto_otro: puestoOtro || null,
-      puntaje,
-      razones_positivas: razonesPositivas,
-      razones_negativas: razonesNegativas,
-      cv_snapshot: snapshot,
     }).select().single();
 
-    if (!error) {
-      setPostuladas((s) => new Set([...s, vacante.id]));
-      setConteos((c) => ({ ...c, [vacante.id]: (c[vacante.id] || 0) + 1 }));
-      if (data) setMisPostulaciones((m) => ({ ...m, [vacante.id]: data }));
+    if (error) {
+      await avisar('Puede que la vacante haya cerrado o que ya te hayas postulado. Recargá la página y probá de nuevo.', {
+        titulo: 'No pudimos registrar tu postulación',
+      });
+      return;
     }
+    setPostuladas((s) => new Set([...s, vacante.id]));
+    setConteos((c) => ({ ...c, [vacante.id]: (c[vacante.id] || 0) + 1 }));
+    if (data) setMisPostulaciones((m) => ({ ...m, [vacante.id]: data }));
   }
 
+
   async function reportar(vacante) {
-    const motivo = window.prompt(
-      'Contanos qué te resultó sospechoso de este aviso (por ejemplo: piden dinero, el local no existe, piden datos personales raros).'
+    const motivo = await pedirTexto(
+      'Contanos qué te resultó sospechoso. Por ejemplo: piden dinero, el local no existe, o piden datos personales que no corresponden.',
+      { titulo: 'Reportar este aviso', textoAceptar: 'Enviar reporte', placeholder: 'Qué pasó' }
     );
-    if (!motivo || !motivo.trim()) return;
+    if (!motivo) return;
     const { error: err } = await supabase.from('reportes').insert({
       reportante_id: userId,
       vacante_id: vacante.id,
       empleador_id: vacante.empleador_id,
-      motivo: motivo.trim(),
+      motivo: motivo.slice(0, 1000),
     });
     if (err) {
-      window.alert('No pudimos registrar el reporte. Escribinos a gozzasabores@gmail.com.');
+      const yaReportado = /duplicate|reportes_uno_por_persona/i.test(err.message || '');
+      const limite = /límite de reportes/i.test(err.message || '');
+      await avisar(
+        yaReportado ? 'Ya habías reportado este aviso. Lo estamos revisando.'
+          : limite ? err.message
+          : 'No pudimos registrar el reporte. Escribinos a gozzasabores@gmail.com.',
+        { titulo: yaReportado ? 'Reporte ya enviado' : 'No se pudo enviar' }
+      );
       return;
     }
-    window.alert('Gracias. Vamos a revisar este aviso.');
+    await avisar('Vamos a revisar este aviso. Gracias por ayudar a que Matchy sea un lugar seguro.', { titulo: 'Reporte enviado' });
   }
+
+  async function retirarPostulacion(vacante) {
+    const post = misPostulaciones[vacante.id];
+    if (!post) return;
+    const ok = await confirmar(
+      'El local deja de ver tu postulación. Si ya te propusieron una entrevista, también se cancela. Podés volver a postularte mientras la vacante siga abierta.',
+      { titulo: '¿Retirar tu postulación?', textoAceptar: 'Retirar', peligro: true }
+    );
+    if (!ok) return;
+    const { error: err } = await supabase.from('postulaciones').delete().eq('id', post.id);
+    if (err) {
+      await avisar('No pudimos retirar la postulación. Probá de nuevo en un rato.', { titulo: 'No se pudo retirar' });
+      return;
+    }
+    setPostuladas((s) => { const n = new Set(s); n.delete(vacante.id); return n; });
+    setConteos((c) => ({ ...c, [vacante.id]: Math.max(0, (c[vacante.id] || 1) - 1) }));
+    setMisPostulaciones((m) => { const n = { ...m }; delete n[vacante.id]; return n; });
+  }
+
 
   const vacantesFiltradas = vacantes.filter((v) => {
     if (filtroPuesto && v.puesto !== filtroPuesto) return false;
@@ -194,6 +209,7 @@ function VacantesCandidatoContenido() {
   return (
     <div>
       <Encabezado links={[{ href: '/candidato/panel', texto: 'Mi panel' }, { href: '/candidato/mi-perfil', texto: 'Mi CV' }, { href: '/candidato/entrevistas', texto: 'Entrevistas' }]} campanaHref="/candidato/entrevistas" />
+      {dialogo}
       <div className="container">
         <h1>Vacantes en Posadas</h1>
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>
@@ -313,15 +329,22 @@ function VacantesCandidatoContenido() {
               {postuladas.has(v.id) ? (
                 <div className="aviso-postulado">
                   <strong>Ya te postulaste.</strong>
-                  {misPostulaciones[v.id]?.puntaje != null && (
-                    <> Quedaste con <strong>{misPostulaciones[v.id].puntaje}% de compatibilidad</strong>, calculado
-                    con tu CV tal como estaba al momento de postularte.</>
+                  {misPostulaciones[v.id]?.cv_snapshot && (
+                    <> Quedaste con{' '}
+                    <strong>
+                      {misPostulaciones[v.id].puntaje ?? calcularPuntaje(v, misPostulaciones[v.id].cv_snapshot).puntaje}% de
+                      compatibilidad
+                    </strong>, calculado con tu CV tal como estaba al momento de postularte.</>
                   )}
-                  {' '}Te avisamos por mail y por acá si hacés match con el empleador.
+                  {' '}Si el local te propone una entrevista, te avisamos en tu panel: fijate la campanita arriba
+                  a la derecha.
                   <p style={{ margin: '8px 0 0', fontSize: '0.84rem' }}>
                     Si editás tu CV ahora, esta postulación no cambia: el porcentaje quedó congelado cuando la
                     enviaste.
                   </p>
+                  <button type="button" className="btn-accion quitar" style={{ marginTop: 12 }} onClick={() => retirarPostulacion(v)}>
+                    Retirar postulación
+                  </button>
                 </div>
               ) : v.puesto === 'Otro' ? (
                 <div>
