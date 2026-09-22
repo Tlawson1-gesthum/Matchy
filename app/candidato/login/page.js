@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import BotonGoogle from '../../../components/BotonGoogle';
+import CampoContrasena from '../../../components/CampoContrasena';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 
@@ -89,19 +90,15 @@ export default function LoginCandidato() {
 
       <form onSubmit={handleSubmit} className="card">
         <div className="form-field">
-          <label>Email</label>
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label htmlFor="login-candidato-email">Email</label>
+          <input id="login-candidato-email" inputMode="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
-        <div className="form-field">
-          <label>Contraseña</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+        <CampoContrasena
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+        />
+        {error && <p className="mensaje-error" role="alert">{error}</p>}
         <button className="btn ancho" type="submit" disabled={cargando}>
           {cargando ? 'Entrando...' : 'Entrar'}
         </button>

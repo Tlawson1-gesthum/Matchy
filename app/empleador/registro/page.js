@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import { TIPOS_LOCAL, LOCALIDADES, revisarCuit, revisarRedSocial } from '../../../lib/opciones';
 import BotonGoogle from '../../../components/BotonGoogle';
+import CampoContrasena from '../../../components/CampoContrasena';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -173,11 +174,6 @@ function RegistroEmpleadorContenido() {
     <div>
       <Encabezado links={[]} />
       <div className="panel-auth" style={{ maxWidth: 540 }}>
-        <div className="pasos">
-          <span className={paso === 'cuenta' ? 'paso activo' : 'paso hecho'}>1. Tu cuenta</span>
-          <span className={paso === 'local' ? 'paso activo' : 'paso'}>2. Datos del local</span>
-        </div>
-
         {paso === 'cuenta' && (
           <>
             <h1>Creá tu cuenta</h1>
@@ -193,15 +189,17 @@ function RegistroEmpleadorContenido() {
 
               <form onSubmit={crearCuenta}>
                 <div className="form-field">
-                  <label>Email</label>
-                  <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <label htmlFor="registro-local-email">Email</label>
+                  <input id="registro-local-email" type="email" required autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <div className="form-field">
-                  <label>Contraseña</label>
-                  <input type="password" required minLength={6} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                  <p className="ayuda-campo">Mínimo 6 caracteres.</p>
-                </div>
-                {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+                <CampoContrasena
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  minLength={6}
+                  ayuda="Mínimo 6 caracteres."
+                />
+                {error && <p className="mensaje-error" role="alert">{error}</p>}
                 <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
                   {cargando ? 'Creando cuenta...' : 'Continuar'}
                 </button>
@@ -350,7 +348,7 @@ function RegistroEmpleadorContenido() {
                 </span>
               </label>
 
-              {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+              {error && <p className="mensaje-error" role="alert">{error}</p>}
               <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
                 {cargando ? 'Guardando...' : 'Registrar mi local'}
               </button>

@@ -69,7 +69,7 @@ function PanelCandidatoContenido() {
 
   async function cerrarSesion() {
     await supabase.auth.signOut();
-    router.push('/');
+    window.location.href = '/';
   }
 
   if (cargando) return <div className="container">Cargando...</div>;

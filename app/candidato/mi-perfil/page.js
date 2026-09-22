@@ -33,7 +33,7 @@ function MiPerfilContenido() {
 
   async function cerrarSesion() {
     await supabase.auth.signOut();
-    router.push('/');
+    window.location.href = '/';
   }
 
   if (!cv) return <div className="container">Cargando...</div>;

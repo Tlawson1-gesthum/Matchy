@@ -34,6 +34,7 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
   const [abierto, setAbierto] = useState(false);
   const [menuCuenta, setMenuCuenta] = useState(false);
   const [usuario, setUsuario] = useState(null);
+  const [rol, setRol] = useState(null);
   const [pendientes, setPendientes] = useState(0);
   const cuentaRef = useRef(null);
 
@@ -47,6 +48,7 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
       // Notificaciones reales: entrevistas esperando respuesta del candidato
       const { data: perfil } = await supabase
         .from('perfiles').select('role').eq('id', u.id).maybeSingle();
+      setRol(perfil?.role || null);
 
       if (perfil?.role === 'candidato') {
         const { data: posts } = await supabase
@@ -83,10 +85,18 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
     return () => document.removeEventListener('mousedown', fuera);
   }, []);
 
-  async function salir() {
+  async function salir(e) {
+    if (e) e.preventDefault();
+    setMenuCuenta(false);
+    setAbierto(false);
     await supabase.auth.signOut();
-    router.push('/');
+    setUsuario(null);
+    // Recarga completa: garantiza que ninguna pantalla quede mostrando datos de la sesión cerrada.
+    window.location.href = '/';
   }
+
+  const panelHref = rol === 'empleador' ? '/empleador/vacantes' : '/candidato/panel';
+
 
   const avatar = usuario?.user_metadata?.avatar_url || usuario?.user_metadata?.picture || null;
   const iniciales = (usuario?.user_metadata?.full_name || usuario?.email || '?')
@@ -146,10 +156,11 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
             {menuCuenta && (
               <nav className="menu-desplegado">
                 <span className="menu-mail">{usuario.email}</span>
-                {links.map((l) => (
+                <a href={panelHref}>Ir a mi panel</a>
+                {links.filter((l) => l.href !== panelHref).map((l) => (
                   <a key={l.href} href={l.href}>{l.texto}</a>
                 ))}
-                <a href="#" onClick={salir}>Cerrar sesión</a>
+                <button type="button" className="menu-salir" onClick={salir}>Cerrar sesión</button>
               </nav>
             )}
           </div>
@@ -167,7 +178,8 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setAbierto(false)}>{l.texto}</a>
           ))}
-          {usuario && <a href="#" onClick={salir}>Cerrar sesión</a>}
+          {usuario && <a href={panelHref}>Ir a mi panel</a>}
+          {usuario && <button type="button" className="menu-salir" onClick={salir}>Cerrar sesión</button>}
         </nav>
       )}
     </header>

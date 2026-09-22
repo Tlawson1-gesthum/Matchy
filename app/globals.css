@@ -750,25 +750,8 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   line-height: 1.45;
 }
 
-.pasos {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-}
 
-.paso {
-  font-family: var(--font-datos);
-  font-size: 0.74rem;
-  color: var(--texto-suave);
-  background: var(--panel);
-  border: 1px solid var(--borde);
-  border-radius: 999px;
-  padding: 5px 14px;
-}
 
-.paso.activo { background: var(--verde); color: var(--blanco); border-color: var(--verde); }
-.paso.hecho { color: var(--verde); border-color: var(--verde); }
 
 .chequeo-ok { font-size: 0.82rem; color: #2F6B3C; margin: 6px 0 0; }
 .chequeo-mal { font-size: 0.82rem; color: #9C3A22; margin: 6px 0 0; line-height: 1.45; }
@@ -1847,4 +1830,28 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .btn-contorno-rect:focus-visible {
   outline: 3px solid var(--verde);
   outline-offset: 2px;
+}
+
+/* Cerrar sesión dentro del menú de la cuenta: se ve como los demás ítems */
+.menu-salir {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--borde);
+  margin-top: 6px;
+  border-radius: 0 0 8px 8px;
+  color: #8F3E22;
+  font-family: var(--font-cuerpo);
+  font-size: 0.93rem;
+  cursor: pointer;
+}
+
+.menu-salir:hover { background: #FBF4F2; }
+
+.menu-salir:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: -3px;
 }
