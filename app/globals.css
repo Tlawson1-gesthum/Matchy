@@ -230,8 +230,8 @@ a { color: var(--oro-oscuro); }
    ============================================================ */
 .btn {
   display: inline-block;
-  background: linear-gradient(180deg, var(--oro-claro) 0%, var(--oro) 55%, var(--oro-oscuro) 100%);
-  color: #33301F;
+  background: #3A5A40;
+  color: #FFFFFF;
   border: none;
   padding: 13px 30px;
   border-radius: 999px;
@@ -240,11 +240,10 @@ a { color: var(--oro-oscuro); }
   font-size: 0.98rem;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: 0 2px 5px rgba(120, 95, 30, 0.28);
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.btn:hover { filter: brightness(1.05); }
+.btn:hover { filter: brightness(1.1); }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
@@ -312,7 +311,8 @@ a { color: var(--oro-oscuro); }
   border-color: var(--oro);
 }
 
-.btn:focus-visible, a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
+.btn:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 .tip {
   background: #F6F1DF;
@@ -783,18 +783,17 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(180deg, var(--oro-claro) 0%, var(--oro) 55%, var(--oro-oscuro) 100%);
-  color: #33301F;
+  background: #3A5A40;
+  color: #FFFFFF;
   padding: 9px 18px;
   border-radius: 999px;
   font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
-  box-shadow: 0 2px 5px rgba(120, 95, 30, 0.28);
   white-space: nowrap;
 }
 
-.btn-destacado:hover { filter: brightness(1.05); }
+.btn-destacado:hover { filter: brightness(1.1); }
 
 .burbuja {
   background: var(--tierra);
