@@ -29,8 +29,7 @@ export default function AdminLocales() {
       .from('administradores').select('id').eq('id', uid).maybeSingle();
 
     if (!admin) {
-      setEsAdmin(false);
-      setCargando(false);
+      router.push('/empleador/vacantes');
       return;
     }
     setEsAdmin(true);
@@ -121,19 +120,7 @@ export default function AdminLocales() {
     setLocales((l) => l.map((x) => (x.id === id ? { ...x, estado } : x)));
   }
 
-  if (cargando) return <PantallaCarga texto="Cargando locales..." />;
-
-  if (!esAdmin) {
-    return (
-      <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
-        <div className="container">
-          <h1>Sin acceso</h1>
-          <p>Esta pantalla es solo para administradores de Voral.</p>
-        </div>
-      </div>
-    );
-  }
+  if (cargando || !esAdmin) return <PantallaCarga texto="Cargando locales..." />;
 
   const pendientes = locales.filter((l) => l.estado === 'pendiente');
   const resto = locales.filter((l) => l.estado !== 'pendiente');

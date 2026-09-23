@@ -309,7 +309,7 @@ function RankingVacanteContenido({ params }) {
         {postulaciones.map((p) => (
           <div
             key={p.id}
-            className="card"
+            className="card tarjeta-postulante"
             style={{ marginBottom: 16, opacity: p.estado === 'descartado' ? 0.5 : 1 }}
           >
             <div className="postulante-cabecera">

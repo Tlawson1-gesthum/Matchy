@@ -34,7 +34,6 @@ function Callback() {
             id: user.id,
             nombre: user.user_metadata?.full_name || '',
             acepto_tyc_at: new Date().toISOString(),
-            declara_mayor_edad: true,
           });
           router.push('/candidato/consentimiento');
         } else {

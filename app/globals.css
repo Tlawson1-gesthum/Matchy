@@ -16,7 +16,7 @@
   --oro-oscuro: #A8842A;
   --enlace: #7A5E1E;
   --texto: #43443C;
-  --texto-suave: #5C5D51;
+  --texto-suave: #55564B;
   --blanco: #FBFAF5;
   --font-titulos: 'Fraunces', Georgia, serif;
   --font-cuerpo: 'Inter', system-ui, sans-serif;
@@ -47,6 +47,11 @@ h1, h2, h3 {
 h1 { font-size: clamp(1.9rem, 6.4vw, 2.6rem); line-height: 1.12; }
 h2 { font-size: clamp(1.4rem, 4.6vw, 1.8rem); }
 h3 { font-size: 1.15rem; }
+
+/* Título de tarjeta con jerarquía semántica de h2 (una sección real de la
+   página) pero el tamaño visual compacto de h3 — para no agrandar tarjetas
+   ya ajustadas solo por corregir el orden de encabezados. */
+.card-titulo { font-size: 1.15rem; margin: 0 0 12px; }
 
 a { color: var(--enlace); }
 
@@ -632,7 +637,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 .vacante-tipo {
   display: block;
   font-size: 0.78rem;
-  color: #6E6F63;
+  color: var(--texto-suave);
   text-transform: uppercase;
   letter-spacing: 0.055em;
   margin-top: 3px;
@@ -743,6 +748,13 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   .vacante { padding: 22px 20px; border-radius: 16px; }
   .vacante-cabecera { flex-direction: column; align-items: flex-start; }
   .etiquetas-vacante { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+}
+
+/* Mismo radio y sombra que .vacante y .ficha-local: las tres tarjetas de
+   "entidad principal" de la app comparten un solo lenguaje visual. */
+.tarjeta-postulante {
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(38, 64, 44, 0.05);
 }
 
 /* Encabezado de la tarjeta de postulante: nombre a la izquierda, "Ver CV" a
@@ -1063,7 +1075,8 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 .ficha-local {
   background: var(--blanco);
   border: 1px solid #E6E3DA;
-  border-radius: 14px;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(38, 64, 44, 0.05);
   padding: 22px 24px 0;
   margin-bottom: 16px;
 }
@@ -1105,9 +1118,10 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   flex-shrink: 0;
 }
 
-.pildora.aprobado { background: #E7EFE7; color: #3C6144; }
-.pildora.pendiente { background: #F1EFE7; color: #7A7359; }
-.pildora.rechazado { background: #F4E7E2; color: #8F4030; }
+/* Mismos tonos que .badge: un solo sistema de color para "estado" en toda la app */
+.pildora.aprobado { background: #DCE7DC; color: var(--verde); }
+.pildora.pendiente { background: #F4EBD4; color: #7E6520; }
+.pildora.rechazado { background: #F2DED6; color: var(--tierra); }
 
 .ficha-local-grid {
   display: grid;
@@ -1362,7 +1376,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 /* Texto de ayuda con contraste suficiente (7:1 sobre la tarjeta) */
 .ayuda-contraste {
   font-size: 0.84rem;
-  color: #55564B;
+  color: var(--texto-suave);
   line-height: 1.5;
   margin: 6px 0 0;
 }
@@ -1391,7 +1405,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   background: none;
   border: none;
   border-radius: 8px;
-  color: #55564B;
+  color: var(--texto-suave);
   cursor: pointer;
 }
 
@@ -1511,7 +1525,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 .seccion-estado.completo { background: #E7EFE7; color: #2F5A38; }
 .seccion-estado.pendiente { background: #F6E7DF; color: #8F3E22; }
-.seccion-estado.opcional { background: #EFEEE8; color: #55564B; }
+.seccion-estado.opcional { background: #EFEEE8; color: var(--texto-suave); }
 
 .seccion-chevron {
   color: var(--verde);
@@ -1969,7 +1983,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 .enlace-discreto {
   font-size: 0.84rem;
-  color: #55564B;
+  color: var(--texto-suave);
 }
 
 .enlace-discreto:hover { color: var(--error); }

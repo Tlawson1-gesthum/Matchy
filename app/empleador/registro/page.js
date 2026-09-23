@@ -373,11 +373,11 @@ function RegistroEmpleadorContenido() {
                     <input type="checkbox" checked={sinFraude} onChange={(e) => setSinFraude(e.target.checked)} />
                     <span>
                       <strong>Compromiso antifraude.</strong> Me comprometo a no pedirle ni ofrecerle dinero a
-                      ningún candidato por el puesto o por el proceso de selección, a no solicitar sus claves
-                      bancarias ni documentación personal innecesaria, a no exigir trabajo no remunerado a modo de
-                      prueba, y a no usar Voral para cometer fraude, estafas, trata de personas ni ningún otro
-                      delito. Entiendo que el incumplimiento habilita la baja inmediata de la cuenta y la denuncia
-                      ante la autoridad competente.
+                      ningún candidato por el puesto o por el proceso de selección, a no pedirle claves bancarias
+                      ni documentación personal de más, a no exigirle trabajo gratis a modo de prueba, y a no usar
+                      Voral para cometer fraude, estafas, trata de personas ni ningún otro delito. Sé que si no
+                      cumplo esto, Voral puede dar de baja mi cuenta al instante y hacer la denuncia que
+                      corresponda.
                     </span>
                   </label>
                 </div>

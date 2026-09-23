@@ -122,7 +122,7 @@ function PanelCandidatoContenido() {
 
         <div className="panel-grid">
           <div className="card">
-            <h3>Tu CV</h3>
+            <h2 className="card-titulo">Tu CV</h2>
             <BarraProgreso pct={pct} margin="10px 0" />
             <strong>{pct}% completo</strong>
 
@@ -143,7 +143,7 @@ function PanelCandidatoContenido() {
           </div>
 
           <div className="card">
-            <h3>Qué hacer ahora</h3>
+            <h2 className="card-titulo">Qué hacer ahora</h2>
 
             {pendientes > 0 ? (
               <a className="cta-principal" href="/candidato/entrevistas">
