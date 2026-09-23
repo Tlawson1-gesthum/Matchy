@@ -245,7 +245,7 @@ function RankingVacanteContenido({ params }) {
     const hoja = XLSX.utils.json_to_sheet(filas);
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, 'Ranking');
-    XLSX.writeFile(libro, `matchy-ranking-${vacante.puesto}.xlsx`);
+    XLSX.writeFile(libro, `voral-ranking-${vacante.puesto}.xlsx`);
   }
 
   if (cargando) return <PantallaCarga texto="Ordenando postulantes..." />;
@@ -293,7 +293,7 @@ function RankingVacanteContenido({ params }) {
           </p>
           <p style={{ margin: '10px 0 0' }}>
             Ningún cálculo reemplaza la verificación: confirmá la experiencia en la entrevista y con las
-            referencias. Matchy no participa de las entrevistas ni de la contratación, y no responde por lo que
+            referencias. Voral no participa de las entrevistas ni de la contratación, y no responde por lo que
             ocurra entre vos y los candidatos.
           </p>
         </div>
@@ -452,7 +452,7 @@ function RankingVacanteContenido({ params }) {
                   </div>
                 )}
                 <div style={{ marginTop: 10 }}>
-                  <BotonWhatsApp href={linkWhatsApp(p.cv.contacto, `Hola ${p.cv.nombre || ''}, te escribo por Matchy: te propuse una entrevista para el puesto de ${vacante.puesto}.`)} texto="Avisarle por WhatsApp" />
+                  <BotonWhatsApp href={linkWhatsApp(p.cv.contacto, `Hola ${p.cv.nombre || ''}, te escribo por Voral: te propuse una entrevista para el puesto de ${vacante.puesto}.`)} texto="Avisarle por WhatsApp" />
                 </div>
               </div>
             ) : p.estado === 'descartado' ? null : (

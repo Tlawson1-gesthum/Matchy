@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 10)
+-- VORAL — actualización de esquema (versión 10)
 -- Logo del local.
 -- Correr DESPUÉS de schema-v9.sql. Se puede correr las veces que haga falta.
 

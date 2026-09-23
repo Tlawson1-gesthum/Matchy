@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 8)
+-- VORAL — actualización de esquema (versión 8)
 -- Datos reales para las señales de urgencia: fecha de cierre, cantidad de
 -- puestos, vistas verificables y actividad de la plataforma.
 -- Correr DESPUÉS de schema-v7.sql. Se puede correr las veces que haga falta.

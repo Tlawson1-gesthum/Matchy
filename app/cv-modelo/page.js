@@ -56,7 +56,7 @@ export default function CvModelo() {
   return (
     <div>
       <header className="cabecera no-imprimir">
-        <a className="cabecera-marca" href="/">Matchy</a>
+        <a className="cabecera-marca" href="/">Voral</a>
         <nav className="cabecera-iconos">
           <a href="/candidato/cv" style={{ color: 'var(--verde)', textDecoration: 'none', fontSize: '0.92rem' }}>
             Armar el mío
@@ -64,7 +64,7 @@ export default function CvModelo() {
         </nav>
       </header>
       <div className="container no-imprimir" style={{ maxWidth: 760 }}>
-        <h1 style={{ marginTop: 24 }}>Así queda un CV en Matchy</h1>
+        <h1 style={{ marginTop: 24 }}>Así queda un CV en Voral</h1>
         <p>
           Este es un ejemplo con datos inventados. Fijate el nivel de detalle: nadie contrata por adjetivos, contratan
           por lo concreto. Cuando cargues el tuyo, vas a poder descargarlo en PDF con este mismo diseño.

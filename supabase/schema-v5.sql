@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 5): cumplimiento legal y antifraude
+-- VORAL — actualización de esquema (versión 5): cumplimiento legal y antifraude
 -- Se puede correr las veces que haga falta.
 -- Supabase Dashboard → SQL Editor → New query → pegar todo → Run
 

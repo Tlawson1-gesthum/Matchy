@@ -11,7 +11,7 @@ export default function Home() {
           <div className="hero-ilustracion">
             <img
               src="/ilustracion-portada.webp"
-              alt="Una persona arma su CV en una computadora con el logo de Matchy, rodeada de íconos gastronómicos y piezas de rompecabezas que encajan."
+              alt="Una persona arma su CV en una computadora con el logo de Voral, rodeada de íconos gastronómicos y piezas de rompecabezas que encajan."
               width="1024"
               height="512"
               fetchPriority="high"

@@ -74,7 +74,7 @@ export default function EliminarCuenta() {
         {estado === 'borrada' && (
           <div className="card">
             <p style={{ marginTop: 0 }}><strong>Tu cuenta fue eliminada.</strong></p>
-            <p>Borramos tus datos y tus archivos. Gracias por haber usado Matchy.</p>
+            <p>Borramos tus datos y tus archivos. Gracias por haber usado Voral.</p>
             <a className="btn-verde-solido en-linea" href="/">Ir al inicio</a>
           </div>
         )}
@@ -97,7 +97,7 @@ export default function EliminarCuenta() {
                   <li>Todas tus postulaciones y entrevistas.</li>
                 </>
               )}
-              <li>Tu acceso a Matchy.</li>
+              <li>Tu acceso a Voral.</li>
             </ul>
             <p className="ayuda-contraste">
               Los reportes por posibles fraudes se conservan sin tus datos personales, porque sirven para proteger a

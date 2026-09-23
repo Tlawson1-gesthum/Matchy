@@ -1,4 +1,4 @@
--- MATCHY — versión 11: SEGURIDAD
+-- VORAL — versión 11: SEGURIDAD
 -- Principio: el navegador no decide nada importante, decide la base.
 -- Correr DESPUÉS de schema-v10.sql. Se puede correr las veces que haga falta.
 -- Después de correrlo, corré probar-seguridad.sql para confirmar que todo quedó bloqueado.

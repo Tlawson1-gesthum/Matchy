@@ -27,7 +27,7 @@ function traducirError(msg) {
   if (m.includes('column') || m.includes('schema cache')) {
     return 'La base de datos está desactualizada. Avisale al administrador que corra el último script de esquema. Detalle: ' + msg;
   }
-  if (m.includes('ciudad_permitida')) return 'Por ahora Matchy funciona solo en Posadas y Garupá.';
+  if (m.includes('ciudad_permitida')) return 'Por ahora Voral funciona solo en Posadas y Garupá.';
   if (m.includes('row-level security')) return 'No tenés permisos para crear el local. Cerrá sesión, volvé a entrar y probá de nuevo.';
   return msg;
 }
@@ -329,7 +329,7 @@ function RegistroEmpleadorContenido() {
                 <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
                 <span>
                   Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede
-                  tener consecuencias legales y que Matchy da de baja las cuentas de menores de edad apenas las
+                  tener consecuencias legales y que Voral da de baja las cuentas de menores de edad apenas las
                   detecta.
                 </span>
               </label>
@@ -347,7 +347,7 @@ function RegistroEmpleadorContenido() {
                 <span>
                   Me comprometo a no pedirle ni ofrecerle dinero a ningún candidato por el puesto o por el proceso
                   de selección, a no solicitar sus claves bancarias ni documentación personal innecesaria, a no
-                  exigir trabajo no remunerado a modo de prueba, y a no usar Matchy para cometer fraude, estafas,
+                  exigir trabajo no remunerado a modo de prueba, y a no usar Voral para cometer fraude, estafas,
                   trata de personas ni ningún otro delito. Entiendo que el incumplimiento habilita la baja
                   inmediata de la cuenta y la denuncia ante la autoridad competente.
                 </span>

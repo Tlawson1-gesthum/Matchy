@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 2)
+-- VORAL — actualización de esquema (versión 2)
 -- Cómo usar: Supabase Dashboard → SQL Editor → New query → pegar esto → Run
 -- Es seguro correrlo aunque ya tengas datos cargados: solo agrega columnas.
 

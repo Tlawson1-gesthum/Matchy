@@ -1,4 +1,4 @@
--- MATCHY — PRUEBA DE SEGURIDAD
+-- VORAL — PRUEBA DE SEGURIDAD
 -- Crea usuarios de prueba, intenta cada ataque haciéndose pasar por ellos,
 -- y al final DESHACE TODO. No deja ningún dato en la base.
 --
@@ -24,14 +24,14 @@ declare
 begin
   -- ---------- Preparación (como administrador de la base) ----------
   insert into auth.users (id, email, created_at)
-  values (a, 'prueba-a-' || a || '@matchy.test', now()),
-         (b, 'prueba-b-' || b || '@matchy.test', now()),
-         (c, 'prueba-c-' || c || '@matchy.test', now());
+  values (a, 'prueba-a-' || a || '@voral.test', now()),
+         (b, 'prueba-b-' || b || '@voral.test', now()),
+         (c, 'prueba-c-' || c || '@voral.test', now());
 
   insert into perfiles (id, role, email) values
-    (a, 'empleador', 'a@matchy.test'),
-    (b, 'candidato', 'b@matchy.test'),
-    (c, 'empleador', 'c@matchy.test');
+    (a, 'empleador', 'a@voral.test'),
+    (b, 'candidato', 'b@voral.test'),
+    (c, 'empleador', 'c@voral.test');
 
   insert into empleadores (id, nombre_local, ciudad, cuit, telefono, estado)
   values (a, 'Local de prueba', 'Posadas', '30500010912', '3764000000', 'pendiente');

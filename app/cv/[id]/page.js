@@ -29,7 +29,7 @@ export default async function CvPublico({ params }) {
   return (
     <div>
       <header className="cabecera no-imprimir">
-        <a className="cabecera-marca" href="/">Matchy</a>
+        <a className="cabecera-marca" href="/">Voral</a>
       </header>
       <CvHoja cv={cv} />
     </div>

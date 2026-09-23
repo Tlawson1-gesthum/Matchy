@@ -191,7 +191,7 @@ function NuevaVacanteContenido() {
 
         <div className="aviso-legal">
           <strong>Antes de publicar.</strong> Publicá solo vacantes reales y vigentes, con condiciones que vayas a
-          cumplir. Matchy pone en contacto a las partes: la relación laboral que surja, su registración y todas las
+          cumplir. Voral pone en contacto a las partes: la relación laboral que surja, su registración y todas las
           obligaciones que de ella deriven son exclusivamente tuyas como empleador.
         </div>
 

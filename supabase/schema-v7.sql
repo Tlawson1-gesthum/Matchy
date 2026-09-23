@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 7)
+-- VORAL — actualización de esquema (versión 7)
 -- Congelado del CV al postularse, nombre bloqueado, verificación de teléfono.
 -- Correr DESPUÉS de schema-v6.sql. Se puede correr las veces que haga falta.
 

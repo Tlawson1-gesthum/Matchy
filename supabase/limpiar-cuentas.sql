@@ -1,4 +1,4 @@
--- MATCHY — BORRAR TODAS LAS CUENTAS Y EMPEZAR DE CERO
+-- VORAL — BORRAR TODAS LAS CUENTAS Y EMPEZAR DE CERO
 -- ⚠️  Borra datos y no se puede deshacer. Deja solo gozzasabores@gmail.com como superusuario.
 -- Los archivos (fotos, certificados, logos) se borran aparte desde el panel: Storage.
 

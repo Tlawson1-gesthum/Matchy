@@ -37,7 +37,7 @@ export default function Recuperar() {
         {enviado ? (
           <div className="card">
             <p style={{ marginTop: 0 }}>
-              Si <strong>{email}</strong> tiene una cuenta en Matchy, te enviamos un mail con un enlace para crear una
+              Si <strong>{email}</strong> tiene una cuenta en Voral, te enviamos un mail con un enlace para crear una
               contraseña nueva.
             </p>
             <p className="ayuda-contraste">
@@ -70,7 +70,7 @@ export default function Recuperar() {
               {cargando ? 'Enviando...' : 'Enviarme el enlace'}
             </button>
             <p className="ayuda-contraste" style={{ marginTop: 14 }}>
-              Si entraste con Google, no tenés contraseña en Matchy: usá el botón "Continuar con Google".
+              Si entraste con Google, no tenés contraseña en Voral: usá el botón "Continuar con Google".
             </p>
           </form>
         )}

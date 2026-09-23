@@ -109,7 +109,7 @@ export default function CvHoja({ cv }) {
         </p>
       </section>
 
-      <footer className="cv-pie">Hecho con Matchy · matchy.com.ar</footer>
+      <footer className="cv-pie">Hecho con Voral · voral.com.ar</footer>
     </div>
   );
 }

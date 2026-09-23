@@ -33,7 +33,7 @@ function RegistroCandidatoContenido() {
     setError('');
 
     if (!esMayor) {
-      setError('Para usar Matchy tenés que ser mayor de 18 años.');
+      setError('Para usar Voral tenés que ser mayor de 18 años.');
       return;
     }
     if (!aceptaTyc) {
@@ -117,7 +117,7 @@ function RegistroCandidatoContenido() {
               <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
               <span>
                 Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede tener
-                consecuencias legales y que Matchy da de baja las cuentas de menores de edad apenas las detecta.
+                consecuencias legales y que Voral da de baja las cuentas de menores de edad apenas las detecta.
               </span>
             </label>
 

@@ -1,10 +1,10 @@
-// Isotipo de Matchy en SVG, reconstruido del logo original.
+// Isotipo de Voral en SVG, reconstruido del logo original.
 // Está separado en capas para poder animarlas: figura izquierda,
 // figura derecha y la unión central (que tapa el hueco entre las dos).
 // El "anillo" de la unión usa el color de fondo de la página para
 // recortar visualmente las figuras, igual que en el logo.
 
-export default function IsotipoMatchy({ className = '', colorFondo = '#F2F0E6', animado = false }) {
+export default function IsotipoVoral({ className = '', colorFondo = '#F2F0E6', animado = false }) {
   const c = animado ? 'carga-' : '';
   return (
     <svg

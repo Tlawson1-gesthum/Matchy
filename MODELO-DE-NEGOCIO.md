@@ -1,4 +1,4 @@
-# Matchy — notas de modelo de negocio
+# Voral — notas de modelo de negocio
 
 Documento de trabajo. Se va puliendo a medida que avanza el proyecto.
 
@@ -55,5 +55,5 @@ principio de que el acceso básico es gratis.
 ## Competencia real
 
 No son los portales nacionales. Es el hábito instalado: WhatsApp, el cartel en la vidriera y
-los grupos de Facebook. Matchy gana si es más rápido que un cartel, no si es más completo que
+los grupos de Facebook. Voral gana si es más rápido que un cartel, no si es más completo que
 un portal genérico.

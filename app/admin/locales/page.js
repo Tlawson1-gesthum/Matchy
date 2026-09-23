@@ -128,7 +128,7 @@ export default function AdminLocales() {
       <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }]} />
         <div className="container">
           <h1>Sin acceso</h1>
-          <p>Esta pantalla es solo para administradores de Matchy.</p>
+          <p>Esta pantalla es solo para administradores de Voral.</p>
         </div>
       </div>
     );

@@ -57,7 +57,7 @@ export default function GuardiaRol({ rol, children }) {
             {rol === 'empleador' ? 'locales' : 'candidatos'}.
           </p>
           <p>
-            En Matchy cada cuenta tiene un solo rol. Si necesitás las dos cosas, registrate con otro email para el
+            En Voral cada cuenta tiene un solo rol. Si necesitás las dos cosas, registrate con otro email para el
             otro rol.
           </p>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16 }}>

@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 3)
+-- VORAL — actualización de esquema (versión 3)
 -- Corrige: los candidatos no podían ver los datos del local dueño de una vacante,
 -- y no había forma de aprobar locales.
 -- Este script se puede correr las veces que haga falta sin romper nada.
@@ -51,7 +51,7 @@ create policy "los administradores aprueban locales"
 -- ============================================================
 -- 3. IMPORTANTE — date de alta como administrador
 --    Cambiá el email de abajo por el email con el que creaste tu cuenta
---    DENTRO de Matchy (la de empleador), si es distinto al que está puesto.
+--    DENTRO de Voral (la de empleador), si es distinto al que está puesto.
 -- ============================================================
 insert into administradores (id, email)
 select id, email from auth.users

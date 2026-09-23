@@ -1,4 +1,4 @@
--- MATCHY — versión 12
+-- VORAL — versión 12
 -- Conteo real de postulantes, borrado de cuenta y destinatarios de los avisos por mail.
 -- Correr DESPUÉS de schema-v11-seguridad.sql. Se puede correr las veces que haga falta.
 

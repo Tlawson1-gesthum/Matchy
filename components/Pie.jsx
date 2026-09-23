@@ -9,7 +9,7 @@ export default function Pie() {
       </p>
 
       <p className="pie-aviso">
-        Matchy conecta a quienes buscan trabajo con locales gastronómicos de Posadas y alrededores. No somos
+        Voral conecta a quienes buscan trabajo con locales gastronómicos de Posadas y alrededores. No somos
         empleadores ni parte de la relación laboral que pueda surgir entre las partes. Verificamos cada local antes
         de habilitarlo, pero no intervenimos en las entrevistas, en la negociación ni en la contratación, y no
         respondemos por la conducta de candidatos ni de empleadores, ni por lo que ocurra entre ellos dentro o

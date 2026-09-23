@@ -1,4 +1,4 @@
--- MATCHY — script único de puesta al día (versión 6)
+-- VORAL — script único de puesta al día (versión 6)
 -- Incluye todo lo necesario. Se puede correr las veces que haga falta.
 -- Supabase → SQL Editor → New query → pegar todo → Run
 

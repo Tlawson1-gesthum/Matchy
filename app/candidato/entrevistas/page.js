@@ -130,7 +130,7 @@ function EntrevistasCandidatoContenido() {
         <div className="aviso-legal">
           <strong>Cuidate en la entrevista.</strong> Las entrevistas se hacen en el local y en horario comercial.
           Nadie puede pedirte dinero, tus claves bancarias ni que trabajes gratis a modo de prueba. Contale a
-          alguien de confianza adónde vas. Matchy coordina el contacto pero no participa de la entrevista ni
+          alguien de confianza adónde vas. Voral coordina el contacto pero no participa de la entrevista ni
           responde por lo que ocurra en ella: si algo te resulta raro, no vayas y escribinos a{' '}
           <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
         </div>
@@ -150,7 +150,7 @@ function EntrevistasCandidatoContenido() {
             ? (e.vacante.puesto === 'Otro' && e.vacante.puesto_otro ? e.vacante.puesto_otro : e.vacante.puesto)
             : 'Puesto no disponible';
           const nombreLocal = e.local?.nombre_local || 'Local no disponible';
-          const mensajeWpp = `Hola, te escribo por Matchy: confirmo la entrevista para el puesto de ${puesto}.`;
+          const mensajeWpp = `Hola, te escribo por Voral: confirmo la entrevista para el puesto de ${puesto}.`;
           const wpp = e.local?.contacto ? linkWhatsApp(e.local.contacto, mensajeWpp) : null;
 
           return (

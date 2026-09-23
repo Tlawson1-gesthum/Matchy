@@ -112,7 +112,7 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
     <header className="cabecera">
       <a className="cabecera-marca" href="/">
         <img src="/logo.png" alt="" className="cabecera-logo" />
-        <span>Matchy</span>
+        <span>Voral</span>
       </a>
 
       <div className="cabecera-iconos">

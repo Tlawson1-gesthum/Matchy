@@ -177,7 +177,7 @@ function VacantesCandidatoContenido() {
       );
       return;
     }
-    await avisar('Vamos a revisar este aviso. Gracias por ayudar a que Matchy sea un lugar seguro.', { titulo: 'Reporte enviado' });
+    await avisar('Vamos a revisar este aviso. Gracias por ayudar a que Voral sea un lugar seguro.', { titulo: 'Reporte enviado' });
   }
 
   async function retirarPostulacion(vacante) {
@@ -324,7 +324,7 @@ function VacantesCandidatoContenido() {
                 const clase = puntaje >= 70 ? '' : puntaje >= 40 ? 'tibio' : 'frio';
                 return (
                   <p style={{ margin: '0 0 14px' }}>
-                    <span className={`match-chip ${clase}`}>Tenés {puntaje}% de matchyar</span>
+                    <span className={`match-chip ${clase}`}>Tenés {puntaje}% de compatibilidad</span>
                   </p>
                 );
               })()}
@@ -411,7 +411,7 @@ function VacantesCandidatoContenido() {
           </div>
 
           <div className="nota-final">
-            <strong>Cuidate de los avisos falsos.</strong> Matchy es gratis para vos y verificamos cada local antes
+            <strong>Cuidate de los avisos falsos.</strong> Voral es gratis para vos y verificamos cada local antes
             de habilitarlo. Ningún empleador serio te va a pedir dinero para darte el puesto, ni tu clave bancaria,
             ni que trabajes gratis a prueba. Las entrevistas se hacen en el local, en horario comercial. Si algo te
             resulta raro, tocá "Reportar" en el aviso.

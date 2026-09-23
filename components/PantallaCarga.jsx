@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import IsotipoMatchy from './IsotipoMatchy';
+import IsotipoVoral from './IsotipoVoral';
 
 // Momento en que se cerró la última pantalla de carga. Sirve para que, si una
 // carga sigue inmediatamente a otra (primero se verifica la cuenta y después se
@@ -34,7 +34,7 @@ export default function PantallaCarga({ texto = 'Cargando...', retraso = 180 }) 
 
   return (
     <div className={clases} role="status" aria-live="polite" aria-busy="true">
-      <IsotipoMatchy className="carga-isotipo" animado />
+      <IsotipoVoral className="carga-isotipo" animado />
       <p className="carga-texto">{texto}</p>
     </div>
   );

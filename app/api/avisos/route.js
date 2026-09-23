@@ -43,7 +43,7 @@ export async function POST(req) {
         parrafos: [
           `<strong>${local}</strong> te propone una entrevista para el puesto de <strong>${puesto}</strong>.`,
           `Horario propuesto: <strong>${horario}</strong>${d.direccion ? `, en ${escapar(d.direccion)}` : ''}.`,
-          'Entrá a Matchy para confirmarla, proponer otro horario o avisar que no podés.',
+          'Entrá a Voral para confirmarla, proponer otro horario o avisar que no podés.',
         ],
         boton: { texto: 'Responder', href: `${base}/candidato/entrevistas` },
       };
@@ -74,7 +74,7 @@ export async function POST(req) {
       };
     } else if (evento === 'local_aprobado') {
       mail = {
-        asunto: `${d.local} ya está habilitado en Matchy`,
+        asunto: `${d.local} ya está habilitado en Voral`,
         titulo: 'Tu local fue aprobado',
         parrafos: [
           `Verificamos los datos de <strong>${local}</strong>. Tus vacantes ya se muestran a los candidatos de Posadas.`,
@@ -83,7 +83,7 @@ export async function POST(req) {
       };
     } else {
       mail = {
-        asunto: `Sobre el alta de ${d.local} en Matchy`,
+        asunto: `Sobre el alta de ${d.local} en Voral`,
         titulo: 'No pudimos aprobar tu local',
         parrafos: [
           `No pudimos verificar los datos de <strong>${local}</strong>, así que por ahora no está habilitado para publicar.`,

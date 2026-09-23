@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 9)
+-- VORAL — actualización de esquema (versión 9)
 -- Procedimiento ante reportes de vacantes sospechosas.
 -- Correr DESPUÉS de schema-v8.sql. Se puede correr las veces que haga falta.
 

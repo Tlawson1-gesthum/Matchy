@@ -1,4 +1,4 @@
--- MATCHY — actualización de esquema (versión 4)
+-- VORAL — actualización de esquema (versión 4)
 -- 1) Define el superusuario que aprueba locales.
 -- 2) Restringe las localidades al Gran Posadas.
 -- Se puede correr las veces que haga falta.
@@ -30,6 +30,6 @@ alter table empleadores add constraint empleadores_ciudad_permitida
 
 -- ============================================================
 -- 3. Verificación: tiene que devolver gozzasabores@gmail.com
---    Si vuelve vacío, esa cuenta todavía no está creada en Matchy.
+--    Si vuelve vacío, esa cuenta todavía no está creada en Voral.
 -- ============================================================
 select email as superusuario from administradores;

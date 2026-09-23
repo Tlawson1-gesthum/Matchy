@@ -1,4 +1,4 @@
--- MATCHY — esquema de base de datos para Supabase
+-- VORAL — esquema de base de datos para Supabase
 -- Cómo usar: Supabase Dashboard → SQL Editor → pegar todo este archivo → Run
 
 -- Extensión para generar UUIDs

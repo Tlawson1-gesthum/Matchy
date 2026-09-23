@@ -59,7 +59,7 @@ function ConsentimientoContenido() {
         <p style={{ fontSize: '0.88rem', borderTop: '1px solid var(--borde)', paddingTop: 14, marginTop: 18 }}>
           Al apretar "Acepto y continúo" estás de acuerdo con los{' '}
           <a href="/legal/terminos" target="_blank">términos y condiciones</a> y con la{' '}
-          <a href="/legal/privacidad" target="_blank">política de privacidad</a> de Matchy.
+          <a href="/legal/privacidad" target="_blank">política de privacidad</a> de Voral.
         </p>
 
         {error && <p style={{ color: '#B5432A' }}>{error}</p>}

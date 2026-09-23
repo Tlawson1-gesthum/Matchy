@@ -1,4 +1,4 @@
--- MATCHY — versión 13: MAYORÍA DE EDAD CON REGISTRO REAL Y NOTAS INTERNAS PROTEGIDAS
+-- VORAL — versión 13: MAYORÍA DE EDAD CON REGISTRO REAL Y NOTAS INTERNAS PROTEGIDAS
 -- Correr DESPUÉS de schema-v12.sql. Se puede correr las veces que haga falta.
 -- Después de correrlo, corré probar-seguridad.sql para confirmar que sigue todo bien
 -- (ahora son 19 protecciones, antes eran 18).
