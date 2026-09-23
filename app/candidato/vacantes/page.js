@@ -216,7 +216,7 @@ function VacantesCandidatoContenido() {
       <div className="container">
         <h1>Vacantes en Posadas</h1>
         <p>{vacantes.length} {vacantes.length === 1 ? 'local está buscando' : 'locales están buscando'} gente ahora mismo.</p>
-        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+        {error && <p className="mensaje-error" role="alert">{error}</p>}
 
         <TickerActividad datos={actividad} />
 

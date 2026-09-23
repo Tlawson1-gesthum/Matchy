@@ -6,12 +6,17 @@
   --borde: #D3D2BF;
   --verde: #26402C;
   --verde-claro: #4A6B51;
+  --verde-candidato: #3A5A40;
+  --oxido-empleador: #A6461F;
+  --whatsapp: #0E6B5C;
   --tierra: #B5432A;
+  --error: #9C3A22;
   --oro-claro: #E0C173;
   --oro: #C9A33F;
   --oro-oscuro: #A8842A;
+  --enlace: #7A5E1E;
   --texto: #43443C;
-  --texto-suave: #6E6F63;
+  --texto-suave: #5C5D51;
   --blanco: #FBFAF5;
   --font-titulos: 'Fraunces', Georgia, serif;
   --font-cuerpo: 'Inter', system-ui, sans-serif;
@@ -43,7 +48,7 @@ h1 { font-size: clamp(1.9rem, 6.4vw, 2.6rem); line-height: 1.12; }
 h2 { font-size: clamp(1.4rem, 4.6vw, 1.8rem); }
 h3 { font-size: 1.15rem; }
 
-a { color: var(--oro-oscuro); }
+a { color: var(--enlace); }
 
 .mono { font-family: var(--font-datos); }
 
@@ -83,12 +88,11 @@ a { color: var(--oro-oscuro); }
   flex-shrink: 0;
 }
 
-/* Fraunces deja un espacio óptico arriba del glifo: sin este ajuste el
-   texto se ve corrido hacia arriba respecto del isotipo. */
+/* "Voral" a un tamaño mayor que el heredado del contenedor: a 1.55rem
+   se leía chico y corrido hacia arriba respecto del isotipo de 34px. */
 .cabecera-marca span {
+  font-size: 1.78rem;
   line-height: 1;
-  position: relative;
-  top: 2px;
 }
 
 .cabecera-logo {
@@ -138,7 +142,7 @@ a { color: var(--oro-oscuro); }
   white-space: nowrap;
 }
 
-.cabecera-nav a:hover { color: var(--oro-oscuro); }
+.cabecera-nav a:hover { color: var(--enlace); }
 
 .cuenta { position: relative; flex-shrink: 0; }
 
@@ -238,7 +242,7 @@ a { color: var(--oro-oscuro); }
    ============================================================ */
 .btn {
   display: inline-block;
-  background: #3A5A40;
+  background: var(--verde-candidato);
   color: #FFFFFF;
   border: none;
   padding: 13px 30px;
@@ -432,7 +436,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 }
 
 .pie-texto { color: var(--texto); font-size: 0.93rem; margin: 0; }
-.pie-texto a { color: var(--oro-oscuro); }
+.pie-texto a { color: var(--enlace); }
 .pie-sobre { margin-right: 4px; }
 .pie-marca { font-size: 1.5rem; margin: 12px 0 0; opacity: 0.6; }
 
@@ -698,7 +702,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 .badge.cierra {
   background: #F3E2DB;
-  color: #9C3A22;
+  color: var(--error);
   font-family: var(--font-cuerpo);
   font-weight: 700;
   font-size: 0.86rem;
@@ -722,7 +726,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 .badge.urgente {
   background: #F3E2DB;
-  color: #9C3A22;
+  color: var(--error);
   font-family: var(--font-cuerpo);
   font-weight: 600;
   font-size: 0.86rem;
@@ -797,7 +801,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 
 .chequeo-ok { font-size: 0.82rem; color: #2F6B3C; margin: 6px 0 0; }
-.chequeo-mal { font-size: 0.82rem; color: #9C3A22; margin: 6px 0 0; line-height: 1.45; }
+.chequeo-mal { font-size: 0.82rem; color: var(--error); margin: 6px 0 0; line-height: 1.45; }
 
 /* ============================================================
    BOTONES ESPECIALES
@@ -826,7 +830,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #3A5A40;
+  background: var(--verde-candidato);
   color: #FFFFFF;
   padding: 9px 18px;
   border-radius: 999px;
@@ -886,7 +890,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   margin: 14px 0 0;
 }
 
-.tarjeta-acceso a { color: var(--oro-oscuro); }
+.tarjeta-acceso a { color: var(--enlace); }
 
 /* ============================================================
    PIE
@@ -1039,7 +1043,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   background: var(--oro);
 }
 
-.lista-secundaria a { color: var(--oro-oscuro); }
+.lista-secundaria a { color: var(--enlace); }
 
 /* ============================================================
    PANEL DE ADMINISTRACIÓN — FICHA DE LOCAL
@@ -1183,7 +1187,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 .btn-rechazar {
   background: transparent;
-  color: #9C3A22;
+  color: var(--error);
   border: 1px solid #E8D3CC;
   border-radius: 999px;
   padding: 10px 20px;
@@ -1290,8 +1294,8 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.btn-portada.verde { background: #3A5A40; }
-.btn-portada.oxido { background: #A6461F; }
+.btn-portada.verde { background: var(--verde-candidato); }
+.btn-portada.oxido { background: var(--oxido-empleador); }
 
 .btn-portada:hover { filter: brightness(1.1); }
 .btn-portada:active { transform: translateY(1px); }
@@ -1335,7 +1339,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   margin: 1px 0 0;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: #3A5A40;
+  accent-color: var(--verde-candidato);
 }
 
 .casilla-legal input:focus-visible {
@@ -1352,7 +1356,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 }
 
 .mensaje-error {
-  color: #9C3A22;
+  color: var(--error);
   font-size: 0.9rem;
   margin: 4px 0 12px;
 }
@@ -1408,7 +1412,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   min-height: 50px;
   padding: 14px 22px;
   margin-top: 8px;
-  background: #3A5A40;
+  background: var(--verde-candidato);
   color: #FFFFFF;
   border: none;
   border-radius: 999px;
@@ -1439,7 +1443,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   justify-content: center;
   min-height: 48px;
   padding: 12px 26px;
-  background: #A6461F;
+  background: var(--oxido-empleador);
   color: #FFFFFF;
   border: none;
   border-radius: 999px;
@@ -1567,7 +1571,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .btn-accion:hover { border-color: var(--verde); background: rgba(38, 64, 44, 0.04); }
 
 .btn-accion.quitar { color: #8F3E22; border-color: #E6CFC6; }
-.btn-accion.quitar:hover { border-color: #A6461F; background: #FBF4F2; }
+.btn-accion.quitar:hover { border-color: var(--oxido-empleador); background: #FBF4F2; }
 
 .btn-accion:focus-visible {
   outline: 3px solid var(--verde);
@@ -1612,8 +1616,8 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .pildora-puesto:hover { border-color: var(--verde); }
 
 .pildora-puesto.elegida {
-  background: #3A5A40;
-  border-color: #3A5A40;
+  background: var(--verde-candidato);
+  border-color: var(--verde-candidato);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -1782,7 +1786,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   min-height: 50px;
   padding: 13px 26px;
   margin-top: 12px;
-  background: #0E6B5C;
+  background: var(--whatsapp);
   color: #FFFFFF;
   border-radius: 999px;
   font-family: var(--font-cuerpo);
@@ -1971,7 +1975,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   justify-content: center;
   min-height: 48px;
   padding: 12px 24px;
-  background: #9C3A22;
+  background: var(--error);
   color: #FFFFFF;
   border: none;
   border-radius: 999px;
@@ -1998,7 +2002,7 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   color: #55564B;
 }
 
-.enlace-discreto:hover { color: #9C3A22; }
+.enlace-discreto:hover { color: var(--error); }
 
 .aviso-estado {
   border-radius: 12px;

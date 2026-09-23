@@ -271,7 +271,7 @@ function RankingVacanteContenido({ params }) {
           Urgencia: {etiqueta(URGENCIAS, vacante.urgencia)} · Estado: {vacante.estado}
         </p>
 
-        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+        {error && <p className="mensaje-error" role="alert">{error}</p>}
 
         <div style={{ margin: '16px 0' }}>
           <button className="btn blanco" onClick={exportarExcel} disabled={postulaciones.length === 0}>

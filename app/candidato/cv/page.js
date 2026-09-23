@@ -619,7 +619,7 @@ function CvFormContenido() {
           </div>
         </SeccionAcordeon>
 
-        {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : '#B5432A' }}>{mensaje}</p>}
+        {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : 'var(--error)' }}>{mensaje}</p>}
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
           <button className="btn-verde-solido en-linea" onClick={guardar} disabled={guardando}>

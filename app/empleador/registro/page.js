@@ -13,6 +13,7 @@ import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
+import SeccionAcordeon from '../../../components/SeccionAcordeon';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -58,6 +59,7 @@ function RegistroEmpleadorContenido() {
   const [cargando, setCargando] = useState(false);
   const [subiendoLogo, setSubiendoLogo] = useState(false);
   const [logoUrl, setLogoUrl] = useState('');
+  const [abiertas, setAbiertas] = useState(new Set(['contacto']));
 
   const chequeoCuit = revisarCuit(form.cuit);
   const chequeoRed = revisarRedSocial(form.red_social);
@@ -179,6 +181,25 @@ function RegistroEmpleadorContenido() {
 
   if (paso === 'cargando') return <PantallaCarga texto="Verificando tu cuenta..." />;
 
+  const estados = {
+    contacto: form.nombre_responsable.trim() && form.telefono.trim() ? 'completo' : 'pendiente',
+    local: form.nombre_local.trim() && form.razon_social.trim() && chequeoCuit.valido &&
+      form.direccion.trim() && chequeoRed.valido && form.contacto.trim() ? 'completo' : 'pendiente',
+    legal: esMayor && declaracion && sinFraude && aceptaTyc ? 'completo' : 'pendiente',
+  };
+
+  function alternarSeccion(id, abierta) {
+    setAbiertas((prev) => {
+      const nueva = new Set(prev);
+      if (abierta) nueva.add(id); else nueva.delete(id);
+      return nueva;
+    });
+  }
+
+  function propsSeccion(id) {
+    return { estado: estados[id], abierta: abiertas.has(id), onToggle: alternarSeccion };
+  }
+
   return (
     <div>
       <Encabezado links={[]} />
@@ -230,136 +251,145 @@ function RegistroEmpleadorContenido() {
               aprobemos tu local, tus vacantes no se muestran. Revisamos las altas dentro de las 48 horas hábiles.
             </div>
 
-            <form onSubmit={guardarLocal} className="card">
-              <h3>Responsable</h3>
-              <div className="form-field">
-                <label>Nombre y apellido</label>
-                <input required value={form.nombre_responsable} onChange={(e) => set('nombre_responsable', e.target.value)} />
-              </div>
-              <div className="form-field">
-                <label>Tu teléfono de contacto directo</label>
-                <input required inputMode="tel" placeholder="376 4123456" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} />
-                <p className="ayuda-campo">Lo usamos para verificar el alta. No se muestra a los candidatos.</p>
-              </div>
+            <form onSubmit={guardarLocal}>
+              <SeccionAcordeon id="contacto" titulo="Tu contacto" {...propsSeccion('contacto')}>
+                <div className="form-field">
+                  <label>Nombre y apellido</label>
+                  <input required value={form.nombre_responsable} onChange={(e) => set('nombre_responsable', e.target.value)} />
+                </div>
+                <div className="form-field">
+                  <label>Tu teléfono de contacto directo</label>
+                  <input required inputMode="tel" placeholder="376 4123456" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} />
+                  <p className="ayuda-campo">Lo usamos para verificar el alta. No se muestra a los candidatos.</p>
+                </div>
+              </SeccionAcordeon>
 
-              <h3 style={{ marginTop: 22 }}>El local</h3>
-              <div className="form-field">
-                <label>Nombre de fantasía</label>
-                <input required value={form.nombre_local} onChange={(e) => set('nombre_local', e.target.value)} />
-              </div>
-              <div className="form-field">
-                <label>Logo del local (opcional)</label>
-                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={subirLogo} />
-                {subiendoLogo && <p className="ayuda-campo">Subiendo...</p>}
-                {logoUrl && (
-                  <img
-                    src={logoUrl}
-                    alt=""
-                    style={{ width: 64, height: 64, borderRadius: 10, objectFit: 'cover', marginTop: 10, border: '1px solid var(--borde)' }}
-                  />
-                )}
-                <p className="ayuda-campo">
-                  Aparece junto al nombre en cada vacante. Un aviso con logo se reconoce más rápido.
-                </p>
-              </div>
-
-              <div className="form-field">
-                <label>Razón social</label>
-                <input required value={form.razon_social} onChange={(e) => set('razon_social', e.target.value)} />
-              </div>
-
-              <div className="form-field">
-                <label>CUIT con el que opera</label>
-                <input
-                  required
-                  inputMode="numeric"
-                  placeholder="30-12345678-9"
-                  value={form.cuit}
-                  onChange={(e) => set('cuit', e.target.value)}
-                />
-                {form.cuit && (
-                  <p className={chequeoCuit.valido ? 'chequeo-ok' : 'chequeo-mal'}>
-                    {chequeoCuit.valido ? `${chequeoCuit.formateado} · ${chequeoCuit.mensaje}` : chequeoCuit.mensaje}
+              <SeccionAcordeon id="local" titulo="El local" {...propsSeccion('local')}>
+                <div className="form-field">
+                  <label>Nombre de fantasía</label>
+                  <input required value={form.nombre_local} onChange={(e) => set('nombre_local', e.target.value)} />
+                </div>
+                <div className="form-field">
+                  <label>Logo del local (opcional)</label>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" onChange={subirLogo} />
+                  {subiendoLogo && <p className="ayuda-campo">Subiendo...</p>}
+                  {logoUrl && (
+                    <img
+                      src={logoUrl}
+                      alt=""
+                      style={{ width: 64, height: 64, borderRadius: 10, objectFit: 'cover', marginTop: 10, border: '1px solid var(--borde)' }}
+                    />
+                  )}
+                  <p className="ayuda-campo">
+                    Aparece junto al nombre en cada vacante. Un aviso con logo se reconoce más rápido.
                   </p>
-                )}
-                <p className="ayuda-campo">Un CUIT solo puede tener un local registrado.</p>
-              </div>
+                </div>
 
-              <div className="form-field">
-                <label>Tipo de local</label>
-                <select value={form.tipo_local} onChange={(e) => set('tipo_local', e.target.value)}>
-                  {TIPOS_LOCAL.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label>Localidad</label>
-                <select value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)}>
-                  {LOCALIDADES.map((l) => <option key={l} value={l}>{l}</option>)}
-                </select>
-              </div>
-              <div className="form-field">
-                <label>Dirección exacta</label>
-                <input required placeholder="Calle, número, barrio" value={form.direccion} onChange={(e) => set('direccion', e.target.value)} />
-                <p className="ayuda-campo">Donde funciona el local, no un domicilio particular.</p>
-              </div>
+                <div className="form-field">
+                  <label>Razón social</label>
+                  <input required value={form.razon_social} onChange={(e) => set('razon_social', e.target.value)} />
+                </div>
 
-              <div className="form-field">
-                <label>Enlace público del local</label>
-                <input
-                  required
-                  placeholder="https://instagram.com/tulocal"
-                  value={form.red_social}
-                  onChange={(e) => set('red_social', e.target.value)}
-                />
-                {form.red_social && (
-                  <p className={chequeoRed.valido ? 'chequeo-ok' : 'chequeo-mal'}>{chequeoRed.mensaje}</p>
-                )}
-                <p className="ayuda-campo">
-                  Pegá la dirección completa desde la barra del navegador. Sirve Instagram, Facebook, TikTok,
-                  Google Maps o el sitio web del local. Lo usamos para confirmar que existe y está en actividad.
-                </p>
-              </div>
+                <div className="form-field">
+                  <label>CUIT con el que opera</label>
+                  <input
+                    required
+                    inputMode="numeric"
+                    placeholder="30-12345678-9"
+                    value={form.cuit}
+                    onChange={(e) => set('cuit', e.target.value)}
+                  />
+                  {form.cuit && (
+                    <p className={chequeoCuit.valido ? 'chequeo-ok' : 'chequeo-mal'}>
+                      {chequeoCuit.valido ? `${chequeoCuit.formateado} · ${chequeoCuit.mensaje}` : chequeoCuit.mensaje}
+                    </p>
+                  )}
+                  <p className="ayuda-campo">Un CUIT solo puede tener un local registrado.</p>
+                </div>
 
-              <div className="form-field">
-                <label>Contacto que van a ver los candidatos</label>
-                <input required value={form.contacto} onChange={(e) => set('contacto', e.target.value)} />
-              </div>
+                <div className="form-field">
+                  <label>Tipo de local</label>
+                  <select value={form.tipo_local} onChange={(e) => set('tipo_local', e.target.value)}>
+                    {TIPOS_LOCAL.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+                <div className="form-field">
+                  <label>Localidad</label>
+                  <select value={form.ciudad} onChange={(e) => set('ciudad', e.target.value)}>
+                    {LOCALIDADES.map((l) => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+                <div className="form-field">
+                  <label>Dirección exacta</label>
+                  <input required placeholder="Calle, número, barrio" value={form.direccion} onChange={(e) => set('direccion', e.target.value)} />
+                  <p className="ayuda-campo">Donde funciona el local, no un domicilio particular.</p>
+                </div>
 
-              <label className="casilla-legal">
-                <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
-                <span>
-                  Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede
-                  tener consecuencias legales y que Voral da de baja las cuentas de menores de edad apenas las
-                  detecta.
-                </span>
-              </label>
+                <div className="form-field">
+                  <label>Enlace público del local</label>
+                  <input
+                    required
+                    placeholder="https://instagram.com/tulocal"
+                    value={form.red_social}
+                    onChange={(e) => set('red_social', e.target.value)}
+                  />
+                  {form.red_social && (
+                    <p className={chequeoRed.valido ? 'chequeo-ok' : 'chequeo-mal'}>{chequeoRed.mensaje}</p>
+                  )}
+                  <p className="ayuda-campo">
+                    Pegá la dirección completa desde la barra del navegador. Sirve Instagram, Facebook, TikTok,
+                    Google Maps o el sitio web del local. Lo usamos para confirmar que existe y está en actividad.
+                  </p>
+                </div>
 
-              <label className="casilla-legal">
-                <input type="checkbox" checked={declaracion} onChange={(e) => setDeclaracion(e.target.checked)} />
-                <span>
-                  Declaro bajo juramento que el local existe y está en actividad, que estoy autorizado a
-                  representarlo, y que las vacantes que publique van a ser reales.
-                </span>
-              </label>
+                <div className="form-field">
+                  <label>Contacto que van a ver los candidatos</label>
+                  <input required value={form.contacto} onChange={(e) => set('contacto', e.target.value)} />
+                </div>
+              </SeccionAcordeon>
 
-              <label className="casilla-legal">
-                <input type="checkbox" checked={sinFraude} onChange={(e) => setSinFraude(e.target.checked)} />
-                <span>
-                  Me comprometo a no pedirle ni ofrecerle dinero a ningún candidato por el puesto o por el proceso
-                  de selección, a no solicitar sus claves bancarias ni documentación personal innecesaria, a no
-                  exigir trabajo no remunerado a modo de prueba, y a no usar Voral para cometer fraude, estafas,
-                  trata de personas ni ningún otro delito. Entiendo que el incumplimiento habilita la baja
-                  inmediata de la cuenta y la denuncia ante la autoridad competente.
-                </span>
-              </label>
+              <SeccionAcordeon id="legal" titulo="Declaraciones legales" {...propsSeccion('legal')}>
+                <p className="ayuda-campo" style={{ marginTop: 0 }}>Antes de publicar, confirmá esto:</p>
 
-              <label className="casilla-legal">
-                <input type="checkbox" checked={aceptaTyc} onChange={(e) => setAceptaTyc(e.target.checked)} />
-                <span>
-                  Leí y acepto los <a href="/legal/terminos" target="_blank">términos y condiciones</a> y la{' '}
-                  <a href="/legal/privacidad" target="_blank">política de privacidad</a>.
-                </span>
-              </label>
+                <label className="casilla-legal">
+                  <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
+                  <span>
+                    Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede
+                    tener consecuencias legales y que Voral da de baja las cuentas de menores de edad apenas las
+                    detecta.
+                  </span>
+                </label>
+
+                <label className="casilla-legal">
+                  <input type="checkbox" checked={declaracion} onChange={(e) => setDeclaracion(e.target.checked)} />
+                  <span>
+                    Declaro bajo juramento que el local existe y está en actividad, que estoy autorizado a
+                    representarlo, y que las vacantes que publique van a ser reales.
+                  </span>
+                </label>
+
+                <div className="aviso-legal" style={{ marginBottom: 8 }}>
+                  <label className="casilla-legal" style={{ margin: 0, padding: 0 }}>
+                    <input type="checkbox" checked={sinFraude} onChange={(e) => setSinFraude(e.target.checked)} />
+                    <span>
+                      <strong>Compromiso antifraude.</strong> Me comprometo a no pedirle ni ofrecerle dinero a
+                      ningún candidato por el puesto o por el proceso de selección, a no solicitar sus claves
+                      bancarias ni documentación personal innecesaria, a no exigir trabajo no remunerado a modo de
+                      prueba, y a no usar Voral para cometer fraude, estafas, trata de personas ni ningún otro
+                      delito. Entiendo que el incumplimiento habilita la baja inmediata de la cuenta y la denuncia
+                      ante la autoridad competente.
+                    </span>
+                  </label>
+                </div>
+
+                <label className="casilla-legal">
+                  <input type="checkbox" checked={aceptaTyc} onChange={(e) => setAceptaTyc(e.target.checked)} />
+                  <span>
+                    Leí y acepto los <a href="/legal/terminos" target="_blank">términos y condiciones</a> y la{' '}
+                    <a href="/legal/privacidad" target="_blank">política de privacidad</a>.
+                  </span>
+                </label>
+              </SeccionAcordeon>
 
               {error && <p className="mensaje-error" role="alert">{error}</p>}
               <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>

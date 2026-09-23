@@ -147,7 +147,7 @@ export default function AdminLocales() {
       {dialogo}
       <div className="container" style={{ maxWidth: 820 }}>
         <h1>Locales registrados</h1>
-        {error && <p style={{ color: '#B5432A' }}>{error}</p>}
+        {error && <p className="mensaje-error" role="alert">{error}</p>}
 
         {reportes.length > 0 && (
           <section style={{ marginBottom: 28 }}>
