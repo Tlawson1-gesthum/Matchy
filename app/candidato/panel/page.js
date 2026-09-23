@@ -50,7 +50,9 @@ function PanelCandidatoContenido() {
       setCv(miCv);
 
       const { data: posts } = await supabase
-        .from('postulaciones').select('*').eq('candidato_id', uid);
+        .from('postulaciones')
+        .select('id, vacante_id, candidato_id, puntaje, estado, created_at, puesto_otro, cv_snapshot, cv_editado_despues')
+        .eq('candidato_id', uid);
       setPostulaciones(posts || []);
 
       if (posts?.length) {

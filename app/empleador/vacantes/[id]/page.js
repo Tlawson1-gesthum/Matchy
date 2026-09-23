@@ -56,10 +56,10 @@ function RankingVacanteContenido({ params }) {
 
     // Paso 1: las postulaciones (sin traer el CV embebido, porque no hay
     // relación directa entre postulaciones y cvs que la base sepa resolver).
+    // resumen_ia y las razones son columnas restringidas: se leen a través de
+    // esta función, que verifica que la vacante sea del local que llama.
     const { data: posts, error: errPost } = await supabase
-      .from('postulaciones')
-      .select('*')
-      .eq('vacante_id', params.id);
+      .rpc('postulaciones_para_empleador', { p_vacante_id: params.id });
 
     if (errPost) {
       setError('No pudimos cargar los postulantes: ' + errPost.message);

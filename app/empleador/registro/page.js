@@ -166,7 +166,8 @@ function RegistroEmpleadorContenido() {
       contacto: form.contacto,
       estado: 'pendiente',
       acepto_tyc_at: ahora,
-      declara_mayor_edad: true,
+      declara_mayor_edad: esMayor,
+      declaracion_edad_at: ahora,
       declaracion_jurada_at: ahora,
       declaracion_fraude_at: ahora,
     });
@@ -326,7 +327,11 @@ function RegistroEmpleadorContenido() {
 
               <label className="casilla-legal">
                 <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
-                <span>Declaro que soy mayor de 18 años.</span>
+                <span>
+                  Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede
+                  tener consecuencias legales y que Matchy da de baja las cuentas de menores de edad apenas las
+                  detecta.
+                </span>
               </label>
 
               <label className="casilla-legal">

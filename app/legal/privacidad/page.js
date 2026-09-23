@@ -99,6 +99,11 @@ export default function Privacidad() {
           componen, corregir tu CV en cualquier momento, y solicitar una revisión humana escribiendo a
           <a href="mailto:gozzasabores@gmail.com"> gozzasabores@gmail.com</a>.
         </p>
+        <p>
+          Por eso no se trata de una decisión automatizada en el sentido de la Ley 25.326: el cálculo solo ordena
+          una lista, no produce por sí mismo ningún efecto sobre vos, y quien decide a quién contactar es siempre
+          una persona del lado del empleador.
+        </p>
 
         <h2>7. Tus derechos</h2>
         <p>

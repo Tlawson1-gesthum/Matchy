@@ -48,11 +48,11 @@ export async function POST(req) {
     const postulacionId = typeof cuerpo.postulacion_id === 'string' ? cuerpo.postulacion_id : '';
     if (!/^[0-9a-f-]{36}$/i.test(postulacionId)) return respuesta({ error: 'Pedido inválido.' }, 400);
 
-    const { data: post } = await supabase
-      .from('postulaciones')
-      .select('id, vacante_id, cv_snapshot, resumen_ia')
-      .eq('id', postulacionId)
-      .maybeSingle();
+    // resumen_ia es una columna restringida (ver schema-v13.sql): se lee a
+    // través de esta función, que verifica que la vacante sea del local que llama.
+    const { data: postRows } = await supabase
+      .rpc('postulacion_para_resumen', { p_postulacion_id: postulacionId });
+    const post = postRows?.[0];
     if (!post) return respuesta({ error: 'Postulación no encontrada.' }, 404);
 
     if (post.resumen_ia) return respuesta({ resumen: post.resumen_ia });

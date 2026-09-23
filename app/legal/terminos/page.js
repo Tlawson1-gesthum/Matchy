@@ -63,6 +63,11 @@ export default function Terminos() {
           posición escribiendo a <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
         </p>
         <p>
+          Ni el porcentaje ni el resumen que lo acompaña son una decisión automatizada en el sentido de la Ley
+          25.326: no producen por sí mismos ningún efecto sobre la persona candidata, no seleccionan ni descartan a
+          nadie, y siempre hay una persona del lado del empleador que decide con criterio propio a quién contactar.
+        </p>
+        <p>
           El porcentaje se calcula con los datos del CV tal como estaban al momento de la postulación y queda
           congelado: modificar el CV después no altera las postulaciones ya enviadas. Si un candidato modifica su
           CV con posterioridad, el empleador es informado de ello.

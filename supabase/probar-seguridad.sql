@@ -143,6 +143,15 @@ begin
   if num is null then r := r || 'OK     El candidato no puede editar su postulación' || E'\n';
   else r := r || 'FALLA  El candidato pudo cambiar su puntaje' || E'\n'; fallas := fallas + 1; end if;
 
+  execute 'set local role authenticated';
+  begin
+    perform resumen_ia from postulaciones where id = p;
+    r := r || 'FALLA  El candidato pudo leer el resumen de IA de su postulación' || E'\n'; fallas := fallas + 1;
+  exception when others then
+    r := r || 'OK     El candidato no puede leer el resumen de IA ni las razones internas' || E'\n';
+  end;
+  execute 'reset role';
+
   select nombre_bloqueado into flag from cvs where id = b;
   execute 'set local role authenticated';
   update cvs set nombre = 'Otro nombre', nombre_bloqueado = false where id = b;
@@ -198,7 +207,7 @@ begin
 
   -- ---------- Resumen y deshacer todo ----------
   if fallas = 0 then
-    r := r || E'\nTODO BIEN: las 18 protecciones funcionan.\n';
+    r := r || E'\nTODO BIEN: las 19 protecciones funcionan.\n';
   else
     r := r || E'\nATENCION: ' || fallas || ' protecciones fallaron. Pasale este texto a Claude.\n';
   end if;

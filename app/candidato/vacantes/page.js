@@ -103,7 +103,9 @@ function VacantesCandidatoContenido() {
       setConteos(cuenta);
 
       const { data: post } = await supabase
-        .from('postulaciones').select('*').eq('candidato_id', uid);
+        .from('postulaciones')
+        .select('id, vacante_id, candidato_id, puntaje, estado, created_at, puesto_otro, cv_snapshot, cv_editado_despues')
+        .eq('candidato_id', uid);
       setPostuladas(new Set((post || []).map((p) => p.vacante_id)));
       setMisPostulaciones(Object.fromEntries((post || []).map((p) => [p.vacante_id, p])));
 

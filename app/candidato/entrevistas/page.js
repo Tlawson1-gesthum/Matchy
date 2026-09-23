@@ -37,7 +37,9 @@ function EntrevistasCandidatoContenido() {
 
     // Paso 1: mis postulaciones
     const { data: posts, error: errPost } = await supabase
-      .from('postulaciones').select('*').eq('candidato_id', uid);
+      .from('postulaciones')
+      .select('id, vacante_id, candidato_id, puntaje, estado, created_at, puesto_otro, cv_snapshot, cv_editado_despues')
+      .eq('candidato_id', uid);
     if (errPost) { setError(errPost.message); setCargando(false); return; }
 
     if (!posts || posts.length === 0) {

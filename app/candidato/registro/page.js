@@ -58,11 +58,13 @@ function RegistroCandidatoContenido() {
 
     const userId = data.user?.id;
     if (userId) {
+      const ahora = new Date().toISOString();
       await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
       await supabase.from('cvs').insert({
         id: userId,
-        acepto_tyc_at: new Date().toISOString(),
-        declara_mayor_edad: true,
+        acepto_tyc_at: ahora,
+        declara_mayor_edad: esMayor,
+        declaracion_edad_at: ahora,
       });
     }
 
@@ -113,7 +115,10 @@ function RegistroCandidatoContenido() {
 
             <label className="casilla-legal">
               <input type="checkbox" checked={esMayor} onChange={(e) => setEsMayor(e.target.checked)} />
-              <span>Declaro que soy mayor de 18 años.</span>
+              <span>
+                Declaro bajo mi responsabilidad que soy mayor de 18 años. Sé que una declaración falsa puede tener
+                consecuencias legales y que Matchy da de baja las cuentas de menores de edad apenas las detecta.
+              </span>
             </label>
 
             <label className="casilla-legal">
