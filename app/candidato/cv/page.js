@@ -475,9 +475,9 @@ function CvFormContenido() {
           <div className="tip">
             <strong>Cómo cargar tus cursos:</strong>
             <ul style={{ margin: '8px 0 0 0', paddingLeft: 18 }}>
-              <li>Escribí el nombre completo del curso y quién lo dictó, aunque haya durado un día o haya sido online. "Curso de barismo — Escuela X" vale más que "curso de café".</li>
+              <li>Escribí el nombre completo del curso y quién lo dictó, aunque haya durado un día o haya sido online. "Curso de barismo, Escuela X" vale más que "curso de café".</li>
               <li>Si lo estás cursando, cargalo igual y marcá "en curso" con el año en que calculás terminarlo. Estar estudiando suma; esconderlo no.</li>
-              <li>Poné primero lo que tenga que ver con gastronomía — manipulación de alimentos, barismo, pastelería, atención al cliente — y después el resto de tu formación.</li>
+              <li>Poné primero lo que tenga que ver con gastronomía (manipulación de alimentos, barismo, pastelería, atención al cliente) y después el resto de tu formación.</li>
             </ul>
           </div>
           {cv.formacion.map((f, i) => (

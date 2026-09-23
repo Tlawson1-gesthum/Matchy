@@ -71,11 +71,6 @@ function PanelCandidatoContenido() {
     cargar();
   }, [router]);
 
-  async function cerrarSesion() {
-    await supabase.auth.signOut();
-    window.location.href = '/';
-  }
-
   if (cargando) return <PantallaCarga texto="Preparando tu panel..." />;
   if (!cv) return <div className="container">No encontramos tu CV.</div>;
 
@@ -185,13 +180,6 @@ function PanelCandidatoContenido() {
             </ul>
           </div>
         </div>
-        <p style={{ marginTop: 28 }}>
-          <button className="btn-accion" onClick={cerrarSesion}>Cerrar sesión</button>
-        </p>
-        <p style={{ marginTop: 8 }}>
-          <a className="enlace-discreto" href="/cuenta/eliminar">Eliminar mi cuenta</a>
-        </p>
-        <div style={{ height: 40 }} />
       </div>
       <Pie />
     </div>

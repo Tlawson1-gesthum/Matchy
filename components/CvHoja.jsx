@@ -64,7 +64,7 @@ export default function CvHoja({ cv }) {
             <div key={i} className="cv-item">
               <div className="cv-item-titulo">
                 <strong>{exp.puesto}</strong>
-                {exp.empresa ? ` — ${exp.empresa}` : ''}
+                {exp.empresa ? `, ${exp.empresa}` : ''}
                 <span className="cv-fechas">
                   {exp.desde} {exp.desde && (exp.actual || exp.hasta) ? 'a' : ''}{' '}
                   {exp.actual ? 'actualidad' : exp.hasta}
@@ -86,7 +86,7 @@ export default function CvHoja({ cv }) {
             return (
               <p key={i} className="cv-linea-dato">
                 {f.titulo}
-                {f.institucion ? ` — ${f.institucion}` : ''}
+                {f.institucion ? `, ${f.institucion}` : ''}
                 {detalle ? ` (${detalle})` : ''}
               </p>
             );

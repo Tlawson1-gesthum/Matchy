@@ -76,7 +76,7 @@ export default function LoginEmpleador() {
     <div>
       <Encabezado links={[]} />
       <div className="panel-auth" style={{ paddingTop: 36 }}>
-      <h1>Iniciar sesión — locales</h1>
+      <h1>Iniciar sesión de tu local</h1>
       <p>¿Ya sos usuario? Iniciá sesión con tu email y contraseña.</p>
       <div className="card" style={{ marginBottom: 16 }}>
         <BotonGoogle rol="empleador" texto="Entrar con Google" />
