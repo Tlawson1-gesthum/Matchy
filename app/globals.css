@@ -83,6 +83,14 @@ a { color: var(--oro-oscuro); }
   flex-shrink: 0;
 }
 
+/* Fraunces deja un espacio óptico arriba del glifo: sin este ajuste el
+   texto se ve corrido hacia arriba respecto del isotipo. */
+.cabecera-marca span {
+  line-height: 1;
+  position: relative;
+  top: 2px;
+}
+
 .cabecera-logo {
   height: 34px;
   width: auto;
@@ -538,6 +546,41 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
     font-size: 10.5pt;
   }
   .cv-nombre { font-size: 20pt; }
+}
+
+/* ============================================================
+   TARJETA DE BIENVENIDA: PANEL DEL LOCAL SIN VACANTES TODAVÍA
+   ============================================================ */
+.tarjeta-bienvenida-vacio {
+  max-width: 460px;
+  margin: 32px auto;
+  padding: 38px 32px 34px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.tarjeta-bienvenida-vacio h2 { margin: 0; }
+
+.tarjeta-bienvenida-vacio p {
+  color: var(--texto-suave);
+  margin: 0 0 10px;
+  max-width: 38ch;
+}
+
+.tarjeta-bienvenida-botones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .tarjeta-bienvenida-vacio { padding: 32px 22px 28px; }
+  .tarjeta-bienvenida-botones { flex-direction: column; width: 100%; }
+  .tarjeta-bienvenida-botones > a { width: 100%; text-align: center; }
 }
 
 /* ============================================================
@@ -1851,6 +1894,23 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .menu-salir:hover { background: #FBF4F2; }
 
 .menu-salir:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: -3px;
+}
+
+/* Eliminar cuenta: el ítem menos usado del menú, discreto a propósito */
+.menu-eliminar {
+  display: block;
+  padding: 8px 14px 4px;
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.menu-eliminar:hover { color: #8F3E22; }
+
+.menu-eliminar:focus-visible {
   outline: 3px solid var(--verde);
   outline-offset: -3px;
 }

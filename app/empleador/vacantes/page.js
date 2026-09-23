@@ -63,11 +63,6 @@ function VacantesEmpleadorContenido() {
     cargar();
   }
 
-  async function cerrarSesion() {
-    await supabase.auth.signOut();
-    window.location.href = '/';
-  }
-
   if (cargando) return <PantallaCarga texto="Preparando tu panel..." />;
 
   return (
@@ -112,10 +107,14 @@ function VacantesEmpleadorContenido() {
           />
         )}
         {vacantes.length === 0 && (
-          <div className="card">
-            <p style={{ marginTop: 0 }}>Todavía no publicaste ninguna vacante.</p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <a className="btn-oxido-solido" href="/empleador/vacantes/nueva">Publicar la primera</a>
+          <div className="card tarjeta-bienvenida-vacio">
+            <h2>Tu espacio de trabajo en Voral</h2>
+            <p>
+              Todavía no tenés vacantes publicadas. Publicá tu primera búsqueda o mirá un ejemplo para guiarte en
+              cómo armar un aviso efectivo.
+            </p>
+            <div className="tarjeta-bienvenida-botones">
+              <a className="btn-oxido-solido" href="/empleador/vacantes/nueva">Publicar la primera vacante</a>
               <a className="btn blanco" href="/vacante-ejemplo">Ver un ejemplo</a>
             </div>
           </div>
@@ -157,14 +156,6 @@ function VacantesEmpleadorContenido() {
             </div>
           </div>
         ))}
-
-        <p style={{ marginTop: 28, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          {esAdmin && <a className="btn-accion" href="/admin/locales">Aprobar locales</a>}
-          <button className="btn-accion" onClick={cerrarSesion}>Cerrar sesión</button>
-        </p>
-        <p style={{ marginTop: 8 }}>
-          <a className="enlace-discreto" href="/cuenta/eliminar">Eliminar mi cuenta</a>
-        </p>
       </div>
       <Pie />
     </div>

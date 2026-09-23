@@ -161,6 +161,7 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
                   <a key={l.href} href={l.href}>{l.texto}</a>
                 ))}
                 <button type="button" className="menu-salir" onClick={salir}>Cerrar sesión</button>
+                <a href="/cuenta/eliminar" className="menu-eliminar">Eliminar mi cuenta</a>
               </nav>
             )}
           </div>
@@ -180,6 +181,7 @@ export default function Encabezado({ links = [], destacado = null, campanaHref =
           ))}
           {usuario && <a href={panelHref}>Ir a mi panel</a>}
           {usuario && <button type="button" className="menu-salir" onClick={salir}>Cerrar sesión</button>}
+          {usuario && <a href="/cuenta/eliminar" className="menu-eliminar">Eliminar mi cuenta</a>}
         </nav>
       )}
     </header>
