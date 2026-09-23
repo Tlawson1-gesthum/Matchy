@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
+import { traducirError } from '../../../lib/errores';
 import PantallaCarga from '../../../components/PantallaCarga';
 
 function Callback() {
@@ -52,7 +53,7 @@ function Callback() {
       }
     }
 
-    completar().catch((e) => setError(e.message));
+    completar().catch((e) => setError(traducirError(e.message)));
   }, [router, params]);
 
   return (

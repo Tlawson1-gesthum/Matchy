@@ -104,6 +104,8 @@ a { color: var(--enlace); }
 .cabecera-iconos {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 14px;
   min-width: 0;
 }
@@ -362,10 +364,6 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 .badge.alto { background: #DCE7DC; color: var(--verde); }
 .badge.medio { background: #F4EBD4; color: #7E6520; }
 .badge.bajo { background: #F2DED6; color: var(--tierra); }
-
-table.ranking { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-table.ranking th, table.ranking td { padding: 10px; border-bottom: 1px solid var(--borde); text-align: left; }
-table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 
 /* ============================================================
    PANEL
@@ -745,6 +743,20 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   .vacante { padding: 22px 20px; border-radius: 16px; }
   .vacante-cabecera { flex-direction: column; align-items: flex-start; }
   .etiquetas-vacante { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+}
+
+/* Encabezado de la tarjeta de postulante: nombre a la izquierda, "Ver CV" a
+   la derecha, apilados en mobile como ya hace .vacante-cabecera. */
+.postulante-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .postulante-cabecera { flex-direction: column; }
+  .postulante-cabecera .btn-contorno-rect { margin-left: 0; }
 }
 
 /* ============================================================
@@ -1405,37 +1417,6 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
   outline-offset: 2px;
 }
 
-/* Botón principal sólido: verde oliva con texto blanco (contraste 7.7:1) */
-.btn-verde-solido {
-  display: block;
-  width: 100%;
-  min-height: 50px;
-  padding: 14px 22px;
-  margin-top: 8px;
-  background: var(--verde-candidato);
-  color: #FFFFFF;
-  border: none;
-  border-radius: 999px;
-  font-family: var(--font-cuerpo);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter 0.15s ease;
-}
-
-.btn-verde-solido:hover { filter: brightness(1.1); }
-
-.btn-verde-solido:focus-visible {
-  outline: 3px solid var(--verde);
-  outline-offset: 3px;
-}
-
-.btn-verde-solido:disabled { opacity: 0.6; cursor: not-allowed; }
-
-@media (prefers-reduced-motion: reduce) {
-  .btn-verde-solido { transition: none; }
-}
-
 /* Botón sólido naranja óxido: texto blanco con contraste 6:1 */
 .btn-oxido-solido {
   display: inline-flex;
@@ -1576,17 +1557,6 @@ table.ranking th { font-family: var(--font-datos); color: var(--verde); }
 .btn-accion:focus-visible {
   outline: 3px solid var(--verde);
   outline-offset: 2px;
-}
-
-/* Variante en línea del botón verde sólido (Guardar CV, Enviarme el código) */
-.btn-verde-solido.en-linea {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: auto;
-  margin-top: 0;
-  padding: 13px 30px;
-  font-weight: 700;
 }
 
 /* ============================================================

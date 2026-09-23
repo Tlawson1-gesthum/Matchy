@@ -56,7 +56,7 @@ function Dialogo({ tipo, titulo, mensaje, textoAceptar, textoCancelar, peligro, 
   }
 
   const tituloFinal = titulo || (tipo === 'avisar' ? 'Aviso' : tipo === 'texto' ? 'Contanos' : '¿Estás seguro?');
-  const claseAceptar = peligro ? 'btn-peligro' : 'btn-verde-solido en-linea';
+  const claseAceptar = peligro ? 'btn-peligro' : 'btn';
 
   return (
     <dialog

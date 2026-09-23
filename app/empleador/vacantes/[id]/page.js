@@ -9,6 +9,7 @@ import { linkWhatsApp } from '../../../../lib/whatsapp';
 import { rutaCertificado } from '../../../../lib/archivos';
 import { enviarAviso } from '../../../../lib/avisos';
 import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../../lib/fechas';
+import { traducirError } from '../../../../lib/errores';
 import BotonWhatsApp from '../../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../../components/GuardiaRol';
 import { useDialogo } from '../../../../components/Dialogo';
@@ -62,7 +63,7 @@ function RankingVacanteContenido({ params }) {
       .rpc('postulaciones_para_empleador', { p_vacante_id: params.id });
 
     if (errPost) {
-      setError('No pudimos cargar los postulantes: ' + errPost.message);
+      setError('No pudimos cargar los postulantes: ' + traducirError(errPost.message));
       setCargando(false);
       return;
     }
@@ -154,7 +155,7 @@ function RankingVacanteContenido({ params }) {
       propuesta_por: 'empleador',
       estado: 'pendiente',
     }).select('id').single();
-    if (err) { setError('No se pudo proponer la entrevista: ' + err.message); return; }
+    if (err) { setError('No se pudo proponer la entrevista: ' + traducirError(err.message)); return; }
     enviarAviso('entrevista_propuesta', nueva?.id);
     cargar();
   }
@@ -162,7 +163,7 @@ function RankingVacanteContenido({ params }) {
   async function cambiarEstado(postulacionId, estado) {
     const { error: err } = await supabase
       .from('postulaciones').update({ estado }).eq('id', postulacionId);
-    if (err) { setError('No se pudo actualizar: ' + err.message); return; }
+    if (err) { setError('No se pudo actualizar: ' + traducirError(err.message)); return; }
     setPostulaciones((lista) =>
       lista.map((x) => (x.id === postulacionId ? { ...x, estado } : x))
     );
@@ -177,7 +178,7 @@ function RankingVacanteContenido({ params }) {
       cambios.propuesta_por = 'empleador';
     }
     const { error: err } = await supabase.from('entrevistas').update(cambios).eq('id', entrevistaId);
-    if (err) { setError('No se pudo actualizar la entrevista: ' + err.message); return; }
+    if (err) { setError('No se pudo actualizar la entrevista: ' + traducirError(err.message)); return; }
     if (horario) enviarAviso('entrevista_actualizada', entrevistaId);
     cargar();
   }
@@ -189,7 +190,7 @@ function RankingVacanteContenido({ params }) {
       estado: 'confirmada',
       updated_at: new Date().toISOString(),
     }).eq('id', entrevista.id);
-    if (err) { setError('No se pudo confirmar: ' + err.message); return; }
+    if (err) { setError('No se pudo confirmar: ' + traducirError(err.message)); return; }
     enviarAviso('entrevista_actualizada', entrevista.id);
     cargar();
   }
@@ -197,7 +198,7 @@ function RankingVacanteContenido({ params }) {
   async function preseleccionar(postulacion) {
     const { error: err } = await supabase
       .from('postulaciones').update({ estado: 'preseleccionado' }).eq('id', postulacion.id);
-    if (err) { setError('No se pudo preseleccionar: ' + err.message); return; }
+    if (err) { setError('No se pudo preseleccionar: ' + traducirError(err.message)); return; }
 
     setPostulaciones((lista) =>
       lista.map((x) => (x.id === postulacion.id ? { ...x, estado: 'preseleccionado' } : x))
@@ -213,7 +214,7 @@ function RankingVacanteContenido({ params }) {
   async function verReferencias(postulacion) {
     const { data, error: errRef } = await supabase
       .rpc('referencias_de_candidato', { p_candidato_id: postulacion.candidato_id });
-    if (errRef) { setError('No se pudieron cargar las referencias: ' + errRef.message); return; }
+    if (errRef) { setError('No se pudieron cargar las referencias: ' + traducirError(errRef.message)); return; }
     setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
   }
 
@@ -298,7 +299,12 @@ function RankingVacanteContenido({ params }) {
           </p>
         </div>
 
-        {postulaciones.length === 0 && <p>Todavía no hay postulantes.</p>}
+        {postulaciones.length === 0 && (
+          <div className="card tarjeta-bienvenida-vacio">
+            <h2>Todavía no hay postulantes</h2>
+            <p>En cuanto alguien se postule a esta vacante, va a aparecer acá con su porcentaje de compatibilidad.</p>
+          </div>
+        )}
 
         {postulaciones.map((p) => (
           <div
@@ -306,7 +312,7 @@ function RankingVacanteContenido({ params }) {
             className="card"
             style={{ marginBottom: 16, opacity: p.estado === 'descartado' ? 0.5 : 1 }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+            <div className="postulante-cabecera">
               <div>
                 <h3 style={{ marginBottom: 4 }}>{p.cv.nombre || 'Candidato sin nombre cargado'}</h3>
                 <span className={`badge ${badgeClase(p.puntaje)}`}>{p.puntaje}/100 de match</span>

@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabaseClient';
 // Requiere que el proveedor de teléfono esté configurado en Supabase
 // (Authentication → Sign In / Providers → Phone).
 export default function VerificarTelefono({ telefonoInicial = '', verificadoAt, onVerificado, sinMarco = false, color = 'verde' }) {
-  const clasePrincipal = color === 'oxido' ? 'btn-oxido-solido' : 'btn-verde-solido en-linea';
+  const clasePrincipal = color === 'oxido' ? 'btn-oxido-solido' : 'btn';
   const [telefono, setTelefono] = useState(telefonoInicial);
   const [codigo, setCodigo] = useState('');
   const [etapa, setEtapa] = useState(verificadoAt ? 'listo' : 'inicio');

@@ -9,6 +9,7 @@ import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
+import { IconoMaletin, IconoSobre, IconoMegafono, IconoCalendario } from '../../../components/IconosPanel';
 
 function VacantesEmpleadorContenido() {
   const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
@@ -18,6 +19,7 @@ function VacantesEmpleadorContenido() {
   const [esAdmin, setEsAdmin] = useState(false);
   const [pendientes, setPendientes] = useState(0);
   const [empleador, setEmpleador] = useState(null);
+  const [postulantesNuevos, setPostulantesNuevos] = useState(0);
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -47,6 +49,19 @@ function VacantesEmpleadorContenido() {
       .eq('empleador_id', uid)
       .order('created_at', { ascending: false });
     setVacantes(data || []);
+
+    const idsActivas = (data || []).filter((v) => v.estado === 'activa').map((v) => v.id);
+    if (idsActivas.length) {
+      const { count: nuevos } = await supabase
+        .from('postulaciones')
+        .select('id', { count: 'exact', head: true })
+        .in('vacante_id', idsActivas)
+        .eq('estado', 'postulado');
+      setPostulantesNuevos(nuevos || 0);
+    } else {
+      setPostulantesNuevos(0);
+    }
+
     setCargando(false);
   }
 
@@ -64,6 +79,10 @@ function VacantesEmpleadorContenido() {
   }
 
   if (cargando) return <PantallaCarga texto="Preparando tu panel..." />;
+
+  const vacantesActivas = vacantes.filter((v) => v.estado === 'activa').length;
+  const vacantesCubiertas = vacantes.filter((v) => v.estado === 'cubierta').length;
+  const postulantesTotales = vacantes.reduce((sum, v) => sum + (v.postulaciones?.[0]?.count || 0), 0);
 
   return (
     <div>
@@ -106,6 +125,37 @@ function VacantesEmpleadorContenido() {
             }}
           />
         )}
+        {vacantes.length > 0 && (
+          <div className="metricas">
+            <div className="metrica">
+              <span className="metrica-icono"><IconoMaletin /></span>
+              <span className="metrica-numero">{vacantesActivas}</span>
+              <span className="metrica-label">{vacantesActivas === 1 ? 'Vacante activa' : 'Vacantes activas'}</span>
+            </div>
+
+            <div className="metrica">
+              <span className="metrica-icono"><IconoSobre /></span>
+              <span className="metrica-numero">{postulantesTotales}</span>
+              <span className="metrica-label">{postulantesTotales === 1 ? 'Postulante' : 'Postulantes'}</span>
+            </div>
+
+            <div className={`metrica${postulantesNuevos > 0 ? ' destacada' : ''}`}>
+              <span className="metrica-icono">
+                <IconoMegafono />
+                {postulantesNuevos > 0 && <span className="punto-estado" aria-hidden="true" />}
+              </span>
+              <span className="metrica-numero">{postulantesNuevos}</span>
+              <span className="metrica-label">Sin revisar</span>
+            </div>
+
+            <div className="metrica">
+              <span className="metrica-icono"><IconoCalendario /></span>
+              <span className="metrica-numero">{vacantesCubiertas}</span>
+              <span className="metrica-label">{vacantesCubiertas === 1 ? 'Vacante cubierta' : 'Vacantes cubiertas'}</span>
+            </div>
+          </div>
+        )}
+
         {vacantes.length === 0 && (
           <div className="card tarjeta-bienvenida-vacio">
             <h2>Tu espacio de trabajo en Voral</h2>

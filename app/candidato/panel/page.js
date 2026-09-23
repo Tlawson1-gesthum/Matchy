@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import GuardiaRol from '../../../components/GuardiaRol';
 import { IconoMaletin, IconoSobre, IconoCalendario, IconoMegafono } from '../../../components/IconosPanel';
+import BarraProgreso from '../../../components/BarraProgreso';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
@@ -122,9 +123,7 @@ function PanelCandidatoContenido() {
         <div className="panel-grid">
           <div className="card">
             <h3>Tu CV</h3>
-            <div style={{ background: '#EFEDE8', borderRadius: 6, height: 8, margin: '10px 0' }}>
-              <div style={{ width: `${pct}%`, background: pct === 100 ? '#2B4632' : '#D9A441', height: 8, borderRadius: 6 }} />
-            </div>
+            <BarraProgreso pct={pct} margin="10px 0" />
             <strong>{pct}% completo</strong>
 
             {pct < 100 && (

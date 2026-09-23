@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TIPOS_LOCAL } from '../../../lib/opciones';
 import { enviarAviso } from '../../../lib/avisos';
+import { traducirError } from '../../../lib/errores';
 import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -39,7 +40,7 @@ export default function AdminLocales() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (err) setError(err.message);
+    if (err) setError(traducirError(err.message));
     setLocales(data || []);
 
     const { data: reps } = await supabase.rpc('reportes_detallados');
@@ -95,7 +96,7 @@ export default function AdminLocales() {
       accion_tomada: accion,
     }).eq('id', reporte.id);
 
-    if (err) { setError('No se pudo cerrar el reporte: ' + err.message); return; }
+    if (err) { setError('No se pudo cerrar el reporte: ' + traducirError(err.message)); return; }
     cargar();
   }
 
@@ -114,7 +115,7 @@ export default function AdminLocales() {
       verificado_at: new Date().toISOString(),
       verificado_por: userData?.user?.id || null,
     }).eq('id', id);
-    if (err) { setError('No se pudo actualizar: ' + err.message); return; }
+    if (err) { setError('No se pudo actualizar: ' + traducirError(err.message)); return; }
     if (estado === 'aprobado') enviarAviso('local_aprobado', id);
     if (estado === 'rechazado') enviarAviso('local_rechazado', id);
     setLocales((l) => l.map((x) => (x.id === id ? { ...x, estado } : x)));
@@ -239,7 +240,12 @@ export default function AdminLocales() {
         <h3 style={{ marginTop: 24 }}>
           Esperando aprobación ({pendientes.length})
         </h3>
-        {pendientes.length === 0 && <p>No hay locales pendientes.</p>}
+        {pendientes.length === 0 && (
+          <div className="nota-final">
+            <strong>Estás al día</strong>
+            No hay locales esperando aprobación por ahora.
+          </div>
+        )}
         {pendientes.map((l) => (
           <FichaLocal key={l.id} local={l} onCambiar={cambiarEstado} />
         ))}

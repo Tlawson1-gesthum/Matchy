@@ -10,8 +10,10 @@ import {
 } from '../../../lib/opciones';
 import VerificarTelefono from '../../../components/VerificarTelefono';
 import SeccionAcordeon from '../../../components/SeccionAcordeon';
+import BarraProgreso from '../../../components/BarraProgreso';
 import { validarArchivo, rutaCertificado, extension, TIPOS_IMAGEN, TIPOS_CERTIFICADO } from '../../../lib/archivos';
 import { comprimirImagen } from '../../../lib/imagenes';
+import { traducirError } from '../../../lib/errores';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -164,7 +166,7 @@ function CvFormContenido() {
       const { data } = supabase.storage.from('fotos-perfil').getPublicUrl(path);
       set('foto_url', `${data.publicUrl}?t=${Date.now()}`);
     } else {
-      setMensaje('No se pudo subir la foto: ' + error.message);
+      setMensaje('No se pudo subir la foto: ' + traducirError(error.message));
     }
     setSubiendoFoto(false);
   }
@@ -188,7 +190,7 @@ function CvFormContenido() {
       setCv((c) => ({ ...c, certificado_url: path, certificado_manipulacion: true }));
       setGuardadoOk(false);
     } else {
-      setMensaje('No se pudo subir el certificado: ' + error.message);
+      setMensaje('No se pudo subir el certificado: ' + traducirError(error.message));
     }
     setSubiendoCert(false);
   }
@@ -215,7 +217,7 @@ function CvFormContenido() {
     const { error } = await supabase.from('cvs').update(payload).eq('id', userId);
     setGuardando(false);
     if (error) {
-      setMensaje('Hubo un error al guardar: ' + error.message);
+      setMensaje('Hubo un error al guardar: ' + traducirError(error.message));
     } else {
       setCv((c) => ({ ...c, ...payload }));
       setMensaje('CV guardado. Las postulaciones que ya enviaste no cambian: su porcentaje quedó congelado.');
@@ -249,9 +251,7 @@ function CvFormContenido() {
 
         <div className="card" style={{ marginBottom: 20 }}>
           <strong>Perfil completo: {pct}%</strong>
-          <div style={{ background: '#EFEDE8', borderRadius: 6, height: 8, marginTop: 6 }}>
-            <div style={{ width: `${pct}%`, background: '#2B4632', height: 8, borderRadius: 6 }} />
-          </div>
+          <BarraProgreso pct={pct} />
           <p style={{ fontSize: '0.85rem', marginBottom: 0, marginTop: 10 }}>
             ¿No sabés cómo va a quedar? <a href="/cv-modelo" target="_blank">Mirá un CV de ejemplo</a> antes de empezar.
           </p>
@@ -622,7 +622,7 @@ function CvFormContenido() {
         {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : 'var(--error)' }}>{mensaje}</p>}
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
-          <button className="btn-verde-solido en-linea" onClick={guardar} disabled={guardando}>
+          <button className="btn" onClick={guardar} disabled={guardando}>
             {guardando ? 'Guardando...' : 'Guardar CV'}
           </button>
           {guardadoOk && (

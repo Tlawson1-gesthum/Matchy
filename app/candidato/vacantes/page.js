@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
+import { traducirError } from '../../../lib/errores';
 import TickerActividad from '../../../components/TickerActividad';
 import TextoFormateado from '../../../components/TextoFormateado';
 import GuardiaRol from '../../../components/GuardiaRol';
@@ -74,7 +75,7 @@ function VacantesCandidatoContenido() {
         .order('created_at', { ascending: false });
 
       if (errVac) {
-        setError('No pudimos cargar las vacantes: ' + errVac.message);
+        setError('No pudimos cargar las vacantes: ' + traducirError(errVac.message));
         setCargando(false);
         return;
       }
@@ -238,11 +239,15 @@ function VacantesCandidatoContenido() {
         </div>
 
         {vacantesFiltradas.length === 0 && (
-          <div className="card">
-            <p>No hay vacantes activas para ese filtro por ahora.</p>
-            <p style={{ marginBottom: 0 }}>
-              Mientras tanto, dejá tu CV completo: los locales también buscan candidatos directamente.
+          <div className="card tarjeta-bienvenida-vacio">
+            <h2>No hay vacantes para ese filtro</h2>
+            <p>
+              Probá con otro puesto o localidad. Mientras tanto, dejá tu CV completo: los locales también buscan
+              candidatos directamente.
             </p>
+            <div className="tarjeta-bienvenida-botones">
+              <a className="btn" href="/candidato/cv">Completar mi CV</a>
+            </div>
           </div>
         )}
 

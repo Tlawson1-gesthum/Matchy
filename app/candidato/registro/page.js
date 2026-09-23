@@ -132,7 +132,7 @@ function RegistroCandidatoContenido() {
 
             {error && <p className="mensaje-error" role="alert">{error}</p>}
 
-            <button className="btn-verde-solido" type="submit" disabled={cargando}>
+            <button className="btn ancho" type="submit" disabled={cargando}>
               {cargando ? 'Creando tu cuenta...' : 'Crear cuenta y armar mi CV'}
             </button>
           </form>

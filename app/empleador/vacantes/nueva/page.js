@@ -6,6 +6,7 @@ import { supabase } from '../../../../lib/supabaseClient';
 import ListaEditable from '../../../../components/ListaEditable';
 import { horarioParaGuardar, aValorSelector, minimoSelector } from '../../../../lib/fechas';
 import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../../lib/opciones';
+import { traducirError } from '../../../../lib/errores';
 import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
 import Pie from '../../../../components/Pie';
@@ -142,7 +143,7 @@ function NuevaVacanteContenido() {
 
     setCargando(false);
     if (errGuardar) {
-      setError((editandoId ? 'No se pudieron guardar los cambios: ' : 'No se pudo publicar la vacante: ') + errGuardar.message);
+      setError((editandoId ? 'No se pudieron guardar los cambios: ' : 'No se pudo publicar la vacante: ') + traducirError(errGuardar.message));
       return;
     }
     router.push('/empleador/vacantes');

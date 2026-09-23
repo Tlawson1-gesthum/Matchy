@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
+import { traducirError } from '../../../lib/errores';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
@@ -44,7 +45,7 @@ export default function EliminarCuenta() {
     // 2. La cuenta y todo lo asociado
     const { error: err } = await supabase.rpc('borrar_mi_cuenta');
     if (err) {
-      setError(err.message || 'No pudimos borrar la cuenta. Escribinos a gozzasabores@gmail.com y lo hacemos a mano.');
+      setError(err.message ? traducirError(err.message) : 'No pudimos borrar la cuenta. Escribinos a gozzasabores@gmail.com y lo hacemos a mano.');
       setEstado('listo');
       return;
     }
@@ -75,7 +76,7 @@ export default function EliminarCuenta() {
           <div className="card">
             <p style={{ marginTop: 0 }}><strong>Tu cuenta fue eliminada.</strong></p>
             <p>Borramos tus datos y tus archivos. Gracias por haber usado Voral.</p>
-            <a className="btn-verde-solido en-linea" href="/">Ir al inicio</a>
+            <a className="btn" href="/">Ir al inicio</a>
           </div>
         )}
 

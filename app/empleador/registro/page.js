@@ -106,7 +106,7 @@ function RegistroEmpleadorContenido() {
       const { data } = supabase.storage.from('logos-locales').getPublicUrl(path);
       setLogoUrl(`${data.publicUrl}?t=${Date.now()}`);
     } else {
-      setError('No se pudo subir el logo: ' + errUp.message);
+      setError('No se pudo subir el logo: ' + traducirError(errUp.message));
     }
     setSubiendoLogo(false);
   }

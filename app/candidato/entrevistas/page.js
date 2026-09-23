@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabaseClient';
 import { linkWhatsApp } from '../../../lib/whatsapp';
 import { formatearHorario, horarioParaGuardar, minimoSelector } from '../../../lib/fechas';
 import { enviarAviso } from '../../../lib/avisos';
+import { traducirError } from '../../../lib/errores';
 import BotonWhatsApp from '../../../components/BotonWhatsApp';
 import GuardiaRol from '../../../components/GuardiaRol';
 import { useDialogo } from '../../../components/Dialogo';
@@ -40,7 +41,7 @@ function EntrevistasCandidatoContenido() {
       .from('postulaciones')
       .select('id, vacante_id, candidato_id, puntaje, estado, created_at, puesto_otro, cv_snapshot, cv_editado_despues')
       .eq('candidato_id', uid);
-    if (errPost) { setError(errPost.message); setCargando(false); return; }
+    if (errPost) { setError(traducirError(errPost.message)); setCargando(false); return; }
 
     if (!posts || posts.length === 0) {
       setEntrevistas([]);
@@ -53,7 +54,7 @@ function EntrevistasCandidatoContenido() {
       .from('entrevistas').select('*')
       .in('postulacion_id', posts.map((p) => p.id))
       .order('created_at', { ascending: false });
-    if (errEnt) { setError(errEnt.message); setCargando(false); return; }
+    if (errEnt) { setError(traducirError(errEnt.message)); setCargando(false); return; }
 
     if (!ents || ents.length === 0) {
       setEntrevistas([]);
@@ -97,7 +98,7 @@ function EntrevistasCandidatoContenido() {
     }
     const { error: err } = await supabase
       .from('entrevistas').update({ estado, updated_at: new Date().toISOString() }).eq('id', id);
-    if (err) { setError('No se pudo guardar tu respuesta: ' + err.message); return; }
+    if (err) { setError('No se pudo guardar tu respuesta: ' + traducirError(err.message)); return; }
     enviarAviso('entrevista_respondida', id);
     cargar();
   }
@@ -110,7 +111,7 @@ function EntrevistasCandidatoContenido() {
       estado: 'reagendar_propuesto',
       updated_at: new Date().toISOString(),
     }).eq('id', id);
-    if (err) { setError('No se pudo proponer el horario: ' + err.message); return; }
+    if (err) { setError('No se pudo proponer el horario: ' + traducirError(err.message)); return; }
     enviarAviso('entrevista_respondida', id);
     setProponiendo(null);
     cargar();
@@ -185,7 +186,7 @@ function EntrevistasCandidatoContenido() {
               {e.estado === 'pendiente' && (
                 <>
                   <div className="botonera-entrevista">
-                    <button className="btn-verde-solido en-linea" onClick={() => responder(e.id, 'confirmada')}>
+                    <button className="btn" onClick={() => responder(e.id, 'confirmada')}>
                       Confirmar
                     </button>
                     <button
@@ -213,7 +214,7 @@ function EntrevistasCandidatoContenido() {
                       />
                       <div className="botonera-entrevista">
                         <button
-                          className="btn-verde-solido en-linea"
+                          className="btn"
                           disabled={!horarioAlt[e.id]}
                           onClick={() => proponerReagendar(e.id)}
                         >

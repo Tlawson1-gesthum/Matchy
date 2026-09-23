@@ -63,14 +63,14 @@ export default function NuevaContrasena() {
         {estado === 'invalido' && (
           <div className="card">
             <p style={{ marginTop: 0 }}>Este enlace venció o ya se usó.</p>
-            <a className="btn-verde-solido en-linea" href="/recuperar">Pedir un enlace nuevo</a>
+            <a className="btn" href="/recuperar">Pedir un enlace nuevo</a>
           </div>
         )}
 
         {estado === 'guardado' && (
           <div className="card">
             <p style={{ marginTop: 0 }}>Listo, tu contraseña quedó cambiada.</p>
-            <a className="btn-verde-solido en-linea" href="/candidato/login">Iniciar sesión</a>
+            <a className="btn" href="/candidato/login">Iniciar sesión</a>
             <p className="ayuda-contraste" style={{ marginTop: 12 }}>
               Si tu cuenta es de un local, <a href="/empleador/login">entrá desde acá</a>.
             </p>
@@ -95,7 +95,7 @@ export default function NuevaContrasena() {
               minLength={6}
             />
             {error && <p className="mensaje-error" role="alert">{error}</p>}
-            <button className="btn-verde-solido" type="submit" disabled={cargando}>
+            <button className="btn ancho" type="submit" disabled={cargando}>
               {cargando ? 'Guardando...' : 'Guardar contraseña'}
             </button>
           </form>
