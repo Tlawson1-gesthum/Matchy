@@ -93,10 +93,11 @@ a { color: var(--enlace); }
   flex-shrink: 0;
 }
 
-/* "Voral" a un tamaño mayor que el heredado del contenedor: a 1.55rem
-   se leía chico y corrido hacia arriba respecto del isotipo de 34px. */
+/* La altura real de la "V" (cap-height) tiene que igualar los 34px del
+   isotipo. Fraunces bold tiene cap-height ≈ 0.70 del font-size, medido con
+   canvas.measureText: 34 / 0.70 ≈ 3.03rem. */
 .cabecera-marca span {
-  font-size: 1.78rem;
+  font-size: 3.03rem;
   line-height: 1;
 }
 
@@ -228,7 +229,8 @@ a { color: var(--enlace); }
 
 @media (max-width: 520px) {
   .cabecera { padding: 14px 16px 10px; }
-  .cabecera-marca { font-size: 1.3rem; gap: 8px; }
+  .cabecera-marca { gap: 8px; }
+  .cabecera-marca span { font-size: 2.5rem; }
   .cabecera-logo { height: 28px; }
   .cabecera-iconos { gap: 10px; }
 }
