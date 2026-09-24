@@ -12,10 +12,9 @@ export default function Pie() {
 
       <p className="pie-aviso">
         Voral conecta a quienes buscan trabajo con locales gastronómicos de Posadas y alrededores. No somos
-        empleadores ni parte de la relación laboral que pueda surgir entre las partes. Verificamos cada local antes
-        de habilitarlo, pero no intervenimos en las entrevistas, en la negociación ni en la contratación, y no
-        respondemos por la conducta de candidatos ni de empleadores, ni por lo que ocurra entre ellos dentro o
-        fuera de la plataforma. Cada parte es responsable por la veracidad de lo que publica y por cómo actúa.
+        empleadores ni intervenimos en la contratación. Antes de usar la plataforma, leé los{' '}
+        <a href="/legal/terminos">términos y condiciones</a> y la{' '}
+        <a href="/legal/privacidad">política de privacidad</a>.
       </p>
 
       <p className="pie-legal" aria-label="Canales de Voral">

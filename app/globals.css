@@ -1339,15 +1339,27 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 .hero-texto { min-width: 0; }
 
-/* Bloque "Cómo verificamos" debajo de las tarjetas */
+/* Sello de confianza debajo del botón del candidato */
+.tarjeta-sello {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--verde-candidato);
+}
+
+.tarjeta-sello svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Bloque "Cómo te cuidamos": franja compacta debajo de las tarjetas */
 .confianza-portada {
-  margin-top: 34px;
-  padding-top: 26px;
-  border-top: 1px solid var(--borde);
+  margin-top: 28px;
 }
 
 .confianza-portada h2 {
-  margin: 0 0 16px;
+  font-size: 1.25rem;
+  margin: 0 0 14px;
   text-align: center;
 }
 
@@ -1357,25 +1369,46 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
-  text-align: center;
+  gap: 12px;
 }
 
 @media (min-width: 760px) {
   .confianza-lista { grid-template-columns: 1fr 1fr; gap: 22px; }
 }
 
+.confianza-lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+
+.confianza-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--verde);
+}
+
 .confianza-lista h3 {
   font-family: var(--font-titulos);
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   color: var(--verde);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
 }
 
 .confianza-lista p {
   color: var(--texto);
-  margin: 0 auto;
-  max-width: 42ch;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 /* ============================================================
@@ -1719,10 +1752,21 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   margin: 18px auto 0;
   padding-top: 16px;
   border-top: 1px solid var(--borde);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   line-height: 1.6;
   color: #4A4A40;
-  text-align: left;
+  text-align: center;
+}
+
+.pie-aviso a {
+  color: #3E3F38;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pie-aviso a:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
 }
 
 .pie-legal {
