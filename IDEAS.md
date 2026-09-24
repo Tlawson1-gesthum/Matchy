@@ -2,6 +2,14 @@
 
 Ideas evaluadas que no se implementan por ahora. Cada una tiene la decisión tomada y lo que habría que resolver si se retoma.
 
+## Próxima tanda de cambios (aprobado, todavía sin aplicar)
+
+Decidido el 24/09/2026.
+
+1. **Estado visible de cada postulación.** Hoy la base guarda el estado (`postulado`, `preseleccionado`, `descartado`) pero el candidato no lo ve en ninguna pantalla.
+2. **Aviso cuando la vacante se cierra.** La vacante puede pasar a `cubierta` o `suspendida`; el candidato que se postuló tiene que enterarse. El aviso por mail depende de activar Resend (hoy apagado).
+3. **Comunicar dignidad del oficio y seguridad** en las pantallas del candidato y del local (propuesta de textos y ubicaciones a aprobar antes de aplicar).
+
 ## Vacantes activas en la portada
 
 **Estado:** en espera (decidido el 24/09/2026).
@@ -49,6 +57,49 @@ Ideas evaluadas que no se implementan por ahora. Cada una tiene la decisión tom
 4. **Límites:** solo locales verificados, con una cantidad máxima de invitaciones por semana y la opción de reportar invitaciones abusivas.
 
 **Antes de retomarla:** revisar con un abogado el consentimiento y actualizar los términos y la política de privacidad.
+
+## Canal de WhatsApp con cada vacante nueva
+
+**Estado:** idea (propuesta el 24/09/2026).
+
+**Idea:** un Canal de WhatsApp de Voral donde se publica cada vacante nueva, para que el candidato se entere sin entrar a la web.
+
+**A favor:**
+
+- WhatsApp es donde ya se habla en el rubro; el aviso llega al celular.
+- Compite con los grupos de Facebook y WhatsApp en rapidez, pero solo con locales verificados.
+- Seguir un canal es anónimo: los seguidores no ven el número de los demás.
+- Trae gente de vuelta a la web para postularse.
+
+**En contra:**
+
+- Al principio hay pocas vacantes: un canal casi vacío transmite que no pasa nada.
+- Si se publica a mano, es trabajo diario para una sola persona. Automatizarlo no es simple (los canales no tienen una forma oficial de publicar desde la web).
+- Mucho volumen cansa y la gente silencia el canal.
+- Hay que publicar solo lo que el local autorizó a difundir.
+
+**Si se aplica:** empezar publicando a mano solo vacantes urgentes y un resumen semanal; medir cuántos se postulan desde el canal (enlaces con UTM).
+
+## Frase de privacidad para el candidato
+
+**Estado:** idea (propuesta el 24/09/2026).
+
+**Frase propuesta:** "Buscá tranqui. Tu CV lo ve solo el local al que te postulás."
+
+**A favor:**
+
+- Responde un miedo real: que el jefe actual se entere de que buscás trabajo.
+- Es corta, suena a persona y encaja con el tono de la marca.
+
+**En contra:**
+
+- No es cierta al cien por cien: el candidato puede compartir el link público de su CV (`/cv/[id]`), y cualquiera con ese link lo ve. La frase tiene que dejar claro que eso depende de él.
+- Si algún día se aplica la idea de que los locales busquen candidatos, la frase deja de ser verdad y hay que cambiarla.
+- "Tranqui" es informal: sirve para el candidato, no para textos a locales.
+
+**Versión segura:** "Buscá tranqui. Tu CV lo ve el local al que te postulás, y nadie más salvo que vos compartas tu link."
+
+**Dónde podría ir:** debajo del botón "Postularme" en cada vacante, y en el paso final del armado del CV.
 
 ## Artículos o gráficos sobre el empleo en Posadas
 
