@@ -1339,6 +1339,45 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 .hero-texto { min-width: 0; }
 
+/* Bloque "Cómo verificamos" debajo de las tarjetas */
+.confianza-portada {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--borde);
+}
+
+.confianza-portada h2 {
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.confianza-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  text-align: center;
+}
+
+@media (min-width: 760px) {
+  .confianza-lista { grid-template-columns: 1fr 1fr; gap: 22px; }
+}
+
+.confianza-lista h3 {
+  font-family: var(--font-titulos);
+  font-size: 1.1rem;
+  color: var(--verde);
+  margin: 0 0 6px;
+}
+
+.confianza-lista p {
+  color: var(--texto);
+  margin: 0 auto;
+  max-width: 42ch;
+}
+
 /* ============================================================
    REGISTRO: ACCESIBILIDAD Y USO TÁCTIL
    ============================================================ */

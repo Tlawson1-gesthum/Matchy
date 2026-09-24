@@ -1,3 +1,5 @@
+import { REDES } from '../lib/redes';
+
 export default function Pie() {
   return (
     <footer className="pie">
@@ -14,6 +16,15 @@ export default function Pie() {
         de habilitarlo, pero no intervenimos en las entrevistas, en la negociación ni en la contratación, y no
         respondemos por la conducta de candidatos ni de empleadores, ni por lo que ocurra entre ellos dentro o
         fuera de la plataforma. Cada parte es responsable por la veracidad de lo que publica y por cómo actúa.
+      </p>
+
+      <p className="pie-legal" aria-label="Canales de Voral">
+        {REDES.map((red, i) => (
+          <span key={red.nombre}>
+            {i > 0 && <span aria-hidden="true"> · </span>}
+            <a href={red.href}>{red.nombre}</a>
+          </span>
+        ))}
       </p>
 
       <p className="pie-legal">
