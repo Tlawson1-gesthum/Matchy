@@ -26,11 +26,6 @@ export default function Pie() {
         ))}
       </p>
 
-      <p className="pie-legal">
-        <a href="/legal/terminos">Términos y condiciones</a>
-        <span aria-hidden="true"> · </span>
-        <a href="/legal/privacidad">Política de privacidad</a>
-      </p>
       <p className="pie-legal">Gratuito para quien busca trabajo. Solo para mayores de 18 años.</p>
       <p className="pie-marca" aria-hidden="true">🤝</p>
     </footer>
