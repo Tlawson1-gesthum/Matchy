@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import ListaEditable from '../../../components/ListaEditable';
 import {
-  PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA,
+  PUESTOS, NIVELES_HERRAMIENTA, NIVELES_IDIOMA, TIPOS_FORMACION,
   TURNOS, DISPONIBILIDAD, DISPONIBLE_DESDE, LOCALIDADES,
 } from '../../../lib/opciones';
 import VerificarTelefono from '../../../components/VerificarTelefono';
@@ -47,7 +47,7 @@ function calcularCompletoPct(cv) {
 // "opcional" no cuenta para decidir qué sección se abre primero.
 const ORDEN_SECCIONES = [
   'telefono', 'datos', 'puestos', 'presentacion', 'experiencia', 'formacion',
-  'habilidades', 'herramientas', 'idiomas', 'disponibilidad', 'certificado',
+  'habilidades', 'herramientas', 'idiomas', 'disponibilidad', 'certificado', 'accesibilidad',
 ];
 
 function estadoSecciones(cv) {
@@ -64,6 +64,8 @@ function estadoSecciones(cv) {
     idiomas: cv.idiomas_nivel?.length ? 'completo' : 'opcional',
     disponibilidad: cv.disponibilidad_horaria && cv.disponible_desde ? 'completo' : 'pendiente',
     certificado: cv.certificado_url ? 'completo' : 'opcional',
+    // Siempre "opcional": es un dato sensible, no queremos que se sienta como un paso pendiente.
+    accesibilidad: 'opcional',
   };
 }
 
@@ -76,7 +78,14 @@ const CV_VACIO = {
   disponibilidad_horaria: '', turno: '', movilidad_propia: false,
   disponible_desde: '', pretension_salarial: '',
   certificado_manipulacion: false, certificado_url: '',
+  tiene_discapacidad: false, tipos_discapacidad: [], posee_cud: false,
+  accesibilidad_consentimiento_at: null,
 };
+
+const TIPOS_DISCAPACIDAD = [
+  'Física motora', 'Física visceral', 'Mental psicosocial', 'Intelectual',
+  'Sensorial visual', 'Sensorial auditiva', 'Discapacidad múltiple',
+];
 
 function CvFormContenido() {
   const router = useRouter();
@@ -89,6 +98,8 @@ function CvFormContenido() {
   const [mensaje, setMensaje] = useState('');
   const [guardadoOk, setGuardadoOk] = useState(false);
   const [abiertas, setAbiertas] = useState(new Set());
+  // Consentimiento específico para el dato de accesibilidad, separado del resto del formulario.
+  const [autorizaAccesibilidad, setAutorizaAccesibilidad] = useState(false);
 
   useEffect(() => {
     async function cargar() {
@@ -99,6 +110,7 @@ function CvFormContenido() {
       const { data } = await supabase.from('cvs').select('*').eq('id', uid).single();
       const completo = { ...CV_VACIO, ...(data || {}) };
       if (data) setCv(completo);
+      setAutorizaAccesibilidad(!!completo.accesibilidad_consentimiento_at);
       const estados = estadoSecciones(completo);
       const primera = ORDEN_SECCIONES.find((id) => estados[id] === 'pendiente');
       setAbiertas(new Set(primera ? [primera] : []));
@@ -122,6 +134,19 @@ function CvFormContenido() {
     setGuardadoOk(false);
   }
 
+  function toggleDiscapacidad(tipo) {
+    setCv((c) => {
+      const ya = c.tipos_discapacidad.includes(tipo);
+      return {
+        ...c,
+        tipos_discapacidad: ya
+          ? c.tipos_discapacidad.filter((x) => x !== tipo)
+          : [...c.tipos_discapacidad, tipo],
+      };
+    });
+    setGuardadoOk(false);
+  }
+
   function agregarExperiencia() {
     set('experiencia', [...cv.experiencia, {
       empresa: '', puesto: PUESTOS[0], desde: '', hasta: '', actual: false, descripcion: '',
@@ -137,8 +162,8 @@ function CvFormContenido() {
     set('experiencia', cv.experiencia.filter((_, idx) => idx !== i));
   }
 
-  function agregarFormacion() {
-    set('formacion', [...cv.formacion, { institucion: '', titulo: '', estado: 'completo', anio: '' }]);
+  function agregarFormacion(tipo = 'curso') {
+    set('formacion', [...cv.formacion, { tipo, institucion: '', carrera: '', titulo: '', estado: 'completo', anio: '' }]);
   }
   function editarFormacion(i, campo, valor) {
     const nueva = [...cv.formacion];
@@ -147,6 +172,48 @@ function CvFormContenido() {
   }
   function borrarFormacion(i) {
     set('formacion', cv.formacion.filter((_, idx) => idx !== i));
+  }
+
+  function filaFormacion(f, i) {
+    const esFormal = f.tipo && f.tipo !== 'curso';
+    return (
+      <div key={i} className="card" style={{ marginBottom: 12, background: '#FAFAF8' }}>
+        <div className="form-field">
+          <label>Tipo</label>
+          <select value={f.tipo || 'curso'} onChange={(e) => editarFormacion(i, 'tipo', e.target.value)}>
+            {TIPOS_FORMACION.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+        </div>
+        <div className="form-field">
+          <label>{esFormal ? 'Título (opcional)' : 'Título / curso'}</label>
+          <input value={f.titulo} onChange={(e) => editarFormacion(i, 'titulo', e.target.value)} />
+        </div>
+        <div className="form-field">
+          <label>Institución</label>
+          <input value={f.institucion} onChange={(e) => editarFormacion(i, 'institucion', e.target.value)} />
+        </div>
+        {esFormal && (
+          <div className="form-field">
+            <label>Carrera / especialidad (opcional)</label>
+            <input value={f.carrera || ''} onChange={(e) => editarFormacion(i, 'carrera', e.target.value)} />
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: 12 }}>
+          <div className="form-field" style={{ flex: 1 }}>
+            <label>Estado</label>
+            <select value={f.estado} onChange={(e) => editarFormacion(i, 'estado', e.target.value)}>
+              <option value="completo">Completo</option>
+              <option value="en_curso">En curso</option>
+            </select>
+          </div>
+          <div className="form-field" style={{ flex: 1 }}>
+            <label>Año</label>
+            <input value={f.anio} onChange={(e) => editarFormacion(i, 'anio', e.target.value)} />
+          </div>
+        </div>
+        <button type="button" className="btn-accion quitar" onClick={() => borrarFormacion(i)}>Quitar formación</button>
+      </div>
+    );
   }
 
   async function subirFoto(e) {
@@ -205,6 +272,12 @@ function CvFormContenido() {
 
 
   async function guardar() {
+    if (cv.tiene_discapacidad && !autorizaAccesibilidad) {
+      setMensaje('Para guardar el dato de accesibilidad, tildá primero la autorización de esa sección.');
+      setGuardadoOk(false);
+      return;
+    }
+
     setGuardando(true);
     setMensaje('');
     const anios_experiencia = calcularAniosExperiencia(cv.experiencia);
@@ -214,6 +287,12 @@ function CvFormContenido() {
     const idiomas = (cv.idiomas_nivel || []).map((i) => i.nombre);
     const payload = { ...cv, herramientas, idiomas, anios_experiencia, perfil_completo_pct, updated_at: new Date().toISOString() };
     if (cv.nombre_bloqueado) delete payload.nombre;
+    if (!cv.tiene_discapacidad) {
+      payload.tipos_discapacidad = [];
+      payload.posee_cud = false;
+    }
+    payload.accesibilidad_consentimiento_at =
+      cv.tiene_discapacidad && autorizaAccesibilidad ? new Date().toISOString() : null;
     const { error } = await supabase.from('cvs').update(payload).eq('id', userId);
     setGuardando(false);
     if (error) {
@@ -229,6 +308,9 @@ function CvFormContenido() {
 
   const pct = calcularCompletoPct(cv);
   const estados = estadoSecciones(cv);
+  const formacionConIndice = cv.formacion.map((f, i) => ({ f, i }));
+  const estudiosFormales = formacionConIndice.filter(({ f }) => f.tipo && f.tipo !== 'curso');
+  const cursos = formacionConIndice.filter(({ f }) => !f.tipo || f.tipo === 'curso');
 
   function alternarSeccion(id, abierta) {
     setAbiertas((prev) => {
@@ -480,33 +562,28 @@ function CvFormContenido() {
               <li>Poné primero lo que tenga que ver con gastronomía (manipulación de alimentos, barismo, pastelería, atención al cliente) y después el resto de tu formación.</li>
             </ul>
           </div>
-          {cv.formacion.map((f, i) => (
-            <div key={i} className="card" style={{ marginBottom: 12, background: '#FAFAF8' }}>
-              <div className="form-field">
-                <label>Título / curso</label>
-                <input value={f.titulo} onChange={(e) => editarFormacion(i, 'titulo', e.target.value)} />
-              </div>
-              <div className="form-field">
-                <label>Institución</label>
-                <input value={f.institucion} onChange={(e) => editarFormacion(i, 'institucion', e.target.value)} />
-              </div>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <div className="form-field" style={{ flex: 1 }}>
-                  <label>Estado</label>
-                  <select value={f.estado} onChange={(e) => editarFormacion(i, 'estado', e.target.value)}>
-                    <option value="completo">Completo</option>
-                    <option value="en_curso">En curso</option>
-                  </select>
-                </div>
-                <div className="form-field" style={{ flex: 1 }}>
-                  <label>Año</label>
-                  <input value={f.anio} onChange={(e) => editarFormacion(i, 'anio', e.target.value)} />
-                </div>
-              </div>
-              <button type="button" className="btn-accion quitar" onClick={() => borrarFormacion(i)}>Quitar formación</button>
-            </div>
-          ))}
-          <button type="button" className="btn-accion" onClick={agregarFormacion}>+ Agregar formación</button>
+          {estudiosFormales.length > 0 && (
+            <>
+              <h3 style={{ fontSize: '0.95rem', margin: '0 0 10px' }}>Estudios formales</h3>
+              {estudiosFormales.map(({ f, i }) => filaFormacion(f, i))}
+            </>
+          )}
+
+          {cursos.length > 0 && (
+            <>
+              <h3 style={{ fontSize: '0.95rem', margin: '16px 0 10px' }}>Cursos y capacitaciones</h3>
+              {cursos.map(({ f, i }) => filaFormacion(f, i))}
+            </>
+          )}
+
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: cv.formacion.length ? 4 : 0 }}>
+            <button type="button" className="btn-accion" onClick={() => agregarFormacion('secundario')}>
+              + Agregar estudio formal
+            </button>
+            <button type="button" className="btn-accion" onClick={() => agregarFormacion('curso')}>
+              + Agregar curso o capacitación
+            </button>
+          </div>
         </SeccionAcordeon>
 
         {/* HABILIDADES */}
@@ -617,6 +694,65 @@ function CvFormContenido() {
               </p>
             )}
           </div>
+        </SeccionAcordeon>
+
+        <SeccionAcordeon id="accesibilidad" titulo="Accesibilidad" {...propsSeccion('accesibilidad')}>
+          <div className="tip">
+            Este dato es opcional: no hace falta completarlo. Si lo cargás, solo lo va a ver el local cuando decida
+            avanzar con tu postulación, nunca antes y nunca en tu CV público. Nos ayuda a que el local pueda
+            ofrecerte, si corresponde, una adaptación del puesto.
+          </div>
+
+          <label className="casilla-legal">
+            <input
+              type="checkbox"
+              checked={cv.tiene_discapacidad}
+              onChange={(e) => set('tiene_discapacidad', e.target.checked)}
+            />
+            <span>Poseo alguna discapacidad</span>
+          </label>
+
+          {cv.tiene_discapacidad && (
+            <>
+              <div className="form-field">
+                <label>¿Cuál o cuáles?</label>
+                {TIPOS_DISCAPACIDAD.map((tipo) => (
+                  <label key={tipo} className="casilla-legal">
+                    <input
+                      type="checkbox"
+                      checked={cv.tipos_discapacidad.includes(tipo)}
+                      onChange={() => toggleDiscapacidad(tipo)}
+                    />
+                    <span>{tipo}</span>
+                  </label>
+                ))}
+              </div>
+
+              <label className="casilla-legal">
+                <input
+                  type="checkbox"
+                  checked={cv.posee_cud}
+                  onChange={(e) => set('posee_cud', e.target.checked)}
+                />
+                <span>Poseo el Certificado Único de Discapacidad (CUD)</span>
+              </label>
+
+              <div className="aviso-legal" style={{ marginTop: 8 }}>
+                <label className="casilla-legal" style={{ margin: 0, padding: 0 }}>
+                  <input
+                    type="checkbox"
+                    checked={autorizaAccesibilidad}
+                    onChange={(e) => setAutorizaAccesibilidad(e.target.checked)}
+                  />
+                  <span>
+                    Autorizo a compartir este dato con el local, solo cuando decida avanzar con mi postulación.
+                    Es un consentimiento específico para este dato, distinto de aceptar los{' '}
+                    <a href="/legal/terminos" target="_blank">términos y condiciones</a>.
+                  </span>
+                </label>
+              </div>
+            </>
+          )}
         </SeccionAcordeon>
 
         {mensaje && <p style={{ color: guardadoOk ? '#2B4632' : 'var(--error)' }}>{mensaje}</p>}

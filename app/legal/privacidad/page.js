@@ -36,8 +36,16 @@ export default function Privacidad() {
         <p>Si entrás con Google, recibimos tu nombre, tu email y tu foto de perfil de Google. Si verificás tu
         teléfono, guardamos el número verificado.</p>
         <p>No solicitamos DNI, ni fecha de nacimiento completa, ni datos sensibles en el sentido de la Ley 25.326
-        (salud, origen racial o étnico, opiniones políticas, convicciones religiosas, afiliación sindical o
-        vida sexual). Si los cargás igual en un campo de texto libre, pedimos que no lo hagas.</p>
+        (origen racial o étnico, opiniones políticas, convicciones religiosas, afiliación sindical o vida sexual).
+        Si los cargás igual en un campo de texto libre, pedimos que no lo hagas.</p>
+        <p>
+          La única excepción es un dato de salud: si querés, podés indicar en tu CV si tenés alguna discapacidad,
+          cuáles, y si poseés el Certificado Único de Discapacidad (CUD). Es un campo optativo, separado del resto
+          del formulario, que solo se activa si vos lo completás, y que pedimos con tu <strong>consentimiento
+          expreso y específico</strong> para este dato en particular, distinto del consentimiento general de esta
+          política. Lo agregamos porque puede ayudarte a que un local te ofrezca, si corresponde, una adaptación
+          del puesto. Quién puede ver este dato está explicado en la sección 4.
+        </p>
 
         <h2>3. Para qué usamos tus datos</h2>
         <ul>
@@ -54,9 +62,12 @@ export default function Privacidad() {
           verificados a cuyas vacantes te postulás, y cualquier persona a la que le compartas el enlace de tu CV.
         </p>
         <p>
-          Hay dos datos que ni siquiera esos locales ven de entrada. Los <strong>contactos de referencia</strong> y
-          tu <strong>certificado de manipulación de alimentos</strong> solo se le muestran a un local cuando decide
-          avanzar específicamente con tu postulación. El certificado se guarda como archivo privado.
+          Hay datos que ni siquiera esos locales ven de entrada. Los <strong>contactos de referencia</strong>, tu
+          <strong> certificado de manipulación de alimentos</strong> y, si lo cargaste, tu <strong>información de
+          accesibilidad</strong> solo se le muestran a un local cuando decide avanzar específicamente con tu
+          postulación. El certificado se guarda como archivo privado. La información de accesibilidad nunca
+          aparece en tu CV público ni en el enlace que compartís: la maneja aparte una función de la base de datos
+          que solo la entrega a ese local puntual, y ningún otro usuario puede leerla directamente.
         </p>
         <p>
           <strong>Si ofrecés empleo:</strong> los candidatos ven el nombre, el tipo, la dirección, el enlace público

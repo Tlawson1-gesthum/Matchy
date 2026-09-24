@@ -152,6 +152,15 @@ begin
   end;
   execute 'reset role';
 
+  update cvs set tiene_discapacidad = true, tipos_discapacidad = array['Física motora'] where id = b;
+  perform set_config('request.jwt.claims', json_build_object('sub', a, 'role', 'authenticated')::text, true);
+  execute 'set local role authenticated';
+  select (accesibilidad_de_candidato(b) is null) into flag;
+  execute 'reset role';
+  if flag then r := r || 'OK     El local no ve los datos de accesibilidad antes de avanzar con la persona' || E'\n';
+  else r := r || 'FALLA  El local vio datos de accesibilidad sin haber avanzado con la persona' || E'\n'; fallas := fallas + 1; end if;
+  perform set_config('request.jwt.claims', json_build_object('sub', b, 'role', 'authenticated')::text, true);
+
   select nombre_bloqueado into flag from cvs where id = b;
   execute 'set local role authenticated';
   update cvs set nombre = 'Otro nombre', nombre_bloqueado = false where id = b;
@@ -207,7 +216,7 @@ begin
 
   -- ---------- Resumen y deshacer todo ----------
   if fallas = 0 then
-    r := r || E'\nTODO BIEN: las 19 protecciones funcionan.\n';
+    r := r || E'\nTODO BIEN: las 20 protecciones funcionan.\n';
   else
     r := r || E'\nATENCION: ' || fallas || ' protecciones fallaron. Pasale este texto a Claude.\n';
   end if;

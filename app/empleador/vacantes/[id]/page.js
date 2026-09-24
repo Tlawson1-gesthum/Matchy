@@ -40,6 +40,7 @@ function RankingVacanteContenido({ params }) {
   const [horarios, setHorarios] = useState({});
   const [error, setError] = useState('');
   const [referencias, setReferencias] = useState({});
+  const [accesibilidad, setAccesibilidad] = useState({});
 
   async function cargar() {
     const { data: userData } = await supabase.auth.getUser();
@@ -209,6 +210,9 @@ function RankingVacanteContenido({ params }) {
     if (!errRef) {
       setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
     }
+    const { data: acc } = await supabase
+      .rpc('accesibilidad_de_candidato', { p_candidato_id: postulacion.candidato_id });
+    setAccesibilidad((a) => ({ ...a, [postulacion.candidato_id]: acc || null }));
   }
 
   async function verReferencias(postulacion) {
@@ -216,6 +220,9 @@ function RankingVacanteContenido({ params }) {
       .rpc('referencias_de_candidato', { p_candidato_id: postulacion.candidato_id });
     if (errRef) { setError('No se pudieron cargar las referencias: ' + traducirError(errRef.message)); return; }
     setReferencias((r) => ({ ...r, [postulacion.candidato_id]: data || [] }));
+    const { data: acc } = await supabase
+      .rpc('accesibilidad_de_candidato', { p_candidato_id: postulacion.candidato_id });
+    setAccesibilidad((a) => ({ ...a, [postulacion.candidato_id]: acc || null }));
   }
 
   async function verCertificado(cv) {
@@ -378,6 +385,13 @@ function RankingVacanteContenido({ params }) {
                     <button className="btn-accion" onClick={() => verCertificado(p.cv)}>
                       Ver certificado de manipulación
                     </button>
+                  </p>
+                )}
+                {accesibilidad[p.candidato_id]?.tiene_discapacidad && (
+                  <p style={{ margin: '10px 0 0' }}>
+                    <strong>Accesibilidad:</strong>{' '}
+                    {(accesibilidad[p.candidato_id].tipos_discapacidad || []).join(', ') || 'declara tener una discapacidad'}
+                    {accesibilidad[p.candidato_id].posee_cud ? ' · posee CUD' : ''}
                   </p>
                 )}
                 <p className="ayuda-contraste" style={{ marginTop: 10 }}>

@@ -1,4 +1,4 @@
-import { NIVELES_HERRAMIENTA, NIVELES_IDIOMA, etiqueta, DISPONIBILIDAD, DISPONIBLE_DESDE, TURNOS } from '../lib/opciones';
+import { NIVELES_HERRAMIENTA, NIVELES_IDIOMA, etiqueta, DISPONIBILIDAD, DISPONIBLE_DESDE, TURNOS, TIPOS_FORMACION } from '../lib/opciones';
 
 // CV de una sola página, pensado para imprimir en A4.
 // Orden: NOMBRE grande → contacto chico → línea → presentación →
@@ -83,9 +83,12 @@ export default function CvHoja({ cv }) {
             const detalle = [f.anio, f.estado === 'en_curso' ? 'en curso' : null]
               .filter(Boolean)
               .join(', ');
+            const esFormal = f.tipo && f.tipo !== 'curso';
+            const titulo = f.titulo || (esFormal ? etiqueta(TIPOS_FORMACION, f.tipo) : '');
             return (
               <p key={i} className="cv-linea-dato">
-                {f.titulo}
+                {titulo}
+                {esFormal && f.carrera ? `, ${f.carrera}` : ''}
                 {f.institucion ? `, ${f.institucion}` : ''}
                 {detalle ? ` (${detalle})` : ''}
               </p>
