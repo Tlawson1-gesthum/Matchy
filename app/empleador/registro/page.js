@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
 import { TIPOS_LOCAL, LOCALIDADES, revisarCuit, revisarRedSocial } from '../../../lib/opciones';
-import { validarArchivo, extension, TIPOS_IMAGEN } from '../../../lib/archivos';
-import { comprimirImagen } from '../../../lib/imagenes';
 import BotonGoogle from '../../../components/BotonGoogle';
 import CampoContrasena from '../../../components/CampoContrasena';
 import GuardiaRol from '../../../components/GuardiaRol';
@@ -14,6 +12,7 @@ import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
 import SeccionAcordeon from '../../../components/SeccionAcordeon';
+import CampoLogo from '../../../components/CampoLogo';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
@@ -57,7 +56,6 @@ function RegistroEmpleadorContenido() {
 
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
-  const [subiendoLogo, setSubiendoLogo] = useState(false);
   const [logoUrl, setLogoUrl] = useState('');
   const [abiertas, setAbiertas] = useState(new Set(['contacto']));
 
@@ -85,30 +83,6 @@ function RegistroEmpleadorContenido() {
 
   function set(campo, valor) {
     setForm((f) => ({ ...f, [campo]: valor }));
-  }
-
-  async function subirLogo(e) {
-    const original = e.target.files[0];
-    const { data: userData } = await supabase.auth.getUser();
-    const uid = userData?.user?.id;
-    if (!original || !uid) return;
-    if (!TIPOS_IMAGEN.includes(original.type)) {
-      setError(validarArchivo(original, { tipos: TIPOS_IMAGEN, maxMB: 2 })); e.target.value = ''; return;
-    }
-    const file = await comprimirImagen(original, { maxLado: 512, calidad: 0.86 });
-    const problema = validarArchivo(file, { tipos: TIPOS_IMAGEN, maxMB: 2 });
-    if (problema) { setError(problema); e.target.value = ''; return; }
-    setSubiendoLogo(true);
-    const path = `${uid}/logo.${extension(file)}`;
-    const { error: errUp } = await supabase.storage
-      .from('logos-locales').upload(path, file, { upsert: true, contentType: file.type });
-    if (!errUp) {
-      const { data } = supabase.storage.from('logos-locales').getPublicUrl(path);
-      setLogoUrl(`${data.publicUrl}?t=${Date.now()}`);
-    } else {
-      setError('No se pudo subir el logo: ' + traducirError(errUp.message));
-    }
-    setSubiendoLogo(false);
   }
 
   async function crearCuenta(e) {
@@ -269,21 +243,7 @@ function RegistroEmpleadorContenido() {
                   <label>Nombre de fantasía</label>
                   <input required value={form.nombre_local} onChange={(e) => set('nombre_local', e.target.value)} />
                 </div>
-                <div className="form-field">
-                  <label>Logo del local (opcional)</label>
-                  <input type="file" accept="image/jpeg,image/png,image/webp" onChange={subirLogo} />
-                  {subiendoLogo && <p className="ayuda-campo">Subiendo...</p>}
-                  {logoUrl && (
-                    <img
-                      src={logoUrl}
-                      alt=""
-                      style={{ width: 64, height: 64, borderRadius: 10, objectFit: 'cover', marginTop: 10, border: '1px solid var(--borde)' }}
-                    />
-                  )}
-                  <p className="ayuda-campo">
-                    Aparece junto al nombre en cada vacante. Un aviso con logo se reconoce más rápido.
-                  </p>
-                </div>
+                <CampoLogo logoUrl={logoUrl} onCambio={setLogoUrl} local={form} setError={setError} />
 
                 <div className="form-field">
                   <label>Razón social</label>

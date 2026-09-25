@@ -613,20 +613,51 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 .vacante-identidad {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   min-width: 0;
 }
 
+/* El logo es lo primero que se ve: grande, entero (sin recortar) y sobre blanco,
+   como en los avisos de las cadenas. */
 .vacante-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 1px solid var(--borde);
+  width: 76px;
+  height: 76px;
+  border-radius: 16px;
+  object-fit: contain;
+  padding: 7px;
+  border: 1px solid #E6E3DA;
   flex-shrink: 0;
-  background: var(--panel);
+  background: #FFF;
 }
 
+/* Sin logo: iniciales del local, para que el aviso no quede con un hueco. */
+.vacante-logo.inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: #FFF;
+  font-family: var(--font-titulos);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* La pieza va en --verde-candidato, el color de la unión en el isotipo; la
+   tilde se cala con el color de la tarjeta (--blanco), como el anillo del logo. */
+.sello-verificado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--verde-candidato);
+}
+
+.sello-verificado svg { flex-shrink: 0; }
 .vacante-local {
   display: block;
   font-family: var(--font-titulos);
@@ -749,6 +780,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 @media (max-width: 560px) {
   .vacante { padding: 22px 20px; border-radius: 16px; }
   .vacante-cabecera { flex-direction: column; align-items: flex-start; }
+  .vacante-logo { width: 64px; height: 64px; border-radius: 14px; }
   .etiquetas-vacante { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
 }
 
@@ -2189,3 +2221,113 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 .pantalla-carga.continua .carga-figura-der,
 .pantalla-carga.continua .carga-union-aparece { animation: none; }
 .pantalla-carga.continua .carga-union-late { animation-delay: 0.2s; }
+
+/* ============================================================
+   ESTADO DE CADA POSTULACIÓN (panel del candidato)
+   Usa .pildora: el mismo sistema de color de estados que el resto de la app.
+   ============================================================ */
+.pildora.neutro { background: #EFEEE8; color: var(--texto-suave); }
+
+.seccion-postulaciones { margin-top: 28px; }
+
+/* Una tarjeta por postulación: mismo fondo, borde, radio y sombra que .vacante
+   y .ficha-local. 1 columna en celular, 2 desde 760px (como .panel-grid). */
+.lista-postulaciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 760px) {
+  .lista-postulaciones { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+
+.postulacion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  background: var(--blanco);
+  border: 1px solid #E6E3DA;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(38, 64, 44, 0.05);
+  padding: 20px 22px 16px;
+}
+
+.postulacion-cabecera { display: flex; align-items: center; gap: 14px; min-width: 0; width: 100%; }
+
+/* El logo del local en chico: mismas clases que en la vacante */
+.postulacion .vacante-logo { width: 48px; height: 48px; border-radius: 12px; padding: 4px; }
+.postulacion .vacante-logo.inicial { padding: 0; font-size: 1.05rem; }
+
+.postulacion-puesto {
+  margin: 0;
+  font-family: var(--font-titulos);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--verde);
+  overflow-wrap: anywhere;
+}
+
+.postulacion-local {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.76rem;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+  overflow-wrap: anywhere;
+}
+
+.postulacion-texto { margin: 0; font-size: 0.9rem; color: var(--texto); line-height: 1.45; }
+
+/* Fecha y acción al pie; margin-top: auto los alinea entre tarjetas de la misma fila */
+.postulacion-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #F0EEE7;
+}
+
+.postulacion-fecha { font-family: var(--font-datos); font-size: 0.74rem; color: var(--texto-suave); }
+
+.postulacion-accion { font-size: 0.88rem; font-weight: 600; color: var(--enlace); }
+.postulacion-accion::after { content: ' \2192'; }
+
+/* Cerradas (búsqueda cubierta, no quedó, aviso de baja): sin sombra, sobre el
+   color de fondo y con el logo apagado. Sin rojo; el texto conserva el contraste. */
+.postulacion.cerrada {
+  background: transparent;
+  border-color: var(--borde);
+  box-shadow: none;
+}
+
+.postulacion.cerrada .postulacion-puesto { color: var(--texto-suave); }
+.postulacion.cerrada .postulacion-texto { color: var(--texto-suave); }
+.postulacion.cerrada .postulacion-pie { border-top-color: #E4E2D6; }
+.postulacion.cerrada .vacante-logo { filter: grayscale(1); opacity: 0.55; }
+
+/* Consejos y vista previa del logo (alta del local y "Mi local") */
+.lista-consejos-logo { margin: 6px 0 12px; padding-left: 18px; }
+.lista-consejos-logo li { margin-bottom: 3px; }
+.vista-previa-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 16px 18px;
+  background: var(--blanco);
+  border: 1px solid #E6E3DA;
+  border-radius: 18px;
+}

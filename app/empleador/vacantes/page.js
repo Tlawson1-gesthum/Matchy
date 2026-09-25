@@ -87,7 +87,7 @@ function VacantesEmpleadorContenido() {
   return (
     <div>
       <Encabezado
-        links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]}
+        links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }, { href: '/empleador/mi-local', texto: 'Mi local' }]}
         campanaHref="/empleador/vacantes"
         destacado={esAdmin ? { href: '/admin/locales', texto: 'Aprobar locales', cantidad: pendientes } : null}
       />

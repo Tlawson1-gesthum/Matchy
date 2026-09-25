@@ -2,12 +2,12 @@
 
 Ideas evaluadas que no se implementan por ahora. Cada una tiene la decisión tomada y lo que habría que resolver si se retoma.
 
-## Próxima tanda de cambios (aprobado, todavía sin aplicar)
+## Próxima tanda de cambios (aprobado)
 
 Decidido el 24/09/2026.
 
-1. **Estado visible de cada postulación.** Hoy la base guarda el estado (`postulado`, `preseleccionado`, `descartado`) pero el candidato no lo ve en ninguna pantalla.
-2. **Aviso cuando la vacante se cierra.** La vacante puede pasar a `cubierta` o `suspendida`; el candidato que se postuló tiene que enterarse. El aviso por mail depende de activar Resend (hoy apagado).
+1. **Estado visible de cada postulación.** Aplicado el 25/09/2026: panel del candidato con una tarjeta por postulación. El "No me interesa" del local se muestra recién cuando la vacante se cierra.
+2. **Aviso cuando la vacante se cierra.** Aplicado dentro de la web el 25/09/2026 ("Búsqueda cerrada" / "Aviso dado de baja"). Falta el aviso por mail, que depende de activar Resend.
 3. **Comunicar dignidad del oficio y seguridad** en las pantallas del candidato y del local (propuesta de textos y ubicaciones a aprobar antes de aplicar).
 
 ## Vacantes activas en la portada

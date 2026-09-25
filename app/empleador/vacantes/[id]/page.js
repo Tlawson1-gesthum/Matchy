@@ -261,7 +261,7 @@ function RankingVacanteContenido({ params }) {
   if (!vacante) {
     return (
       <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }, { href: '/empleador/mi-local', texto: 'Mi local' }]} campanaHref="/empleador/vacantes" />
         <div className="container"><p>{error}</p></div>
       </div>
     );
@@ -269,7 +269,7 @@ function RankingVacanteContenido({ params }) {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }, { href: '/empleador/mi-local', texto: 'Mi local' }]} campanaHref="/empleador/vacantes" />
       {dialogo}
       <div className="container">
         <h1>{vacante.puesto === 'Otro' && vacante.puesto_otro ? vacante.puesto_otro : vacante.puesto}</h1>
@@ -363,6 +363,10 @@ function RankingVacanteContenido({ params }) {
                 </>
               )}
             </div>
+            <p className="ficha-nota" style={{ margin: '8px 0 0' }}>
+              La persona ve si avanzás con ella. Si elegís "No me interesa", se entera recién cuando marcás la
+              vacante como cubierta.
+            </p>
 
             {referencias[p.candidato_id] && (
               <div className="aviso-legal" style={{ marginTop: 12 }}>

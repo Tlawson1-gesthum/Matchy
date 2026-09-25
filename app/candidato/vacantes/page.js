@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
-import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, TIPOS_LOCAL, DISPONIBILIDAD } from '../../../lib/opciones';
+import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
 import { traducirError } from '../../../lib/errores';
+import { estadoPostulacion } from '../../../lib/estadoPostulacion';
 import TickerActividad from '../../../components/TickerActividad';
 import TextoFormateado from '../../../components/TextoFormateado';
 import GuardiaRol from '../../../components/GuardiaRol';
@@ -13,6 +14,7 @@ import { useDialogo } from '../../../components/Dialogo';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
+import CabeceraLocal from '../../../components/CabeceraLocal';
 
 function diasDesde(fecha) {
   const ms = Date.now() - new Date(fecha).getTime();
@@ -259,21 +261,7 @@ function VacantesCandidatoContenido() {
           return (
             <div key={v.id} className="card vacante" style={{ marginBottom: 18 }}>
               <div className="vacante-cabecera">
-                <div className="vacante-identidad">
-                  {v.local?.logo_url && (
-                    <img className="vacante-logo" src={v.local.logo_url} alt="" />
-                  )}
-                  <div style={{ minWidth: 0 }}>
-                    <span className="vacante-local">{v.local?.nombre_local || 'Local de Posadas'}</span>
-                    <span className="vacante-tipo">
-                      {[
-                        etiqueta(TIPOS_LOCAL, v.local?.tipo_local) || 'Gastronomía',
-                        v.local?.ciudad,
-                        v.local?.direccion,
-                      ].filter(Boolean).join(' • ')}
-                    </span>
-                  </div>
-                </div>
+                <CabeceraLocal local={v.local ? v.local : { nombre_local: 'Local de Posadas' }} />
                 <div className="etiquetas-vacante">
                   {cierre && !cierre.vencida && (
                     <span className={`badge cierra ${cierre.inminente ? 'inminente' : ''}`}>{cierre.texto}</span>
@@ -336,6 +324,15 @@ function VacantesCandidatoContenido() {
 
               {postuladas.has(v.id) ? (
                 <div className="aviso-postulado">
+                  {misPostulaciones[v.id]?.estado === 'preseleccionado' && (() => {
+                    const est = estadoPostulacion(misPostulaciones[v.id], v);
+                    return (
+                      <p style={{ margin: '0 0 8px' }}>
+                        <span className={`pildora ${est.tono}`}>{est.titulo}</span>{' '}
+                        {est.texto}
+                      </p>
+                    );
+                  })()}
                   <strong>Ya te postulaste.</strong>
                   {misPostulaciones[v.id]?.cv_snapshot && (
                     <> Quedaste con{' '}

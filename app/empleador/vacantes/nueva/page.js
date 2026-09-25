@@ -154,7 +154,7 @@ function NuevaVacanteContenido() {
   if (!empleador) {
     return (
       <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }, { href: '/empleador/mi-local', texto: 'Mi local' }]} campanaHref="/empleador/vacantes" />
         <div className="container" style={{ maxWidth: 520 }}>
           <h1>Falta cargar tu local</h1>
           <div className="card">
@@ -171,7 +171,7 @@ function NuevaVacanteContenido() {
 
   return (
     <div>
-      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }]} campanaHref="/empleador/vacantes" />
+      <Encabezado links={[{ href: '/empleador/vacantes', texto: 'Mis vacantes' }, { href: '/empleador/vacantes/nueva', texto: 'Publicar vacante' }, { href: '/empleador/mi-local', texto: 'Mi local' }]} campanaHref="/empleador/vacantes" />
       <div className="container" style={{ maxWidth: 600 }}>
         <h1>{editandoId ? 'Editar vacante' : 'Publicar vacante'}</h1>
         {editandoId && (

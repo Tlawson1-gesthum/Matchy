@@ -9,6 +9,8 @@ import BarraProgreso from '../../../components/BarraProgreso';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
 import PantallaCarga from '../../../components/PantallaCarga';
+import { estadoPostulacion } from '../../../lib/estadoPostulacion';
+import { iniciales } from '../../../components/CabeceraLocal';
 
 function pctCompleto(cv) {
   const campos = [
@@ -38,6 +40,7 @@ function PanelCandidatoContenido() {
   const [cv, setCv] = useState(null);
   const [postulaciones, setPostulaciones] = useState([]);
   const [entrevistas, setEntrevistas] = useState([]);
+  const [vacantesPostuladas, setVacantesPostuladas] = useState({});
   const [vacantesAbiertas, setVacantesAbiertas] = useState(0);
   const [cargando, setCargando] = useState(true);
 
@@ -60,6 +63,23 @@ function PanelCandidatoContenido() {
         const { data: ents } = await supabase
           .from('entrevistas').select('*').in('postulacion_id', posts.map((p) => p.id));
         setEntrevistas(ents || []);
+
+        // Las vacantes a las que se postuló, aunque ya estén cerradas: así ve si se cubrieron.
+        const { data: vacs } = await supabase
+          .from('vacantes').select('id, puesto, puesto_otro, estado, empleador_id')
+          .in('id', posts.map((p) => p.vacante_id));
+        const idsLocales = [...new Set((vacs || []).map((v) => v.empleador_id))];
+        const { data: locales } = idsLocales.length
+          ? await supabase.from('locales_publicos').select('id, nombre_local, logo_url').in('id', idsLocales)
+          : { data: [] };
+        const localPorId = Object.fromEntries((locales || []).map((l) => [l.id, l]));
+        setVacantesPostuladas(Object.fromEntries(
+          (vacs || []).map((v) => [v.id, {
+            ...v,
+            nombre_local: localPorId[v.empleador_id]?.nombre_local || null,
+            logo_url: localPorId[v.empleador_id]?.logo_url || null,
+          }])
+        ));
       }
 
       const { count } = await supabase
@@ -78,6 +98,17 @@ function PanelCandidatoContenido() {
   const faltas = queFalta(cv);
   const pendientes = entrevistas.filter((e) => e.estado === 'pendiente').length;
   const confirmadas = entrevistas.filter((e) => e.estado === 'confirmada').length;
+  // La entrevista más reciente de cada postulación
+  const entrevistaPorPostulacion = {};
+  for (const e of [...entrevistas].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))) {
+    entrevistaPorPostulacion[e.postulacion_id] = e;
+  }
+  // Una búsqueda cubierta o un aviso dado de baja ya no esperan nada del candidato:
+  // esas tarjetas van al final y más apagadas. Dentro de cada grupo, la más nueva primero.
+  const estaCerrada = (p) => ['cubierta', 'suspendida'].includes(vacantesPostuladas[p.vacante_id]?.estado);
+  const misPostulaciones = [...postulaciones].sort((a, b) =>
+    (estaCerrada(a) - estaCerrada(b)) || (new Date(b.created_at) - new Date(a.created_at))
+  );
 
   return (
     <div>
@@ -180,6 +211,41 @@ function PanelCandidatoContenido() {
             </ul>
           </div>
         </div>
+
+        {misPostulaciones.length > 0 && (
+          <section className="seccion-postulaciones" aria-labelledby="titulo-postulaciones">
+            <h2 className="card-titulo" id="titulo-postulaciones">Tus postulaciones</h2>
+            <ul className="lista-postulaciones">
+              {misPostulaciones.map((p) => {
+                const v = vacantesPostuladas[p.vacante_id];
+                const est = estadoPostulacion(p, v, entrevistaPorPostulacion[p.id]);
+                const puesto = p.puesto_otro || (v?.puesto === 'Otro' && v?.puesto_otro ? v.puesto_otro : v?.puesto) || 'Vacante';
+                const fecha = new Date(p.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+                return (
+                  <li key={p.id} className={`postulacion${estaCerrada(p) ? ' cerrada' : ''}`}>
+                    <div className="postulacion-cabecera">
+                      {v?.logo_url ? (
+                        <img className="vacante-logo" src={v.logo_url} alt="" />
+                      ) : (
+                        <span className="vacante-logo inicial" aria-hidden="true">{iniciales(v?.nombre_local)}</span>
+                      )}
+                      <div style={{ minWidth: 0 }}>
+                        <h3 className="postulacion-puesto">{puesto}</h3>
+                        {v?.nombre_local && <span className="postulacion-local">{v.nombre_local}</span>}
+                      </div>
+                    </div>
+                    <span className={`pildora ${est.tono}`}>{est.titulo}</span>
+                    <p className="postulacion-texto">{est.texto}</p>
+                    <div className="postulacion-pie">
+                      <span className="postulacion-fecha">Te postulaste el {fecha}</span>
+                      {est.accion && <a className="postulacion-accion" href="/candidato/entrevistas">Ir a Entrevistas</a>}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
       </div>
       <Pie />
     </div>
