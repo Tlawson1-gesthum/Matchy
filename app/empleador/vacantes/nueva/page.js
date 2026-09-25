@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 import ListaEditable from '../../../../components/ListaEditable';
 import { horarioParaGuardar, aValorSelector, minimoSelector } from '../../../../lib/fechas';
-import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../../lib/opciones';
+import { PUESTOS, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD, urgenciaActual } from '../../../../lib/opciones';
 import { traducirError } from '../../../../lib/errores';
 import GuardiaRol from '../../../../components/GuardiaRol';
 import Encabezado from '../../../../components/Encabezado';
@@ -77,7 +77,7 @@ function NuevaVacanteContenido() {
             puesto_otro: vac.puesto_otro || '',
             turno: vac.turno || '',
             dias_trabajo: vac.dias_trabajo || '',
-            urgencia: vac.urgencia || f.urgencia,
+            urgencia: urgenciaActual(vac.urgencia) || f.urgencia,
             cantidad_puestos: vac.cantidad_puestos || 1,
             cierra_at: aValorSelector(vac.cierra_at),
             experiencia_minima_anios: vac.experiencia_minima_anios || 0,

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import { traducirError } from '../../../lib/errores';
 import VerificarTelefono from '../../../components/VerificarTelefono';
 import GuardiaRol from '../../../components/GuardiaRol';
 import { useDialogo } from '../../../components/Dialogo';
@@ -15,6 +16,7 @@ function VacantesEmpleadorContenido() {
   const { dialogo, confirmar, avisar, pedirTexto } = useDialogo();
   const router = useRouter();
   const [vacantes, setVacantes] = useState([]);
+  const [errorCarga, setErrorCarga] = useState('');
   const [cargando, setCargando] = useState(true);
   const [esAdmin, setEsAdmin] = useState(false);
   const [pendientes, setPendientes] = useState(0);
@@ -43,12 +45,22 @@ function VacantesEmpleadorContenido() {
       setPendientes(count || 0);
     }
 
-    const { data } = await supabase
+    // Las vacantes y sus postulantes se piden por separado: si el conteo falla,
+    // las vacantes se muestran igual (antes un error dejaba la lista vacía sin aviso).
+    const { data, error: errVac } = await supabase
       .from('vacantes')
-      .select('*, postulaciones(count)')
+      .select('*')
       .eq('empleador_id', uid)
       .order('created_at', { ascending: false });
-    setVacantes(data || []);
+    setErrorCarga(errVac ? 'No pudimos cargar tus vacantes: ' + traducirError(errVac.message) : '');
+
+    const ids = (data || []).map((v) => v.id);
+    const { data: posts } = ids.length
+      ? await supabase.from('postulaciones').select('vacante_id').in('vacante_id', ids)
+      : { data: [] };
+    const cuenta = {};
+    for (const p of posts || []) cuenta[p.vacante_id] = (cuenta[p.vacante_id] || 0) + 1;
+    setVacantes((data || []).map((v) => ({ ...v, total_postulantes: cuenta[v.id] || 0 })));
 
     const idsActivas = (data || []).filter((v) => v.estado === 'activa').map((v) => v.id);
     if (idsActivas.length) {
@@ -82,7 +94,7 @@ function VacantesEmpleadorContenido() {
 
   const vacantesActivas = vacantes.filter((v) => v.estado === 'activa').length;
   const vacantesCubiertas = vacantes.filter((v) => v.estado === 'cubierta').length;
-  const postulantesTotales = vacantes.reduce((sum, v) => sum + (v.postulaciones?.[0]?.count || 0), 0);
+  const postulantesTotales = vacantes.reduce((sum, v) => sum + (v.total_postulantes), 0);
 
   return (
     <div>
@@ -94,6 +106,7 @@ function VacantesEmpleadorContenido() {
       {dialogo}
       <div className="container">
         <h1>Mis vacantes</h1>
+        {errorCarga && <p className="mensaje-error" role="alert">{errorCarga}</p>}
 
         {empleador?.estado === 'pendiente' && (
           <div className="aviso-estado pendiente" role="status">
@@ -181,7 +194,7 @@ function VacantesEmpleadorContenido() {
               <div>
                 <h3>{v.puesto}</h3>
                 <p className="mono" style={{ fontSize: '0.85rem', margin: 0 }}>
-                  {v.postulaciones?.[0]?.count || 0} postulantes · Estado: {v.estado}
+                  {v.total_postulantes} postulantes · Estado: {v.estado}
                   {v.cantidad_puestos > 1 && ` · ${v.cantidad_puestos} puestos`}
                 </p>
                 {v.estado === 'suspendida' && (

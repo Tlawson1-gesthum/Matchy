@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
-import { etiqueta, TURNOS, DIAS_TRABAJO, URGENCIAS, DISPONIBILIDAD } from '../../../lib/opciones';
+import { etiqueta, TURNOS, DIAS_TRABAJO, DISPONIBILIDAD, esInmediata } from '../../../lib/opciones';
 import { calcularPuntaje } from '../../../lib/scoring';
 import { traducirError } from '../../../lib/errores';
 import { estadoPostulacion } from '../../../lib/estadoPostulacion';
@@ -254,7 +254,9 @@ function VacantesCandidatoContenido() {
         )}
 
         {vacantesFiltradas.map((v) => {
-          const urgente = v.urgencia === 'hoy' || v.urgencia === 'esta_semana';
+          const inmediata = esInmediata(v);
+          // Pasadas las 48 horas, "para hoy o mañana" se muestra como urgencia común
+          const urgente = !inmediata && ['inmediata', 'hoy', 'esta_semana'].includes(v.urgencia);
           const cantidad = conteos[v.id] || 0;
           const cierre = cuentaRegresiva(v.cierra_at);
           const mirando = vistas[v.id] || 0;
@@ -263,6 +265,7 @@ function VacantesCandidatoContenido() {
               <div className="vacante-cabecera">
                 <CabeceraLocal local={v.local ? v.local : { nombre_local: 'Local de Posadas' }} />
                 <div className="etiquetas-vacante">
+                  {inmediata && <span className="badge cierra inminente">Arrancá hoy</span>}
                   {cierre && !cierre.vencida && (
                     <span className={`badge cierra ${cierre.inminente ? 'inminente' : ''}`}>{cierre.texto}</span>
                   )}
@@ -313,16 +316,6 @@ function VacantesCandidatoContenido() {
                   </span>
                 )}
               </div>
-
-              {miCv && !postuladas.has(v.id) && (() => {
-                const { puntaje } = calcularPuntaje(v, miCv);
-                const clase = puntaje >= 70 ? '' : puntaje >= 40 ? 'tibio' : 'frio';
-                return (
-                  <p style={{ margin: '0 0 14px' }}>
-                    <span className={`match-chip ${clase}`}>Tenés {puntaje}% de compatibilidad</span>
-                  </p>
-                );
-              })()}
 
               {postuladas.has(v.id) ? (
                 <div className="aviso-postulado">
@@ -377,8 +370,8 @@ function VacantesCandidatoContenido() {
                       })}.
                     </p>
                   )}
-                  {!cierre && v.urgencia === 'hoy' && (
-                    <p className="micro-cta">El local marcó que necesita cubrir el puesto esta semana.</p>
+                  {inmediata && (
+                    <p className="micro-cta">El local necesita cubrir el puesto para hoy o mañana.</p>
                   )}
                 </>
               )}
@@ -402,7 +395,7 @@ function VacantesCandidatoContenido() {
         {vacantesFiltradas.length > 0 && (
           <>
           <div className="nota-final" style={{ marginTop: 28 }}>
-            <strong>Sobre el porcentaje de compatibilidad.</strong> Se calcula comparando lo que cargaste en tu CV
+            <strong>Sobre el porcentaje de compatibilidad.</strong> Lo ves después de postularte. Se calcula comparando lo que cargaste en tu CV
             con los requisitos que el local declaró en la vacante: puesto, años de experiencia, turno,
             disponibilidad, movilidad, certificado y herramientas. No evalúa tus cualidades como persona ni tu
             idoneidad, y no influyen ni tu edad ni tu foto.

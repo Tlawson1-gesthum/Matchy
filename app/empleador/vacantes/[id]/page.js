@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 import { calcularPuntaje } from '../../../../lib/scoring';
-import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO } from '../../../../lib/opciones';
+import { etiqueta, TURNOS, URGENCIAS, DIAS_TRABAJO, urgenciaActual } from '../../../../lib/opciones';
 import { linkWhatsApp } from '../../../../lib/whatsapp';
 import { rutaCertificado } from '../../../../lib/archivos';
 import { enviarAviso } from '../../../../lib/avisos';
@@ -276,7 +276,7 @@ function RankingVacanteContenido({ params }) {
         <p className="mono" style={{ fontSize: '0.85rem' }}>
           Turno: {etiqueta(TURNOS, vacante.turno) || 'a definir'} ·{' '}
           {etiqueta(DIAS_TRABAJO, vacante.dias_trabajo) || 'días a definir'} ·{' '}
-          Urgencia: {etiqueta(URGENCIAS, vacante.urgencia)} · Estado: {vacante.estado}
+          Urgencia: {etiqueta(URGENCIAS, urgenciaActual(vacante.urgencia))} · Estado: {vacante.estado}
         </p>
 
         {error && <p className="mensaje-error" role="alert">{error}</p>}
