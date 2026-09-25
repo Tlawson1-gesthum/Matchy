@@ -8,7 +8,7 @@ Decidido el 24/09/2026.
 
 1. **Estado visible de cada postulación.** Aplicado el 25/09/2026: panel del candidato con una tarjeta por postulación. El "No me interesa" del local se muestra recién cuando la vacante se cierra.
 2. **Aviso cuando la vacante se cierra.** Aplicado dentro de la web el 25/09/2026 ("Búsqueda cerrada" / "Aviso dado de baja"). Falta el aviso por mail, que depende de activar Resend.
-3. **Comunicar dignidad del oficio y seguridad** en las pantallas del candidato y del local (propuesta de textos y ubicaciones a aprobar antes de aplicar).
+3. **Comunicar dignidad del oficio y seguridad.** Aplicado el 25/09/2026: frase de privacidad bajo "Postularme", aviso "Trabajar no cuesta plata", textos para el local al publicar y cartel de local verificado. Se sumó el sueldo opcional en la vacante.
 
 ## Vacantes activas en la portada
 

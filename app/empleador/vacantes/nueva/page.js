@@ -29,6 +29,7 @@ function NuevaVacanteContenido() {
     movilidad_requerida: false,
     certificado_requerido: false,
     herramientas_buscadas: [],
+    sueldo: '',
     descripcion: '',
     contacto: '',
   });
@@ -84,6 +85,7 @@ function NuevaVacanteContenido() {
             movilidad_requerida: !!vac.movilidad_requerida,
             certificado_requerido: !!vac.certificado_requerido,
             herramientas_buscadas: vac.herramientas_buscadas || [],
+            sueldo: vac.sueldo || '',
             descripcion: vac.descripcion || '',
             contacto: vac.contacto || f.contacto,
           }));
@@ -120,6 +122,10 @@ function NuevaVacanteContenido() {
       descripcion: form.descripcion,
       contacto: form.contacto,
     };
+    // El sueldo es opcional: vacío se guarda como null y no aparece en el aviso.
+    // Solo se manda si se cargó o si la vacante ya tenía uno (para poder borrarlo).
+    const sueldo = form.sueldo.trim();
+    if (sueldo || original?.sueldo) datos.sueldo = sueldo || null;
 
     let errGuardar = null;
     if (editandoId) {
@@ -182,6 +188,10 @@ function NuevaVacanteContenido() {
         <p>
           ¿Primera vez? <a href="/vacante-ejemplo" target="_blank">Mirá un ejemplo</a> de cómo se ve una vacante
           bien cargada y una mal cargada.
+        </p>
+        <p>
+          Quien se postula acá eligió la gastronomía como trabajo. Un aviso claro, con turno, días y paga reales,
+          atrae gente que se queda.
         </p>
 
         {empleador.estado === 'pendiente' && (
@@ -255,6 +265,21 @@ function NuevaVacanteContenido() {
           </div>
 
           <div className="form-field">
+            <label htmlFor="vac-sueldo">Sueldo (opcional)</label>
+            <input
+              id="vac-sueldo"
+              maxLength={120}
+              placeholder="Ej.: $450.000 por mes + propinas"
+              value={form.sueldo}
+              onChange={(e) => set('sueldo', e.target.value)}
+            />
+            <p className="ayuda-campo">
+              Es opcional, pero es lo que más les interesa a los candidatos: los avisos con sueldo reciben
+              mejores postulaciones. Si lo dejás vacío, no aparece en el aviso.
+            </p>
+          </div>
+
+          <div className="form-field">
             <label>¿Hasta cuándo recibís postulaciones? (opcional)</label>
             <input
               type="datetime-local"
@@ -308,6 +333,10 @@ function NuevaVacanteContenido() {
             <p className="ayuda-contraste">
               Separá los temas en párrafos dejando un renglón en blanco. Para armar una lista, empezá cada línea con
               un guion (-).
+            </p>
+            <p className="ayuda-campo">
+              Evitá pedir "buena presencia", edad o fotos: no suman y alejan a buenos candidatos. Contá qué vas a
+              pedir y qué ofrecés.
             </p>
           </div>
 

@@ -4,7 +4,7 @@
 // El "anillo" de la unión usa el color de fondo de la página para
 // recortar visualmente las figuras, igual que en el logo.
 
-export default function IsotipoVoral({ className = '', colorFondo = '#F2F0E6', animado = false }) {
+export default function IsotipoVoral({ className = '', colorFondo = 'var(--fondo)', animado = false }) {
   const c = animado ? 'carga-' : '';
   return (
     <svg

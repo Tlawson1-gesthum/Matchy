@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  --fondo: #F2F0E6;
+  --fondo: #FFFFFF;
   --panel: #E7EADF;
   --borde: #D3D2BF;
   --verde: #26402C;
@@ -2331,3 +2331,16 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
   border: 1px solid #E6E3DA;
   border-radius: 18px;
 }
+
+/* Sueldo de la vacante (opcional): va debajo del puesto, con el color de marca */
+.vacante-sueldo {
+  font-family: var(--font-titulos);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--verde);
+  margin: -6px 0 14px;
+  overflow-wrap: anywhere;
+}
+
+/* Local aprobado: mismos tonos que .pildora.aprobado */
+.aviso-estado.aprobado { background: #EEF3EC; border-color: #CFDDCC; color: var(--verde); }

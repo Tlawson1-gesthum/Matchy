@@ -7,6 +7,7 @@
 -- teléfono. Si hay que cambiarlos, lo hace un administrador.
 --
 -- Se agrega como un trigger aparte para no tocar proteger_local().
+-- Ojo: schema-v16.sql saca el teléfono de esta lista (se cambia al verificarlo por SMS).
 
 create or replace function fijar_datos_verificados_local()
 returns trigger language plpgsql as $$

@@ -276,6 +276,8 @@ function VacantesCandidatoContenido() {
                 {v.puesto === 'Otro' && v.puesto_otro ? v.puesto_otro : v.puesto}
               </h3>
 
+              {v.sueldo && <p className="vacante-sueldo">{v.sueldo}</p>}
+
               <div className="vacante-datos">
                 <span>{etiqueta(TURNOS, v.turno) || 'Turno a definir'}</span>
                 <span>{etiqueta(DIAS_TRABAJO, v.dias_trabajo) || 'Días a definir'}</span>
@@ -381,6 +383,12 @@ function VacantesCandidatoContenido() {
                 </>
               )}
 
+              {!postuladas.has(v.id) && (
+                <p className="micro-cta">
+                  Buscá tranqui. Tu CV lo ve el local al que te postulás, y nadie más salvo que vos compartas tu link.
+                </p>
+              )}
+
               <p className="vacante-meta">
                 {textoAntiguedad(v.created_at)}
                 <span aria-hidden="true"> · </span>
@@ -413,10 +421,9 @@ function VacantesCandidatoContenido() {
           </div>
 
           <div className="nota-final">
-            <strong>Cuidate de los avisos falsos.</strong> Voral es gratis para vos y verificamos cada local antes
-            de habilitarlo. Ningún empleador serio te va a pedir dinero para darte el puesto, ni tu clave bancaria,
-            ni que trabajes gratis a prueba. Las entrevistas se hacen en el local, en horario comercial. Si algo te
-            resulta raro, tocá "Reportar" en el aviso.
+            <strong>Trabajar no cuesta plata.</strong> Ningún local serio te pide dinero, tu clave bancaria ni que
+            trabajes gratis "a prueba". Las entrevistas son en el local y en horario comercial. Si algo no te
+            cierra, tocá "Reportar este aviso".
           </div>
           </>
         )}

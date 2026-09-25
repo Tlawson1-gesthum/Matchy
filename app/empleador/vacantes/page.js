@@ -102,6 +102,12 @@ function VacantesEmpleadorContenido() {
             hábiles.
           </div>
         )}
+        {empleador?.estado === 'aprobado' && (
+          <div className="aviso-estado aprobado" role="status">
+            <strong>Tu local está verificado.</strong> Los candidatos ven el sello de verificado en cada aviso:
+            cuidalo respondiendo a quienes se postulan.
+          </div>
+        )}
         {empleador?.estado === 'rechazado' && (
           <div className="aviso-estado rechazado" role="status">
             <strong>Tu local no está habilitado.</strong>{' '}
