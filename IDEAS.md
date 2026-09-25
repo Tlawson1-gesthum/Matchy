@@ -2,7 +2,13 @@
 
 Ideas evaluadas que no se implementan por ahora. Cada una tiene la decisión tomada y lo que habría que resolver si se retoma.
 
-## Próxima tanda de cambios (aprobado)
+## Próxima tanda de cambios (aprobado, todavía sin aplicar)
+
+Decidido el 25/09/2026.
+
+1. **Cambios de un local aprobado vuelven a revisión.** Si un local ya verificado cambia desde "Mi local" su logo o su dirección, el cambio pasa por revisión de un administrador antes de mostrarse a los candidatos (evita que alguien se haga pasar por otro local). A resolver al aplicarlo: si mientras tanto se sigue mostrando el dato anterior (recomendado, para no bajar sus vacantes) o si el local entero vuelve a "en revisión"; y qué campos cuentan (logo y dirección seguro; ver localidad, tipo de local y enlace). Necesita cambio en la base (guardar el cambio pendiente aparte) y una vista en el panel de administración.
+
+## Tanda del 24/09/2026 (aplicada)
 
 Decidido el 24/09/2026.
 
