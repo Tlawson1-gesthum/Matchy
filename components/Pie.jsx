@@ -21,7 +21,7 @@ export default function Pie() {
         {REDES.map((red, i) => (
           <span key={red.nombre}>
             {i > 0 && <span aria-hidden="true"> · </span>}
-            <a href={red.href}>{red.nombre}</a>
+            <a href={red.href} {...(red.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}>{red.nombre}</a>
           </span>
         ))}
       </p>
