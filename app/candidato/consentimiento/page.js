@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import { enviarAviso } from '../../../lib/avisos';
 import GuardiaRol from '../../../components/GuardiaRol';
 import Encabezado from '../../../components/Encabezado';
 import Pie from '../../../components/Pie';
@@ -16,14 +17,16 @@ function ConsentimientoContenido() {
   // anterior (el registro con email sí la pide antes de llegar acá).
   const [yaDeclarada, setYaDeclarada] = useState(true);
   const [esMayor, setEsMayor] = useState(false);
+  const [primeraVez, setPrimeraVez] = useState(false);
 
   useEffect(() => {
     async function cargar() {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData?.user?.id;
       if (!uid) { setCargando(false); return; }
-      const { data: cv } = await supabase.from('cvs').select('declara_mayor_edad').eq('id', uid).maybeSingle();
+      const { data: cv } = await supabase.from('cvs').select('declara_mayor_edad, consentimiento_at').eq('id', uid).maybeSingle();
       setYaDeclarada(!!cv?.declara_mayor_edad);
+      setPrimeraVez(!cv?.consentimiento_at);
       setCargando(false);
     }
     cargar();
@@ -48,7 +51,9 @@ function ConsentimientoContenido() {
       cambios.declara_mayor_edad = true;
       cambios.declaracion_edad_at = new Date().toISOString();
     }
-    await supabase.from('cvs').update(cambios).eq('id', userId);
+    const { error: errGuardar } = await supabase.from('cvs').update(cambios).eq('id', userId);
+    // La bienvenida sale una sola vez: cuando la cuenta acepta el consentimiento por primera vez
+    if (!errGuardar && primeraVez) enviarAviso('bienvenida', userId);
     router.push('/candidato/cv');
   }
 

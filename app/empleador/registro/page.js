@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabaseClient';
+import { enviarAviso } from '../../../lib/avisos';
 import { TIPOS_LOCAL, LOCALIDADES, revisarCuit, revisarRedSocial } from '../../../lib/opciones';
 import BotonGoogle from '../../../components/BotonGoogle';
 import CampoContrasena from '../../../components/CampoContrasena';
@@ -150,6 +151,7 @@ function RegistroEmpleadorContenido() {
 
     setCargando(false);
     if (errEmp) { setError(traducirError(errEmp.message)); return; }
+    enviarAviso('bienvenida', uid);
     router.push('/empleador/vacantes');
   }
 

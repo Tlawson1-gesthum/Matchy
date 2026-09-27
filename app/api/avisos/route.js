@@ -1,8 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { enviarMail, plantilla, escapar, mailConfigurado } from '../../../lib/mail';
 import { formatearHorario } from '../../../lib/fechas';
+import { mailBienvenida } from '../../../lib/bienvenida';
 
-const EVENTOS = ['entrevista_propuesta', 'entrevista_actualizada', 'entrevista_respondida', 'local_aprobado', 'local_rechazado'];
+const EVENTOS = ['entrevista_propuesta', 'entrevista_actualizada', 'entrevista_respondida', 'local_aprobado', 'local_rechazado', 'bienvenida'];
+
 
 // Envía el aviso por mail que corresponde a un evento.
 // Seguridad: quien llama tiene que estar logueado, y la base solo devuelve el
@@ -26,6 +28,18 @@ export async function POST(req) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false } }
     );
+
+    // Bienvenida: solo para uno mismo (el id tiene que ser el de la sesión)
+    if (evento === 'bienvenida') {
+      const { data: u } = await supabase.auth.getUser(token);
+      if (!u?.user?.email || u.user.id !== id) return Response.json({ error: 'Sin permiso.' }, { status: 403 });
+      const { data: perfil } = await supabase.from('perfiles').select('role').eq('id', id).maybeSingle();
+      const b = mailBienvenida(perfil?.role, new URL(req.url).origin);
+      const html = plantilla({ titulo: b.titulo, parrafos: b.parrafos, pasos: b.pasos, boton: b.boton, cierre: b.cierre });
+      const texto = [...b.parrafos, ...b.pasos.map((p, i) => `${i + 1}. ${p}`), b.cierre || '']
+        .map((p) => p.replace(/<[^>]+>/g, '')).filter(Boolean).join('\n\n');
+      return Response.json(await enviarMail({ para: u.user.email, asunto: b.asunto, html, texto }));
+    }
 
     const { data: d, error } = await supabase.rpc('destinatario_aviso', { p_evento: evento, p_id: id });
     if (error || !d?.email) return Response.json({ error: 'Sin permiso.' }, { status: 403 });
@@ -87,7 +101,7 @@ export async function POST(req) {
         titulo: 'No pudimos aprobar tu local',
         parrafos: [
           `No pudimos verificar los datos de <strong>${local}</strong>, así que por ahora no está habilitado para publicar.`,
-          'Si creés que es un error, respondé a este mail o escribinos y lo revisamos.',
+          'Si creés que es un error, escribinos a hola@somosvoral.com.ar y lo revisamos.',
         ],
       };
     }
