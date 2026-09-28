@@ -12,6 +12,7 @@ import Pie from '../../../components/Pie';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
+  if (m.includes('sending confirmation')) return 'No pudimos mandarte el mail de confirmación. Probá de nuevo en unos minutos o escribinos a hola@somosvoral.com.ar.';
   if (m.includes('rate limit')) return 'Se alcanzó el límite de intentos por hora. Esperá un rato y probá de nuevo.';
   if (m.includes('already registered') || m.includes('already been registered')) return 'Ese email ya tiene una cuenta. Iniciá sesión.';
   if (m.includes('password')) return 'La contraseña tiene que tener al menos 6 caracteres.';

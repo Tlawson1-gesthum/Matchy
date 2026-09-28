@@ -17,6 +17,7 @@ import CampoLogo from '../../../components/CampoLogo';
 
 function traducirError(msg) {
   const m = (msg || '').toLowerCase();
+  if (m.includes('sending confirmation')) return 'No pudimos mandarte el mail de confirmación. Probá de nuevo en unos minutos o escribinos a hola@somosvoral.com.ar.';
   if (m.includes('rate limit')) return 'Se alcanzó el límite de intentos por hora. Esperá un rato y probá de nuevo.';
   if (m.includes('already registered') || m.includes('already been registered')) {
     return 'Ese email ya tiene una cuenta. Iniciá sesión y vas a poder completar los datos del local.';
