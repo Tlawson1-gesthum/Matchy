@@ -64,9 +64,10 @@ export default function Home() {
           <section className="tarjeta-portada" aria-labelledby="tarjeta-local">
             <h2 id="tarjeta-local">¿Ofrecés empleo?</h2>
             <p>Publicá la vacante y recibí a los postulantes ordenados por probabilidad de match, con CV completo y referencias.</p>
-            <a className="btn-portada oxido" href="/empleador/registro">Crear cuenta</a>
+            <a className="btn-portada oxido" href="/empleador/registro">Publicar vacante</a>
             <p className="tarjeta-acceso">
-              ¿Ya tenés cuenta? <a href="/empleador/login">Iniciar sesión</a>
+              ¿Ya tenés cuenta? <a href="/empleador/login">Iniciar sesión</a> o{' '}
+              <a href="/empleador/registro">creá una cuenta gratis</a>
             </p>
           </section>
         </div>
