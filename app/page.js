@@ -10,6 +10,15 @@ function IconoEscudo() {
   );
 }
 
+function IconoCvs() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="5" y="3" width="14" height="18" rx="2.5" />
+      <path d="M9 8h6M9 12h6M9 16h3.5" />
+    </svg>
+  );
+}
+
 function IconoBandera() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -63,8 +72,11 @@ export default function Home() {
 
           <section className="tarjeta-portada" aria-labelledby="tarjeta-local">
             <h2 id="tarjeta-local">¿Ofrecés empleo?</h2>
-            <p>Publicá la vacante y recibí a los postulantes ordenados por probabilidad de match, con CV completo y referencias.</p>
+            <p>Publicá vacantes y recibí a los postulantes ordenados por probabilidad de match y referencias.</p>
             <a className="btn-portada oxido" href="/empleador/registro">Publicar vacante</a>
+            <p className="tarjeta-sello oxido">
+              <IconoCvs /> Recibís CVs completos y ordenados
+            </p>
             <p className="tarjeta-acceso">
               ¿Ya tenés cuenta? <a href="/empleador/login">Iniciar sesión</a> o{' '}
               <a href="/empleador/registro">creá una cuenta gratis</a>

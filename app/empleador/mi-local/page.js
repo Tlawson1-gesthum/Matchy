@@ -109,7 +109,6 @@ function MiLocalContenido() {
             logoUrl={form.logo_url}
             onCambio={(url) => set('logo_url', url)}
             local={{ ...local, ...form }}
-            setError={setError}
           />
 
           <div className="form-field">

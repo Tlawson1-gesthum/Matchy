@@ -52,6 +52,8 @@ function RegistroEmpleadorContenido() {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [aviso, setAviso] = useState('');
+  // Nombre que ya se cargó al crear la cuenta: en los datos del local no se vuelve a editar
+  const [nombreCuenta, setNombreCuenta] = useState('');
 
   // Paso 2
   const [form, setForm] = useState(LOCAL_VACIO);
@@ -82,6 +84,7 @@ function RegistroEmpleadorContenido() {
         ...f,
         nombre_responsable: f.nombre_responsable || u.user_metadata?.full_name || '',
       }));
+      setNombreCuenta(u.user_metadata?.full_name || '');
       setPaso('local');
     }
     revisar();
@@ -123,6 +126,7 @@ function RegistroEmpleadorContenido() {
 
     await supabase.from('perfiles').upsert({ id: data.user.id, role: 'empleador', email });
     setForm((f) => ({ ...f, nombre_responsable: f.nombre_responsable || nombreCompleto }));
+    setNombreCuenta(nombreCompleto);
     setUsuario(data.user);
     setCargando(false);
     setPaso('local');
@@ -269,7 +273,13 @@ function RegistroEmpleadorContenido() {
               <SeccionAcordeon id="contacto" titulo="Tu contacto" {...propsSeccion('contacto')}>
                 <div className="form-field">
                   <label>Nombre y apellido</label>
-                  <input required value={form.nombre_responsable} onChange={(e) => set('nombre_responsable', e.target.value)} />
+                  <input
+                    required
+                    readOnly={!!nombreCuenta}
+                    value={form.nombre_responsable}
+                    onChange={(e) => set('nombre_responsable', e.target.value)}
+                  />
+                  {nombreCuenta && <p className="ayuda-campo">Es el nombre con el que creaste la cuenta.</p>}
                 </div>
                 <div className="form-field">
                   <label>Tu teléfono de contacto directo</label>
@@ -283,7 +293,7 @@ function RegistroEmpleadorContenido() {
                   <label>Nombre de fantasía</label>
                   <input required value={form.nombre_local} onChange={(e) => set('nombre_local', e.target.value)} />
                 </div>
-                <CampoLogo logoUrl={logoUrl} onCambio={setLogoUrl} local={form} setError={setError} />
+                <CampoLogo logoUrl={logoUrl} onCambio={setLogoUrl} local={form} />
 
                 <div className="form-field">
                   <label>Razón social</label>

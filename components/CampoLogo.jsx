@@ -9,8 +9,10 @@ import CabeceraLocal from './CabeceraLocal';
 
 // Campo para subir el logo del local, con consejos y la vista previa de cómo
 // queda en las vacantes. Lo usan el alta del local y "Mi local".
-export default function CampoLogo({ logoUrl, onCambio, local, setError }) {
+// El error se muestra debajo del campo (antes iba al final del formulario y no se veía).
+export default function CampoLogo({ logoUrl, onCambio, local }) {
   const [subiendo, setSubiendo] = useState(false);
+  const [error, setError] = useState('');
 
   async function subir(e) {
     const original = e.target.files[0];
@@ -57,6 +59,7 @@ export default function CampoLogo({ logoUrl, onCambio, local, setError }) {
       </ul>
       <input id="campo-logo" type="file" accept="image/jpeg,image/png,image/webp" onChange={subir} />
       {subiendo && <p className="ayuda-campo">Subiendo...</p>}
+      {error && <p className="mensaje-error" role="alert">{error}</p>}
       <div className="vista-previa-logo">
         <p className="ficha-bloque-titulo" style={{ margin: 0 }}>Así se ve en tus vacantes</p>
         <CabeceraLocal local={{ ...local, logo_url: logoUrl }} />

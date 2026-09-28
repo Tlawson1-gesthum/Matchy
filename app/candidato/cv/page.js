@@ -94,6 +94,9 @@ function CvFormContenido() {
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [subiendoFoto, setSubiendoFoto] = useState(false);
+  // Los errores de cada archivo se muestran debajo de su campo, no al final del formulario
+  const [errorFoto, setErrorFoto] = useState('');
+  const [errorCert, setErrorCert] = useState('');
   const [subiendoCert, setSubiendoCert] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [guardadoOk, setGuardadoOk] = useState(false);
@@ -218,14 +221,15 @@ function CvFormContenido() {
 
   async function subirFoto(e) {
     const original = e.target.files[0];
+    setErrorFoto('');
     if (!original || !userId) return;
     // Primero se revisa que sea una imagen, después se comprime y recién ahí se controla el peso
     if (!TIPOS_IMAGEN.includes(original.type)) {
-      setMensaje(validarArchivo(original, { tipos: TIPOS_IMAGEN, maxMB: 3 })); setGuardadoOk(false); e.target.value = ''; return;
+      setErrorFoto(validarArchivo(original, { tipos: TIPOS_IMAGEN, maxMB: 3 })); e.target.value = ''; return;
     }
     const file = await comprimirImagen(original, { maxLado: 800, calidad: 0.82 });
     const problema = validarArchivo(file, { tipos: TIPOS_IMAGEN, maxMB: 3 });
-    if (problema) { setMensaje(problema); setGuardadoOk(false); e.target.value = ''; return; }
+    if (problema) { setErrorFoto(problema); e.target.value = ''; return; }
     setSubiendoFoto(true);
     const path = `${userId}/foto.${extension(file)}`;
     const { error } = await supabase.storage.from('fotos-perfil').upload(path, file, { upsert: true, contentType: file.type });
@@ -233,7 +237,7 @@ function CvFormContenido() {
       const { data } = supabase.storage.from('fotos-perfil').getPublicUrl(path);
       set('foto_url', `${data.publicUrl}?t=${Date.now()}`);
     } else {
-      setMensaje('No se pudo subir la foto: ' + traducirError(error.message));
+      setErrorFoto('No se pudo subir la foto: ' + traducirError(error.message));
     }
     setSubiendoFoto(false);
   }
@@ -241,14 +245,15 @@ function CvFormContenido() {
 
   async function subirCertificado(e) {
     const original = e.target.files[0];
+    setErrorCert('');
     if (!original || !userId) return;
     if (!TIPOS_CERTIFICADO.includes(original.type)) {
-      setMensaje(validarArchivo(original, { tipos: TIPOS_CERTIFICADO, maxMB: 5 })); setGuardadoOk(false); e.target.value = ''; return;
+      setErrorCert(validarArchivo(original, { tipos: TIPOS_CERTIFICADO, maxMB: 5 })); e.target.value = ''; return;
     }
     // Las fotos del certificado se achican pero con más resolución, para que se pueda leer
     const file = await comprimirImagen(original, { maxLado: 1800, calidad: 0.86 });
     const problema = validarArchivo(file, { tipos: TIPOS_CERTIFICADO, maxMB: 5 });
-    if (problema) { setMensaje(problema); setGuardadoOk(false); e.target.value = ''; return; }
+    if (problema) { setErrorCert(problema); e.target.value = ''; return; }
     setSubiendoCert(true);
     const path = `${userId}/certificado.${extension(file)}`;
     const { error } = await supabase.storage.from('certificados').upload(path, file, { upsert: true, contentType: file.type });
@@ -257,7 +262,7 @@ function CvFormContenido() {
       setCv((c) => ({ ...c, certificado_url: path, certificado_manipulacion: true }));
       setGuardadoOk(false);
     } else {
-      setMensaje('No se pudo subir el certificado: ' + traducirError(error.message));
+      setErrorCert('No se pudo subir el certificado: ' + traducirError(error.message));
     }
     setSubiendoCert(false);
   }
@@ -388,6 +393,7 @@ function CvFormContenido() {
             <label htmlFor="archivo-foto">Foto (opcional, JPG, PNG o WEBP)</label>
             <input id="archivo-foto" type="file" accept="image/jpeg,image/png,image/webp" onChange={subirFoto} />
             {subiendoFoto && <p>Subiendo...</p>}
+            {errorFoto && <p className="mensaje-error" role="alert">{errorFoto}</p>}
             {cv.foto_url && (
               <img src={cv.foto_url} alt="" style={{ width: 88, height: 88, borderRadius: 6, objectFit: 'cover', marginTop: 10 }} />
             )}
@@ -688,6 +694,7 @@ function CvFormContenido() {
               tu DNI u otro dato personal que no quieras compartir, podés taparlo antes de subirlo.
             </p>
             {subiendoCert && <p>Subiendo...</p>}
+            {errorCert && <p className="mensaje-error" role="alert">{errorCert}</p>}
             {cv.certificado_url && (
               <p style={{ marginTop: 8 }}>
                 <button type="button" className="btn-accion" onClick={verMiCertificado}>Ver certificado cargado</button>

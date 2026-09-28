@@ -2348,3 +2348,23 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 /* Nombre y apellido lado a lado en el registro (apilados en celular) */
 .fila-nombre { display: grid; grid-template-columns: 1fr; gap: 0 12px; }
 @media (min-width: 480px) { .fila-nombre { grid-template-columns: 1fr 1fr; } }
+
+/* Portada: sello del local en su color, y tarjetas alineadas por filas en pantallas
+   anchas (título, texto, botón, sello y enlaces a la misma altura en las dos). */
+.tarjeta-sello.oxido { color: var(--oxido-empleador); }
+
+@media (min-width: 760px) {
+  .tarjetas-portada { row-gap: 0; }
+  .tarjeta-portada {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    justify-items: center;
+    align-content: start;
+    row-gap: 10px;
+  }
+  .tarjeta-portada > * { align-self: start; }
+}
+
+/* Campos que se muestran pero no se editan (ej.: nombre que viene de la cuenta) */
+.form-field input[readonly] { background: #F4F3EE; color: var(--texto-suave); cursor: default; }
