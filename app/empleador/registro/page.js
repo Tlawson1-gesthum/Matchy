@@ -23,7 +23,7 @@ function traducirError(msg) {
   }
   if (m.includes('password')) return 'La contraseña tiene que tener al menos 6 caracteres.';
   if (m.includes('cuit_unico') || m.includes('duplicate key')) {
-    return 'Ya existe un local registrado con ese CUIT. Si es tu local y perdiste el acceso, escribinos a gozzasabores@gmail.com.';
+    return 'Ya existe un local registrado con ese CUIT. Si es tu local y perdiste el acceso, escribinos a hola@somosvoral.com.ar.';
   }
   if (m.includes('column') || m.includes('schema cache')) {
     return 'La base de datos está desactualizada. Avisale al administrador que corra el último script de esquema. Detalle: ' + msg;
@@ -47,6 +47,10 @@ function RegistroEmpleadorContenido() {
   // Paso 1
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [aviso, setAviso] = useState('');
 
   // Paso 2
   const [form, setForm] = useState(LOCAL_VACIO);
@@ -89,9 +93,22 @@ function RegistroEmpleadorContenido() {
   async function crearCuenta(e) {
     e.preventDefault();
     setError('');
+    setAviso('');
+    if (!nombre.trim() || !apellido.trim()) { setError('Completá tu nombre y tu apellido.'); return; }
+    if (password !== password2) { setError('Las contraseñas no coinciden. Escribilas de nuevo.'); return; }
     setCargando(true);
 
-    const { data, error: errAuth } = await supabase.auth.signUp({ email, password });
+    const nombreCompleto = `${nombre.trim()} ${apellido.trim()}`;
+    // Si hay que confirmar el email, el enlace del mail vuelve a /auth/callback,
+    // que crea el perfil de local y trae de vuelta a este formulario.
+    const { data, error: errAuth } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: nombreCompleto, nombre: nombre.trim(), apellido: apellido.trim() },
+        emailRedirectTo: `${window.location.origin}/auth/callback?rol=empleador`,
+      },
+    });
     if (errAuth) {
       setError(traducirError(errAuth.message));
       setCargando(false);
@@ -99,11 +116,12 @@ function RegistroEmpleadorContenido() {
     }
     if (!data.session) {
       setCargando(false);
-      setError('Tu cuenta se creó, pero falta confirmar el email. Revisá tu casilla y el spam, iniciá sesión y volvé acá para cargar los datos del local.');
+      setAviso(`Te mandamos un mail a ${email} para confirmar tu cuenta. Tocá el enlace del mail y seguís con los datos del local. Si no lo ves, revisá el spam.`);
       return;
     }
 
     await supabase.from('perfiles').upsert({ id: data.user.id, role: 'empleador', email });
+    setForm((f) => ({ ...f, nombre_responsable: f.nombre_responsable || nombreCompleto }));
     setUsuario(data.user);
     setCargando(false);
     setPaso('local');
@@ -194,6 +212,16 @@ function RegistroEmpleadorContenido() {
               <div className="linea-o">o con tu email</div>
 
               <form onSubmit={crearCuenta}>
+                <div className="fila-nombre">
+                  <div className="form-field">
+                    <label htmlFor="registro-local-nombre">Nombre</label>
+                    <input id="registro-local-nombre" required autoComplete="given-name" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="registro-local-apellido">Apellido</label>
+                    <input id="registro-local-apellido" required autoComplete="family-name" value={apellido} onChange={(e) => setApellido(e.target.value)} />
+                  </div>
+                </div>
                 <div className="form-field">
                   <label htmlFor="registro-local-email">Email</label>
                   <input id="registro-local-email" type="email" required autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -205,8 +233,17 @@ function RegistroEmpleadorContenido() {
                   minLength={6}
                   ayuda="Mínimo 6 caracteres."
                 />
+                <CampoContrasena
+                  etiqueta="Repetir contraseña"
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
+                  autoComplete="new-password"
+                  minLength={6}
+                  ayuda={password2 && password2 !== password ? 'Todavía no coincide con la contraseña.' : undefined}
+                />
                 {error && <p className="mensaje-error" role="alert">{error}</p>}
-                <button className="btn-oxido-solido ancho" type="submit" disabled={cargando}>
+                {aviso && <p className="tip" role="status">{aviso}</p>}
+                <button className="btn-oxido-solido ancho" type="submit" disabled={cargando || !!aviso}>
                   {cargando ? 'Creando cuenta...' : 'Continuar'}
                 </button>
               </form>

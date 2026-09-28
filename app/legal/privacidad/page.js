@@ -22,7 +22,7 @@ export default function Privacidad() {
         <p>
           El responsable de la base de datos es Tomas Oliver Lawson, CUIL 20-34896158-7, con domicilio en
           Centenario 2595, Posadas, provincia de Misiones, Argentina. Para cualquier consulta sobre tus datos
-          podés escribir a <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
+          podés escribir a <a href="mailto:hola@somosvoral.com.ar">hola@somosvoral.com.ar</a>.
         </p>
 
         <h2>2. Qué datos recolectamos</h2>
@@ -108,7 +108,7 @@ export default function Privacidad() {
           <strong>Ese porcentaje no decide nada.</strong> La decisión de convocar, entrevistar o contratar es
           exclusivamente del empleador. Podés ver tu porcentaje antes de postularte, conocer qué criterios lo
           componen, corregir tu CV en cualquier momento, y solicitar una revisión humana escribiendo a
-          <a href="mailto:gozzasabores@gmail.com"> gozzasabores@gmail.com</a>.
+          <a href="mailto:hola@somosvoral.com.ar"> hola@somosvoral.com.ar</a>.
         </p>
         <p>
           Por eso no se trata de una decisión automatizada en el sentido de la Ley 25.326: el cálculo solo ordena

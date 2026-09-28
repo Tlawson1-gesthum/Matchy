@@ -133,7 +133,7 @@ function EntrevistasCandidatoContenido() {
           Nadie puede pedirte dinero, tus claves bancarias ni que trabajes gratis a modo de prueba. Contale a
           alguien de confianza adónde vas. Voral coordina el contacto pero no participa de la entrevista ni
           responde por lo que ocurra en ella: si algo te resulta raro, no vayas y escribinos a{' '}
-          <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
+          <a href="mailto:hola@somosvoral.com.ar">hola@somosvoral.com.ar</a>.
         </div>
 
         {entrevistas.length === 0 && (

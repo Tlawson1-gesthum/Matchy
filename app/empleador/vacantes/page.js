@@ -126,7 +126,7 @@ function VacantesEmpleadorContenido() {
             <strong>Tu local no está habilitado.</strong>{' '}
             {empleador.motivo_rechazo ? `Motivo: ${empleador.motivo_rechazo}. ` : ''}
             Tus vacantes no se muestran a los candidatos. Si creés que es un error, escribinos a{' '}
-            <a href="mailto:gozzasabores@gmail.com?subject=Revisi%C3%B3n%20de%20mi%20local">gozzasabores@gmail.com</a>.
+            <a href="mailto:hola@somosvoral.com.ar?subject=Revisi%C3%B3n%20de%20mi%20local">hola@somosvoral.com.ar</a>.
           </div>
         )}
 
@@ -202,7 +202,7 @@ function VacantesEmpleadorContenido() {
                     Esta vacante está suspendida y no se muestra a los candidatos.
                     {v.suspendida_motivo ? ` ${v.suspendida_motivo}.` : ''}{' '}
                     Si creés que es un error, escribinos a{' '}
-                    <a href="mailto:gozzasabores@gmail.com?subject=Vacante%20suspendida">gozzasabores@gmail.com</a>.
+                    <a href="mailto:hola@somosvoral.com.ar?subject=Vacante%20suspendida">hola@somosvoral.com.ar</a>.
                   </p>
                 )}
                 {v.cierra_at && v.estado === 'activa' && (

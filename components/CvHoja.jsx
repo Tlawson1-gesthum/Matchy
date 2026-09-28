@@ -112,7 +112,7 @@ export default function CvHoja({ cv }) {
         </p>
       </section>
 
-      <footer className="cv-pie">Hecho con Voral · voral.com.ar</footer>
+      <footer className="cv-pie">Hecho con Voral · somosvoral.com.ar</footer>
     </div>
   );
 }

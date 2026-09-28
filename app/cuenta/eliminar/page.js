@@ -45,7 +45,7 @@ export default function EliminarCuenta() {
     // 2. La cuenta y todo lo asociado
     const { error: err } = await supabase.rpc('borrar_mi_cuenta');
     if (err) {
-      setError(err.message ? traducirError(err.message) : 'No pudimos borrar la cuenta. Escribinos a gozzasabores@gmail.com y lo hacemos a mano.');
+      setError(err.message ? traducirError(err.message) : 'No pudimos borrar la cuenta. Escribinos a hola@somosvoral.com.ar y lo hacemos a mano.');
       setEstado('listo');
       return;
     }

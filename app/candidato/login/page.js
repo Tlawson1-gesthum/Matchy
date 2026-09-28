@@ -60,7 +60,13 @@ export default function LoginCandidato() {
       }
       if (!perfil) {
         await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
-        await supabase.from('cvs').insert({ id: userId });
+        const meta = data.user?.user_metadata || {};
+        await supabase.from('cvs').insert({
+          id: userId,
+          nombre: meta.full_name || '',
+          ...(meta.acepto_tyc_at ? { acepto_tyc_at: meta.acepto_tyc_at } : {}),
+          ...(meta.declara_mayor_edad ? { declara_mayor_edad: true, declaracion_edad_at: meta.acepto_tyc_at } : {}),
+        });
         setCargando(false);
         router.push('/candidato/consentimiento');
         return;

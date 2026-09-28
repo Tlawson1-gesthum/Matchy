@@ -97,7 +97,7 @@ function MiLocalContenido() {
             <span className="ficha-nota">
               Con estos datos verificamos tu local, por eso no se pueden cambiar desde acá. Si necesitás
               corregir alguno, escribinos a{' '}
-              <a href="mailto:gozzasabores@gmail.com?subject=Cambiar%20datos%20de%20mi%20local">gozzasabores@gmail.com</a>.
+              <a href="mailto:hola@somosvoral.com.ar?subject=Cambiar%20datos%20de%20mi%20local">hola@somosvoral.com.ar</a>.
             </span>
           </div>
         </div>

@@ -375,7 +375,7 @@ function CvFormContenido() {
               <p className="ayuda-campo">
                 Tu nombre quedó fijo después de tu primera postulación, para que los locales sepan con quién están
                 hablando. Si está mal escrito, escribinos a{' '}
-                <a href="mailto:gozzasabores@gmail.com?subject=Corregir%20mi%20nombre">gozzasabores@gmail.com</a>.
+                <a href="mailto:hola@somosvoral.com.ar?subject=Corregir%20mi%20nombre">hola@somosvoral.com.ar</a>.
               </p>
             ) : (
               <p className="ayuda-campo">

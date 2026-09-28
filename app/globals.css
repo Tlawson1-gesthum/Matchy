@@ -2344,3 +2344,7 @@ a:focus-visible { outline: 2px solid var(--oro); outline-offset: 2px; }
 
 /* Local aprobado: mismos tonos que .pildora.aprobado */
 .aviso-estado.aprobado { background: #EEF3EC; border-color: #CFDDCC; color: var(--verde); }
+
+/* Nombre y apellido lado a lado en el registro (apilados en celular) */
+.fila-nombre { display: grid; grid-template-columns: 1fr; gap: 0 12px; }
+@media (min-width: 480px) { .fila-nombre { grid-template-columns: 1fr 1fr; } }

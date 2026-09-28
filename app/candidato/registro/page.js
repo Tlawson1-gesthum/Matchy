@@ -23,15 +23,28 @@ function RegistroCandidatoContenido() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [aceptaTyc, setAceptaTyc] = useState(false);
   const [esMayor, setEsMayor] = useState(false);
   const [error, setError] = useState('');
+  const [aviso, setAviso] = useState('');
   const [cargando, setCargando] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    setAviso('');
 
+    if (!nombre.trim() || !apellido.trim()) {
+      setError('Completá tu nombre y tu apellido.');
+      return;
+    }
+    if (password !== password2) {
+      setError('Las contraseñas no coinciden. Escribilas de nuevo.');
+      return;
+    }
     if (!esMayor) {
       setError('Para usar Voral tenés que ser mayor de 18 años.');
       return;
@@ -43,7 +56,18 @@ function RegistroCandidatoContenido() {
 
     setCargando(true);
 
-    const { data, error: errAuth } = await supabase.auth.signUp({ email, password });
+    const nombreCompleto = `${nombre.trim()} ${apellido.trim()}`;
+    const ahora = new Date().toISOString();
+    // El nombre y las declaraciones viajan con la cuenta: si hay que confirmar el
+    // email, el perfil se crea después (en /auth/callback) con estos mismos datos.
+    const { data, error: errAuth } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: nombreCompleto, nombre: nombre.trim(), apellido: apellido.trim(), declara_mayor_edad: esMayor, acepto_tyc_at: ahora },
+        emailRedirectTo: `${window.location.origin}/auth/callback?rol=candidato`,
+      },
+    });
     if (errAuth) {
       setError(traducirError(errAuth.message));
       setCargando(false);
@@ -52,16 +76,16 @@ function RegistroCandidatoContenido() {
 
     if (!data.session) {
       setCargando(false);
-      setError('Tu cuenta se creó, pero falta confirmar el email. Revisá tu casilla y el spam, y después iniciá sesión.');
+      setAviso(`Te mandamos un mail a ${email} para confirmar tu cuenta. Tocá el enlace del mail y seguís desde ahí. Si no lo ves, revisá el spam.`);
       return;
     }
 
     const userId = data.user?.id;
     if (userId) {
-      const ahora = new Date().toISOString();
       await supabase.from('perfiles').insert({ id: userId, role: 'candidato', email });
       await supabase.from('cvs').insert({
         id: userId,
+        nombre: nombreCompleto,
         acepto_tyc_at: ahora,
         declara_mayor_edad: esMayor,
         declaracion_edad_at: ahora,
@@ -93,6 +117,16 @@ function RegistroCandidatoContenido() {
           <div className="linea-o">o con tu email</div>
 
           <form onSubmit={handleSubmit}>
+            <div className="fila-nombre">
+              <div className="form-field">
+                <label htmlFor="registro-nombre">Nombre</label>
+                <input id="registro-nombre" required autoComplete="given-name" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label htmlFor="registro-apellido">Apellido</label>
+                <input id="registro-apellido" required autoComplete="family-name" value={apellido} onChange={(e) => setApellido(e.target.value)} />
+              </div>
+            </div>
             <div className="form-field">
               <label htmlFor="registro-email">Email</label>
               <input
@@ -111,6 +145,14 @@ function RegistroCandidatoContenido() {
               autoComplete="new-password"
               minLength={6}
               ayuda="Mínimo 6 caracteres."
+            />
+            <CampoContrasena
+              etiqueta="Repetir contraseña"
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+              autoComplete="new-password"
+              minLength={6}
+              ayuda={password2 && password2 !== password ? 'Todavía no coincide con la contraseña.' : undefined}
             />
 
             <label className="casilla-legal">
@@ -131,8 +173,9 @@ function RegistroCandidatoContenido() {
             </label>
 
             {error && <p className="mensaje-error" role="alert">{error}</p>}
+            {aviso && <p className="tip" role="status">{aviso}</p>}
 
-            <button className="btn ancho" type="submit" disabled={cargando}>
+            <button className="btn ancho" type="submit" disabled={cargando || !!aviso}>
               {cargando ? 'Creando tu cuenta...' : 'Crear cuenta y armar mi CV'}
             </button>
           </form>

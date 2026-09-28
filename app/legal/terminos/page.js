@@ -30,7 +30,7 @@ export default function Terminos() {
           El uso de Voral es y será siempre gratuito para las personas que buscan empleo. Voral nunca cobra a un
           candidato por registrarse, cargar su CV, descargarlo, postularse ni ser contactado. Si alguien te pide
           dinero a cambio de un puesto o de mejorar tu posición en el sitio, no es Voral: reportalo a
-          <a href="mailto:gozzasabores@gmail.com"> gozzasabores@gmail.com</a>.
+          <a href="mailto:hola@somosvoral.com.ar"> hola@somosvoral.com.ar</a>.
         </p>
 
         <h2>3. Solo para mayores de 18 años</h2>
@@ -60,7 +60,7 @@ export default function Terminos() {
           El porcentaje es orientativo y no constituye una evaluación de la persona, de su idoneidad ni de su
           personalidad. Toda decisión de convocar, entrevistar, contratar o descartar es exclusiva del empleador
           y debe ser tomada por una persona. Cualquier candidato puede solicitar la revisión humana de su
-          posición escribiendo a <a href="mailto:gozzasabores@gmail.com">gozzasabores@gmail.com</a>.
+          posición escribiendo a <a href="mailto:hola@somosvoral.com.ar">hola@somosvoral.com.ar</a>.
         </p>
         <p>
           Ni el porcentaje ni el resumen que lo acompaña son una decisión automatizada en el sentido de la Ley

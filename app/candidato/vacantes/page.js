@@ -175,7 +175,7 @@ function VacantesCandidatoContenido() {
       await avisar(
         yaReportado ? 'Ya habías reportado este aviso. Lo estamos revisando.'
           : limite ? err.message
-          : 'No pudimos registrar el reporte. Escribinos a gozzasabores@gmail.com.',
+          : 'No pudimos registrar el reporte. Escribinos a hola@somosvoral.com.ar.',
         { titulo: yaReportado ? 'Reporte ya enviado' : 'No se pudo enviar' }
       );
       return;
@@ -406,8 +406,8 @@ function VacantesCandidatoContenido() {
             <p style={{ margin: '10px 0 0' }}>
               Si creés que tu porcentaje no refleja tu perfil, primero revisá que tu CV esté completo. Si aún
               querés que una persona de nuestro equipo lo revise, escribinos a{' '}
-              <a href="mailto:gozzasabores@gmail.com?subject=Revisi%C3%B3n%20humana%20de%20mi%20compatibilidad">
-                gozzasabores@gmail.com
+              <a href="mailto:hola@somosvoral.com.ar?subject=Revisi%C3%B3n%20humana%20de%20mi%20compatibilidad">
+                hola@somosvoral.com.ar
               </a>{' '}
               y lo miramos a mano.
             </p>

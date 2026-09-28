@@ -5,7 +5,7 @@ export default function Pie() {
     <footer className="pie">
       <p className="pie-texto">
         ¿Dudas? Estamos para ayudarte.{' '}
-        <a href="mailto:gozzasabores@gmail.com">
+        <a href="mailto:hola@somosvoral.com.ar">
           <span className="pie-sobre" aria-hidden="true">✉</span> Contactanos
         </a>
       </p>

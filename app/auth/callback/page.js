@@ -30,10 +30,16 @@ function Callback() {
       if (!perfil) {
         await supabase.from('perfiles').insert({ id: user.id, role: rolPedido, email: user.email });
         if (rolPedido === 'candidato') {
+          // Quien se registró con email y contraseña ya declaró la edad y aceptó los
+          // términos en el formulario: esos datos llegan guardados en la cuenta.
+          const meta = user.user_metadata || {};
           await supabase.from('cvs').insert({
             id: user.id,
-            nombre: user.user_metadata?.full_name || '',
-            acepto_tyc_at: new Date().toISOString(),
+            nombre: meta.full_name || '',
+            acepto_tyc_at: meta.acepto_tyc_at || new Date().toISOString(),
+            ...(meta.declara_mayor_edad
+              ? { declara_mayor_edad: true, declaracion_edad_at: meta.acepto_tyc_at || new Date().toISOString() }
+              : {}),
           });
           router.push('/candidato/consentimiento');
         } else {
