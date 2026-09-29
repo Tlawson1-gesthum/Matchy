@@ -58,7 +58,7 @@ export default function Home() {
         <div className="tarjetas-portada">
           <section className="tarjeta-portada" aria-labelledby="tarjeta-candidato">
             <h2 id="tarjeta-candidato">¿Buscás trabajo?</h2>
-            <p>Armá tu CV una vez, gratis, y postulate a locales que ya verificamos.</p>
+            <p>Armá tu CV una vez, gratis, y postulate a locales que ya verificamos. No compartimos tu CV con nadie que no elijas.</p>
             <a className="btn-portada verde" href="/candidato/registro">Crear CV gratis</a>
             <p className="tarjeta-sello">
               <IconoEscudo /> Todos los locales están verificados

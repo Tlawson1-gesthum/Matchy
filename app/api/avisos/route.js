@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { enviarMail, plantilla, escapar, mailConfigurado } from '../../../lib/mail';
+import { enviarMail, plantilla, escapar, mailConfigurado, enlaceBaja } from '../../../lib/mail';
 import { formatearHorario } from '../../../lib/fechas';
 import { mailBienvenida } from '../../../lib/bienvenida';
 
@@ -34,11 +34,15 @@ export async function POST(req) {
       const { data: u } = await supabase.auth.getUser(token);
       if (!u?.user?.email || u.user.id !== id) return Response.json({ error: 'Sin permiso.' }, { status: 403 });
       const { data: perfil } = await supabase.from('perfiles').select('role').eq('id', id).maybeSingle();
+      // La preferencia de mails se pide aparte: si la base todavía no tiene esas columnas, la bienvenida igual sale
+      const { data: pref } = await supabase.from('perfiles').select('mails_avisos, baja_token').eq('id', id).maybeSingle();
+      if (pref?.mails_avisos === false) return Response.json({ enviado: false, motivo: 'Se dio de baja de los mails.' });
+      const baja = enlaceBaja(pref?.baja_token);
       const b = mailBienvenida(perfil?.role, new URL(req.url).origin);
-      const html = plantilla({ titulo: b.titulo, parrafos: b.parrafos, pasos: b.pasos, boton: b.boton, cierre: b.cierre });
+      const html = plantilla({ titulo: b.titulo, parrafos: b.parrafos, pasos: b.pasos, boton: b.boton, cierre: b.cierre, baja });
       const texto = [...b.parrafos, ...b.pasos.map((p, i) => `${i + 1}. ${p}`), b.cierre || '']
         .map((p) => p.replace(/<[^>]+>/g, '')).filter(Boolean).join('\n\n');
-      return Response.json(await enviarMail({ para: u.user.email, asunto: b.asunto, html, texto }));
+      return Response.json(await enviarMail({ para: u.user.email, asunto: b.asunto, html, texto, baja }));
     }
 
     const { data: d, error } = await supabase.rpc('destinatario_aviso', { p_evento: evento, p_id: id });
@@ -106,9 +110,11 @@ export async function POST(req) {
       };
     }
 
-    const html = plantilla({ titulo: mail.titulo, parrafos: mail.parrafos, boton: mail.boton });
+    if (d.acepta_mails === false) return Response.json({ enviado: false, motivo: 'Se dio de baja de los mails.' });
+    const baja = enlaceBaja(d.baja_token);
+    const html = plantilla({ titulo: mail.titulo, parrafos: mail.parrafos, boton: mail.boton, baja });
     const texto = mail.parrafos.map((p) => p.replace(/<[^>]+>/g, '')).join('\n\n');
-    const resultado = await enviarMail({ para: d.email, asunto: mail.asunto, html, texto });
+    const resultado = await enviarMail({ para: d.email, asunto: mail.asunto, html, texto, baja });
     return Response.json(resultado);
   } catch {
     return Response.json({ enviado: false, error: 'Error interno.' }, { status: 500 });
