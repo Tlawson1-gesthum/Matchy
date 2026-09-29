@@ -7,6 +7,7 @@ import { etiqueta, TURNOS, DIAS_TRABAJO, DISPONIBILIDAD, esInmediata } from '../
 import { calcularPuntaje } from '../../../lib/scoring';
 import { traducirError } from '../../../lib/errores';
 import { estadoPostulacion } from '../../../lib/estadoPostulacion';
+import { formatearSueldo } from '../../../lib/sueldo';
 import TickerActividad from '../../../components/TickerActividad';
 import TextoFormateado from '../../../components/TextoFormateado';
 import GuardiaRol from '../../../components/GuardiaRol';
@@ -143,12 +144,18 @@ function VacantesCandidatoContenido() {
       vacante_id: vacante.id,
       candidato_id: userId,
       puesto_otro: puestoOtro || null,
-    }).select().single();
+    // Solo las columnas que el candidato puede leer (schema-v13): pedir todas hacía
+    // fallar la postulación entera, porque las notas internas del local están ocultas.
+    }).select('id, vacante_id, candidato_id, puntaje, estado, created_at, puesto_otro, cv_snapshot, cv_editado_despues').single();
 
     if (error) {
-      await avisar('Puede que la vacante haya cerrado o que ya te hayas postulado. Recargá la página y probá de nuevo.', {
-        titulo: 'No pudimos registrar tu postulación',
-      });
+      const m = (error.message || '').toLowerCase();
+      const texto = m.includes('duplicate') || m.includes('unique')
+        ? 'Ya te habías postulado a esta vacante. Recargá la página para verlo.'
+        : m.includes('row-level security') || m.includes('policy')
+          ? 'La vacante ya no recibe postulaciones, o estás usando una cuenta de local. Para postularte necesitás una cuenta de candidato.'
+          : 'Algo falló al guardar tu postulación. Recargá la página y probá de nuevo; si sigue pasando, escribinos a hola@somosvoral.com.ar.';
+      await avisar(texto, { titulo: 'No pudimos registrar tu postulación' });
       return;
     }
     setPostuladas((s) => new Set([...s, vacante.id]));
@@ -279,7 +286,7 @@ function VacantesCandidatoContenido() {
                 {v.puesto === 'Otro' && v.puesto_otro ? v.puesto_otro : v.puesto}
               </h3>
 
-              {v.sueldo && <p className="vacante-sueldo">{v.sueldo}</p>}
+              {v.sueldo && <p className="vacante-sueldo">{formatearSueldo(v.sueldo)}</p>}
 
               <div className="vacante-datos">
                 <span>{etiqueta(TURNOS, v.turno) || 'Turno a definir'}</span>
