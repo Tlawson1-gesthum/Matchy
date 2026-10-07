@@ -78,9 +78,14 @@ En contra: ${razonesNegativas.map((x) => limpiar(x, 120)).join('; ') || 'ninguno
 
 Escribí UNA sola frase corta (máximo 25 palabras), en español rioplatense, directa y práctica, explicándole al dueño del local por qué le conviene o no priorizar a este candidato. No repitas el puntaje numérico. No uses comillas. No evalúes la personalidad, la edad ni la apariencia de la persona.`;
 
+    // Claude Sonnet 5.5 razona por defecto; para una frase corta no hace falta, así que
+    // se desactiva ("between_tools" es su forma de apagarlo) y se usa esfuerzo bajo.
+    // El límite de tokens tiene margen: la frase pedida es de 25 palabras.
     const salida = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 100,
+      model: 'claude-sonnet-5-5',
+      max_tokens: 1000,
+      thinking: { type: 'between_tools' },
+      output_config: { effort: 'low' },
       messages: [{ role: 'user', content: prompt }],
     });
 
